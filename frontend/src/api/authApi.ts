@@ -21,6 +21,17 @@ export interface RegisterPayload {
   assignedZoneId?: number;
 }
 
+export interface GoogleAuthPayload {
+  credential: string;
+  customerType?: 'B2C' | 'B2B';
+  companyName?: string;
+  gstNumber?: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  pictureUrl?: string;
+}
+
 export const authApi = {
   login: async (payload: LoginPayload): Promise<AuthResponse> => {
     const res = await apiClient.post<ApiResponse<AuthResponse>>('/auth/login', payload);
@@ -29,6 +40,11 @@ export const authApi = {
 
   register: async (payload: RegisterPayload): Promise<AuthResponse> => {
     const res = await apiClient.post<ApiResponse<AuthResponse>>('/auth/register', payload);
+    return res.data.data;
+  },
+
+  googleLogin: async (payload: GoogleAuthPayload): Promise<AuthResponse> => {
+    const res = await apiClient.post<ApiResponse<AuthResponse>>('/auth/google', payload);
     return res.data.data;
   },
 

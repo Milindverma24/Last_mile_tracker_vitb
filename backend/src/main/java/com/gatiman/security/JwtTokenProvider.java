@@ -46,6 +46,22 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+    public String generateTokenForUser(com.gatiman.entity.User user) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + expirationMs);
+        String roles = "ROLE_" + user.getRole().name();
+
+        return Jwts.builder()
+                .subject(user.getEmail())
+                .claim("userId", user.getId())
+                .claim("uuid", user.getUuid() != null ? user.getUuid() : "")
+                .claim("roles", roles)
+                .issuedAt(now)
+                .expiration(expiryDate)
+                .signWith(key)
+                .compact();
+    }
+
     public String getEmailFromToken(String token) {
         Claims claims = Jwts.parser()
                 .verifyWith(key)

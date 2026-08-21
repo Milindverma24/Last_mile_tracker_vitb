@@ -39,6 +39,13 @@ public class AuthController {
                 .body(ApiResponse.ok("User registered successfully", response));
     }
 
+    @PostMapping("/google")
+    @Operation(summary = "Authenticate or register user via Google OAuth2 credential")
+    public ResponseEntity<ApiResponse<AuthResponse>> googleLogin(@Valid @RequestBody com.gatiman.dto.auth.GoogleAuthRequest request) {
+        AuthResponse response = authService.googleLogin(request);
+        return ResponseEntity.ok(ApiResponse.ok("Google login successful", response));
+    }
+
     @GetMapping("/me")
     @Operation(summary = "Retrieve authenticated user details")
     public ResponseEntity<ApiResponse<UserResponse>> getCurrentUser(

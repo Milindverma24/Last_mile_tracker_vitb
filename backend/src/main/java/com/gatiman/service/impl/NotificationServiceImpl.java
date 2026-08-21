@@ -50,7 +50,20 @@ public class NotificationServiceImpl implements NotificationService {
         try {
             type = NotificationType.valueOf(typeStr);
         } catch (Exception e) {
-            type = NotificationType.ORDER_CREATED;
+            type = switch (typeStr != null ? typeStr.toUpperCase() : "") {
+                case "CREATED", "ORDER_CREATED" -> NotificationType.ORDER_CREATED;
+                case "CONFIRMED", "ORDER_CONFIRMED" -> NotificationType.ORDER_CONFIRMED;
+                case "ASSIGNED", "AGENT_ASSIGNED" -> NotificationType.AGENT_ASSIGNED;
+                case "PICKED_UP" -> NotificationType.PICKED_UP;
+                case "IN_TRANSIT" -> NotificationType.IN_TRANSIT;
+                case "OUT_FOR_DELIVERY" -> NotificationType.OUT_FOR_DELIVERY;
+                case "NEAR_DESTINATION" -> NotificationType.NEAR_DESTINATION;
+                case "DELIVERED" -> NotificationType.DELIVERED;
+                case "FAILED", "DELIVERY_FAILED" -> NotificationType.DELIVERY_FAILED;
+                case "CANCELLED", "DELIVERY_CANCELLED" -> NotificationType.DELIVERY_CANCELLED;
+                case "RESCHEDULED", "RESCHEDULE_APPROVED" -> NotificationType.RESCHEDULE_APPROVED;
+                default -> NotificationType.ORDER_CREATED;
+            };
         }
         return sendNotification(recipient, order, type, title, message);
     }

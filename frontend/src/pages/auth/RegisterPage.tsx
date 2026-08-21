@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, useNavigate } from 'react-router-dom';
 import { registerSchema, RegisterFormData } from '../../schemas/authSchema';
 import { useAuth } from '../../context/AuthContext';
+import { GoogleSignInButton } from '../../components/auth/GoogleSignInButton';
 import { Mail, Lock, User, Phone, ArrowRight, AlertCircle, Building2, Truck } from 'lucide-react';
 
 export const RegisterPage: React.FC = () => {
@@ -27,6 +28,7 @@ export const RegisterPage: React.FC = () => {
   });
 
   const selectedRole = watch('role');
+  const selectedCustomerType = watch('customerType');
 
   const onSubmit = async (data: RegisterFormData) => {
     setIsSubmitting(true);
@@ -38,7 +40,7 @@ export const RegisterPage: React.FC = () => {
       else navigate('/customer/dashboard');
     } catch (err: any) {
       setErrorMessage(
-        err.response?.data?.message || 'Registration failed. Please check the information entered.'
+        err.response?.data?.message || 'Registration failed. Please verify the entered details.'
       );
     } finally {
       setIsSubmitting(false);
@@ -49,10 +51,10 @@ export const RegisterPage: React.FC = () => {
     <div className="mx-auto w-full max-w-md">
       <div className="mb-6 text-center sm:text-left">
         <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-          Register with GATIMAN
+          Create GATIMAN Account
         </h1>
         <p className="mt-2 text-sm text-slate-600">
-          Create an enterprise logistics account or register as a delivery partner
+          Join the high-speed urban delivery logistics network
         </p>
       </div>
 
@@ -64,54 +66,56 @@ export const RegisterPage: React.FC = () => {
       )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        {/* Role Selector Tabs */}
+        {/* Role Selection */}
         <div>
-          <label className="block text-sm font-semibold text-slate-700">Account Type</label>
-          <div className="mt-1.5 grid grid-cols-2 gap-2">
+          <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+            Select Account Role
+          </label>
+          <div className="mt-2 grid grid-cols-2 gap-3">
             <label
-              className={`flex cursor-pointer items-center justify-center gap-2 rounded-lg border p-2.5 text-xs font-bold transition ${
+              className={`flex cursor-pointer items-center justify-center gap-2 rounded-xl border p-3 text-xs font-bold transition ${
                 selectedRole === 'CUSTOMER'
-                  ? 'border-indigo-600 bg-indigo-50 text-indigo-700'
-                  : 'border-slate-300 bg-white text-slate-600 hover:bg-slate-50'
+                  ? 'border-indigo-600 bg-indigo-50/50 text-indigo-900 shadow-xs'
+                  : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
               }`}
             >
               <input type="radio" value="CUSTOMER" {...register('role')} className="sr-only" />
-              <Building2 className="h-4 w-4" /> Customer / Business
+              <User className="h-4 w-4 text-indigo-600" />
+              Customer
             </label>
-
             <label
-              className={`flex cursor-pointer items-center justify-center gap-2 rounded-lg border p-2.5 text-xs font-bold transition ${
+              className={`flex cursor-pointer items-center justify-center gap-2 rounded-xl border p-3 text-xs font-bold transition ${
                 selectedRole === 'DELIVERY_AGENT'
-                  ? 'border-indigo-600 bg-indigo-50 text-indigo-700'
-                  : 'border-slate-300 bg-white text-slate-600 hover:bg-slate-50'
+                  ? 'border-indigo-600 bg-indigo-50/50 text-indigo-900 shadow-xs'
+                  : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
               }`}
             >
               <input type="radio" value="DELIVERY_AGENT" {...register('role')} className="sr-only" />
-              <Truck className="h-4 w-4" /> Delivery Agent
+              <Truck className="h-4 w-4 text-emerald-600" />
+              Delivery Agent
             </label>
           </div>
         </div>
 
-        {/* First & Last Name */}
+        {/* Name Fields */}
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="block text-xs font-semibold text-slate-700">First Name</label>
             <input
               type="text"
               {...register('firstName')}
-              placeholder="Priya"
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
+              placeholder="Rahul"
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-xs focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
             />
             {errors.firstName && <p className="mt-1 text-xs text-rose-600">{errors.firstName.message}</p>}
           </div>
-
           <div>
             <label className="block text-xs font-semibold text-slate-700">Last Name</label>
             <input
               type="text"
               {...register('lastName')}
               placeholder="Sharma"
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-xs focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
             />
           </div>
         </div>
@@ -124,8 +128,8 @@ export const RegisterPage: React.FC = () => {
             <input
               type="email"
               {...register('email')}
-              placeholder="user@example.com"
-              className="w-full rounded-lg border border-slate-300 py-2 pl-9 pr-3 text-sm text-slate-900 shadow-sm focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
+              placeholder="rahul@example.com"
+              className="w-full rounded-lg border border-slate-300 py-2 pl-9 pr-3 text-sm text-slate-900 shadow-xs focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
             />
           </div>
           {errors.email && <p className="mt-1 text-xs text-rose-600">{errors.email.message}</p>}
@@ -137,49 +141,79 @@ export const RegisterPage: React.FC = () => {
           <div className="relative mt-1">
             <Phone className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input
-              type="text"
+              type="tel"
               {...register('phoneNumber')}
               placeholder="+91 98765 43210"
-              className="w-full rounded-lg border border-slate-300 py-2 pl-9 pr-3 text-sm text-slate-900 shadow-sm focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
+              className="w-full rounded-lg border border-slate-300 py-2 pl-9 pr-3 text-sm text-slate-900 shadow-xs focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
             />
           </div>
+          {errors.phoneNumber && <p className="mt-1 text-xs text-rose-600">{errors.phoneNumber.message}</p>}
         </div>
 
-        {/* Role Specific Fields */}
+        {/* Customer Persona Fields */}
         {selectedRole === 'CUSTOMER' && (
-          <div>
-            <label className="block text-xs font-semibold text-slate-700">Customer Category</label>
-            <select
-              {...register('customerType')}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
-            >
-              <option value="B2C">B2C (Individual / Retail)</option>
-              <option value="B2B">B2B (Enterprise Business)</option>
-            </select>
+          <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 space-y-3">
+            <div>
+              <label className="block text-xs font-semibold text-slate-700">Customer Category</label>
+              <div className="mt-1.5 flex gap-4 text-xs font-medium text-slate-700">
+                <label className="flex items-center gap-1.5 cursor-pointer">
+                  <input type="radio" value="B2C" {...register('customerType')} />
+                  <span>Personal (B2C)</span>
+                </label>
+                <label className="flex items-center gap-1.5 cursor-pointer">
+                  <input type="radio" value="B2B" {...register('customerType')} />
+                  <span>Business / Enterprise (B2B)</span>
+                </label>
+              </div>
+            </div>
+
+            {selectedCustomerType === 'B2B' && (
+              <>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700">Company Name</label>
+                  <input
+                    type="text"
+                    {...register('companyName')}
+                    placeholder="Acme Logistics Pvt Ltd"
+                    className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-900 shadow-xs focus:border-indigo-600 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700">GSTIN Number (Optional)</label>
+                  <input
+                    type="text"
+                    {...register('gstNumber')}
+                    placeholder="07AAAAA0000A1Z5"
+                    className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-900 shadow-xs focus:border-indigo-600 focus:outline-none"
+                  />
+                </div>
+              </>
+            )}
           </div>
         )}
 
+        {/* Delivery Agent Fields */}
         {selectedRole === 'DELIVERY_AGENT' && (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3 rounded-xl border border-slate-200 bg-slate-50/70 p-3.5">
             <div>
               <label className="block text-xs font-semibold text-slate-700">Vehicle Type</label>
               <select
                 {...register('vehicleType')}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
+                className="mt-1 w-full rounded-lg border border-slate-300 px-2.5 py-2 text-xs text-slate-900 shadow-xs focus:border-indigo-600 focus:outline-none"
               >
-                <option value="BIKE">Two Wheeler (Motorbike)</option>
-                <option value="EV_SCOOTER">Electric Scooter (EV)</option>
-                <option value="VAN">Delivery Van</option>
-                <option value="TRUCK">Mini Truck</option>
+                <option value="EV_SCOOTER">EV Scooter (Electric)</option>
+                <option value="BIKE">Motorbike (Standard)</option>
+                <option value="VAN">Cargo Van</option>
+                <option value="TRUCK">Light Commercial Truck</option>
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700">Vehicle Number</label>
+              <label className="block text-xs font-semibold text-slate-700">Vehicle Reg Number</label>
               <input
                 type="text"
                 {...register('vehicleNumber')}
                 placeholder="DL-01-AB-1234"
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
+                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-xs focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
               />
             </div>
           </div>
@@ -194,7 +228,7 @@ export const RegisterPage: React.FC = () => {
               type="password"
               {...register('password')}
               placeholder="••••••••"
-              className="w-full rounded-lg border border-slate-300 py-2 pl-9 pr-3 text-sm text-slate-900 shadow-sm focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
+              className="w-full rounded-lg border border-slate-300 py-2 pl-9 pr-3 text-sm text-slate-900 shadow-xs focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
             />
           </div>
           {errors.password && <p className="mt-1 text-xs text-rose-600">{errors.password.message}</p>}
@@ -203,7 +237,7 @@ export const RegisterPage: React.FC = () => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 py-2.5 text-sm font-semibold text-white shadow transition hover:bg-indigo-500 disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 py-2.5 text-sm font-semibold text-white shadow-xs transition hover:bg-indigo-500 disabled:opacity-50 cursor-pointer"
         >
           {isSubmitting ? (
             <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
@@ -214,6 +248,26 @@ export const RegisterPage: React.FC = () => {
           )}
         </button>
       </form>
+
+      {/* Google OAuth Register Section */}
+      <div className="mt-6">
+        <div className="relative mb-4">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-slate-200" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-slate-50 px-3 text-slate-400 font-bold tracking-wider">
+              Or continue with
+            </span>
+          </div>
+        </div>
+
+        <GoogleSignInButton
+          text="Sign up with Google"
+          defaultCustomerType="B2C"
+          onError={(msg) => setErrorMessage(msg)}
+        />
+      </div>
 
       <p className="mt-6 text-center text-sm text-slate-600">
         Already have an account?{' '}

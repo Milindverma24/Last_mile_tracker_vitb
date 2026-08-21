@@ -1,9 +1,8 @@
 package com.gatiman.service.impl;
 
-import com.gatiman.dto.auth.AuthResponse;
-import com.gatiman.dto.auth.LoginRequest;
-import com.gatiman.dto.auth.RegisterRequest;
-import com.gatiman.dto.auth.UserResponse;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gatiman.dto.auth.*;
 import com.gatiman.entity.Customer;
 import com.gatiman.entity.DeliveryAgent;
 import com.gatiman.entity.User;
@@ -19,6 +18,7 @@ import com.gatiman.security.CustomUserDetails;
 import com.gatiman.security.JwtTokenProvider;
 import com.gatiman.service.AuthService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,8 +26,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthServiceImpl implements AuthService {
 
     private final AuthenticationManager authenticationManager;
@@ -108,6 +113,106 @@ public class AuthServiceImpl implements AuthService {
                 .token(token)
                 .tokenType("Bearer")
                 .user(mapToUserResponse(savedUser))
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public AuthResponse googleLogin(GoogleAuthRequest request) {
+        String email = request.getEmail();
+        String firstName = request.getFirstName();
+        String lastName = request.getLastName();
+
+        // 1. If Google ID token / credential is provided, decode payload
+        if (request.getCredential() != null && !request.getCredential().isBlank()) {
+            try {
+                String[] parts = request.getCredential().split("\\.");
+                if (parts.length >= 2) {
+                    String payloadJson = new String(Base64.getUrlDecoder().decode(parts[1]), StandardCharsets.UTF_8);
+                    ObjectMapper mapper = new ObjectMapper();
+                    JsonNode rootNode = mapper.readTree(payloadJson);
+
+                    if (rootNode.has("email")) {
+                        email = rootNode.get("email").asText();
+                    }
+                    if (rootNode.has("given_name")) {
+                        firstName = rootNode.get("given_name").asText();
+                    } else if (rootNode.has("name")) {
+                        firstName = rootNode.get("name").asText();
+                    }
+                    if (rootNode.has("family_name")) {
+                        lastName = rootNode.get("family_name").asText();
+                    }
+                }
+            } catch (Exception e) {
+                log.warn("Could not decode Google credential JWT: {}", e.getMessage());
+            }
+        }
+
+        if (email == null || email.isBlank()) {
+            throw new BusinessRuleException("GOOGLE_AUTH_FAILED: Valid email address could not be extracted from Google credentials.");
+        }
+
+        // 2. Find or Provision User
+        final String finalEmail = email.toLowerCase().trim();
+        final String finalFirstName = (firstName != null && !firstName.isBlank()) ? firstName : "Google";
+        final String finalLastName = (lastName != null) ? lastName : "User";
+        final CustomerType targetCustomerType = request.getCustomerType() != null ? request.getCustomerType() : CustomerType.B2C;
+
+        User user = userRepository.findByEmail(finalEmail)
+                .map(existingUser -> {
+                    // Edge Case Check: If existing user is a CUSTOMER but missing Customer profile table row, auto-heal it
+                    if (existingUser.getRole() == Role.CUSTOMER) {
+                        customerRepository.findByUserId(existingUser.getId()).orElseGet(() -> {
+                            log.info("Auto-healing missing Customer entity for existing user: {}", existingUser.getEmail());
+                            Customer healed = Customer.builder()
+                                    .user(existingUser)
+                                    .customerType(targetCustomerType)
+                                    .companyName(request.getCompanyName())
+                                    .gstNumber(request.getGstNumber())
+                                    .defaultPickupAddress("")
+                                    .defaultPickupPincode("")
+                                    .build();
+                            return customerRepository.save(healed);
+                        });
+                    }
+                    return existingUser;
+                })
+                .orElseGet(() -> {
+                    log.info("Provisioning new {} account via Google OAuth: {}", targetCustomerType, finalEmail);
+                    User newUser = User.builder()
+                            .email(finalEmail)
+                            .passwordHash(passwordEncoder.encode(UUID.randomUUID().toString()))
+                            .firstName(finalFirstName)
+                            .lastName(finalLastName)
+                            .phoneNumber("")
+                            .role(Role.CUSTOMER)
+                            .status("ACTIVE")
+                            .active(true)
+                            .build();
+                    User saved = userRepository.save(newUser);
+
+                    Customer customer = Customer.builder()
+                            .user(saved)
+                            .customerType(targetCustomerType)
+                            .companyName(request.getCompanyName())
+                            .gstNumber(request.getGstNumber())
+                            .defaultPickupAddress("")
+                            .defaultPickupPincode("")
+                            .build();
+                    customerRepository.save(customer);
+                    return saved;
+                });
+
+        // 3. Issue GATIMAN Platform JWT
+        String token = tokenProvider.generateTokenForUser(user);
+
+        log.info("Google OAuth login successful for user: {} (Role: {})", user.getEmail(), user.getRole());
+
+        return AuthResponse.builder()
+                .token(token)
+                .tokenType("Bearer")
+                .user(mapToUserResponse(user))
                 .build();
     }
 

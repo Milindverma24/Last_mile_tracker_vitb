@@ -6,10 +6,14 @@ frontend/dist/
 dist-ssr/
 frontend/dist-ssr/
 *.local
+.env
 .env.local
 .env.*.local
+frontend/.env
 frontend/.env.local
 frontend/.env.*.local
+backend/.env
+backend/.env.local
 
 # Java / Maven build artifacts
 target/

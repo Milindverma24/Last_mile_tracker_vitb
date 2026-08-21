@@ -1,12 +1,13 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, Role } from '../types';
-import { authApi, LoginPayload, RegisterPayload } from '../api/authApi';
+import { authApi, LoginPayload, RegisterPayload, GoogleAuthPayload } from '../api/authApi';
 
 interface AuthContextType {
   user: User | null;
   token: string | null;
   isLoading: boolean;
   login: (payload: LoginPayload) => Promise<User>;
+  loginWithGoogle: (payload: GoogleAuthPayload) => Promise<User>;
   register: (payload: RegisterPayload) => Promise<User>;
   updateUser: (updatedFields: Partial<User>) => void;
   logout: () => void;
@@ -124,6 +125,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const loginWithGoogle = async (payload: GoogleAuthPayload): Promise<User> => {
+    setIsLoading(true);
+    try {
+      const res = await authApi.googleLogin(payload);
+      setToken(res.token);
+      setUser(res.user);
+      localStorage.setItem('gatiman_auth_token', res.token);
+      localStorage.setItem('gatiman_user', JSON.stringify(res.user));
+      return res.user;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const register = async (payload: RegisterPayload): Promise<User> => {
     setIsLoading(true);
     try {
@@ -165,6 +180,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         token,
         isLoading,
         login,
+        loginWithGoogle,
         register,
         updateUser,
         logout,

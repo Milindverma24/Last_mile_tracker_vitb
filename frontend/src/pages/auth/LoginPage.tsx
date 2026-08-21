@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, useNavigate } from 'react-router-dom';
 import { loginSchema, LoginFormData } from '../../schemas/authSchema';
 import { useAuth } from '../../context/AuthContext';
+import { GoogleSignInButton } from '../../components/auth/GoogleSignInButton';
 import { Mail, Lock, ArrowRight, AlertCircle, Shield, Truck, User } from 'lucide-react';
 
 export const LoginPage: React.FC = () => {
@@ -67,7 +68,7 @@ export const LoginPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setDemoRole('admin@gatiman.com')}
-            className="flex flex-col items-center gap-1 rounded-lg border border-slate-200 bg-white p-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-indigo-500 hover:text-indigo-600 cursor-pointer"
+            className="flex flex-col items-center gap-1 rounded-lg border border-slate-200 bg-white p-2 text-xs font-semibold text-slate-700 shadow-xs transition hover:border-indigo-500 hover:text-indigo-600 cursor-pointer"
           >
             <Shield className="h-4 w-4 text-indigo-600" />
             Admin
@@ -75,7 +76,7 @@ export const LoginPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setDemoRole('agent@gatiman.com')}
-            className="flex flex-col items-center gap-1 rounded-lg border border-slate-200 bg-white p-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-indigo-500 hover:text-indigo-600 cursor-pointer"
+            className="flex flex-col items-center gap-1 rounded-lg border border-slate-200 bg-white p-2 text-xs font-semibold text-slate-700 shadow-xs transition hover:border-indigo-500 hover:text-indigo-600 cursor-pointer"
           >
             <Truck className="h-4 w-4 text-emerald-600" />
             Agent
@@ -83,7 +84,7 @@ export const LoginPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setDemoRole('customer@gatiman.com')}
-            className="flex flex-col items-center gap-1 rounded-lg border border-slate-200 bg-white p-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-indigo-500 hover:text-indigo-600 cursor-pointer"
+            className="flex flex-col items-center gap-1 rounded-lg border border-slate-200 bg-white p-2 text-xs font-semibold text-slate-700 shadow-xs transition hover:border-indigo-500 hover:text-indigo-600 cursor-pointer"
           >
             <User className="h-4 w-4 text-blue-600" />
             Customer
@@ -107,7 +108,7 @@ export const LoginPage: React.FC = () => {
               type="email"
               {...register('email')}
               placeholder="user@gatiman.local"
-              className="w-full rounded-lg border border-slate-300 py-2.5 pl-10 pr-3 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
+              className="w-full rounded-lg border border-slate-300 py-2.5 pl-10 pr-3 text-sm text-slate-900 shadow-xs placeholder:text-slate-400 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
             />
           </div>
           {errors.email && <p className="mt-1 text-xs text-rose-600">{errors.email.message}</p>}
@@ -126,7 +127,7 @@ export const LoginPage: React.FC = () => {
               type="password"
               {...register('password')}
               placeholder="••••••••"
-              className="w-full rounded-lg border border-slate-300 py-2.5 pl-10 pr-3 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
+              className="w-full rounded-lg border border-slate-300 py-2.5 pl-10 pr-3 text-sm text-slate-900 shadow-xs placeholder:text-slate-400 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
             />
           </div>
           {errors.password && <p className="mt-1 text-xs text-rose-600">{errors.password.message}</p>}
@@ -135,7 +136,7 @@ export const LoginPage: React.FC = () => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 py-3 text-sm font-semibold text-white shadow transition hover:bg-indigo-500 disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 py-3 text-sm font-semibold text-white shadow-xs transition hover:bg-indigo-500 disabled:opacity-50 cursor-pointer"
         >
           {isSubmitting ? (
             <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
@@ -146,6 +147,26 @@ export const LoginPage: React.FC = () => {
           )}
         </button>
       </form>
+
+      {/* Google OAuth Login Section */}
+      <div className="mt-6">
+        <div className="relative mb-4">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-slate-200" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-slate-50 px-3 text-slate-400 font-bold tracking-wider">
+              Or continue with
+            </span>
+          </div>
+        </div>
+
+        <GoogleSignInButton
+          text="Continue with Google"
+          defaultCustomerType="B2C"
+          onError={(msg) => setErrorMessage(msg)}
+        />
+      </div>
 
       <p className="mt-8 text-center text-sm text-slate-600">
         Don't have an account?{' '}
