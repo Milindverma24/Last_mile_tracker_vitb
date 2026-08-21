@@ -1,0 +1,15 @@
+package com.gatiman.enums;
+
+public enum NotificationType {
+    ORDER_CREATED,
+    AGENT_ASSIGNED,
+    PICKED_UP,
+    IN_TRANSIT,
+    OUT_FOR_DELIVERY,
+    DELIVERED,
+    DELIVERY_FAILED,
+    RESCHEDULE_REQUESTED,
+    RESCHEDULE_APPROVED,
+    RESCHEDULE_REJECTED,
+    AGENT_REASSIGNED
+}

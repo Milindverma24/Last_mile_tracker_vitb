@@ -1,0 +1,13 @@
+package com.gatiman.enums;
+
+public enum FailureReason {
+    CUSTOMER_UNAVAILABLE,
+    ADDRESS_NOT_FOUND,
+    CUSTOMER_REFUSED,
+    ACCESS_ISSUE,
+    PHONE_UNREACHABLE,
+    WRONG_ADDRESS,
+    SECURITY_ACCESS_DENIED,
+    WEATHER_DISRUPTION,
+    OTHER
+}

@@ -1,0 +1,73 @@
+server:
+  port: ${PORT:8088}
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: gatiman-backend
+  profiles:
+    active: dev
+  
+  # Default Dev profile uses in-memory H2 with PostgreSQL compatibility mode
+  datasource:
+    url: ${DATABASE_URL:jdbc:h2:mem:gatiman_db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL}
+    driverClassName: ${DATABASE_DRIVER:org.h2.Driver}
+    username: ${DATABASE_USERNAME:sa}
+    password: ${DATABASE_PASSWORD:}
+    hikari:
+      pool-name: GatimanHikariPool
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 20000
+      idle-timeout: 300000
+      max-lifetime: 1200000
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
+    expiration-ms: 86400000 # 24 hours
+  cors:
+    allowed-origins: "http://localhost:5173,http://localhost:5174,http://localhost:3000,http://127.0.0.1:5173,http://127.0.0.1:5174"
+
+razorpay:
+  key-id: ${RAZORPAY_KEY_ID:rzp_test_gatiman123}
+  key-secret: ${RAZORPAY_KEY_SECRET:gatimanSecretKey123}
+  currency: INR
+  company-name: GATIMAN Logistics Inc.
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} [req:%X{requestId:-none}] - %msg%n"
+  level:
+    com.gatiman: INFO
+    org.springframework.security: WARN
