@@ -2,23 +2,34 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useOrders } from '../../hooks/useOrders';
 import {
-  Package,
-  Search,
-  Filter,
-  ArrowUpDown,
-  ExternalLink,
-  PlusCircle,
-  Clock,
-  CheckCircle,
-  AlertTriangle,
+  Package, Search, Filter, ExternalLink, PlusCircle, RefreshCw,
+  Truck, Navigation, CheckCircle, AlertTriangle, RotateCcw,
 } from 'lucide-react';
 import { OrderStatus } from '../../types';
+
+const getStatusBadge = (status: OrderStatus) => {
+  switch (status) {
+    case 'DELIVERED': return 'bg-emerald-50 text-emerald-700 border-emerald-200';
+    case 'OUT_FOR_DELIVERY': return 'bg-amber-50 text-amber-700 border-amber-200 animate-pulse';
+    case 'IN_TRANSIT': case 'PICKED_UP': case 'ASSIGNED': return 'bg-blue-50 text-blue-700 border-blue-200';
+    case 'FAILED': return 'bg-rose-50 text-rose-700 border-rose-200';
+    case 'RESCHEDULED': return 'bg-purple-50 text-purple-700 border-purple-200';
+    default: return 'bg-slate-100 text-slate-700 border-slate-200';
+  }
+};
+
+const STATUS_GROUPS = [
+  { key: 'ALL', label: 'All Orders', icon: Package },
+  { key: 'IN_TRANSIT', label: 'In Transit', icon: Truck },
+  { key: 'OUT_FOR_DELIVERY', label: 'Out for Delivery', icon: Navigation },
+  { key: 'DELIVERED', label: 'Delivered', icon: CheckCircle },
+  { key: 'FAILED', label: 'Failed', icon: AlertTriangle },
+];
 
 export const CustomerOrdersPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
-
-  const { data: orders = [], isLoading } = useOrders();
+  const { data: orders = [], isLoading, refetch } = useOrders();
 
   const filteredOrders = orders.filter((o) => {
     const matchesSearch =
@@ -26,151 +37,164 @@ export const CustomerOrdersPage: React.FC = () => {
       o.dropName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       o.pickupPincode.includes(searchTerm) ||
       o.dropPincode.includes(searchTerm);
-
     const matchesStatus = statusFilter === 'ALL' || o.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
-
-  const getStatusBadge = (status: OrderStatus) => {
-    switch (status) {
-      case 'DELIVERED':
-        return 'bg-emerald-50 text-emerald-700 border-emerald-200';
-      case 'OUT_FOR_DELIVERY':
-        return 'bg-amber-50 text-amber-700 border-amber-200 animate-pulse';
-      case 'IN_TRANSIT':
-      case 'PICKED_UP':
-      case 'ASSIGNED':
-        return 'bg-blue-50 text-blue-700 border-blue-200';
-      case 'FAILED':
-        return 'bg-rose-50 text-rose-700 border-rose-200';
-      case 'RESCHEDULED':
-        return 'bg-purple-50 text-purple-700 border-purple-200';
-      default:
-        return 'bg-slate-100 text-slate-700 border-slate-200';
-    }
-  };
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">My Deliveries</h1>
-          <p className="text-sm text-slate-500">Track and manage all your historical and active bookings</p>
+          <h1 className="text-2xl font-black text-slate-900">My Deliveries</h1>
+          <p className="text-sm text-slate-500 mt-0.5">Track and manage all your historical and active bookings</p>
         </div>
-        <Link
-          to="/customer/orders/create"
-          className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-bold text-white shadow hover:bg-indigo-500"
-        >
-          <PlusCircle className="h-4 w-4" /> Book New Delivery
-        </Link>
-      </div>
-
-      {/* Filters Bar */}
-      <div className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-        <div className="relative flex-1 max-w-md">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search by Tracking #, Recipient, or PIN code..."
-            className="w-full rounded-lg border border-slate-300 py-2 pl-9 pr-3 text-sm focus:border-indigo-600 focus:outline-none"
-          />
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Filter className="h-4 w-4 text-slate-400" />
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="rounded-lg border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-700 focus:border-indigo-600 focus:outline-none"
+        <div className="flex items-center gap-2 self-start">
+          <button
+            onClick={() => refetch()}
+            className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 transition cursor-pointer"
           >
-            <option value="ALL">All Statuses</option>
-            <option value="CREATED">Created</option>
-            <option value="ASSIGNED">Assigned</option>
-            <option value="PICKED_UP">Picked Up</option>
-            <option value="IN_TRANSIT">In Transit</option>
-            <option value="OUT_FOR_DELIVERY">Out for Delivery</option>
-            <option value="DELIVERED">Delivered</option>
-            <option value="FAILED">Failed</option>
-            <option value="RESCHEDULED">Rescheduled</option>
-          </select>
+            <RefreshCw className="h-4 w-4" />
+            <span className="hidden sm:inline">Refresh</span>
+          </button>
+          <Link
+            to="/customer/orders/create"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 transition"
+          >
+            <PlusCircle className="h-4 w-4" /> Book New Delivery
+          </Link>
         </div>
       </div>
 
-      {/* Orders Table */}
-      <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+      {/* Status Quick Filters */}
+      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+        {STATUS_GROUPS.map((sg) => {
+          const Icon = sg.icon;
+          const count = sg.key === 'ALL' ? orders.length : orders.filter((o) => o.status === sg.key).length;
+          const active = statusFilter === sg.key;
+          return (
+            <button
+              key={sg.key}
+              onClick={() => setStatusFilter(sg.key)}
+              className={`flex items-center gap-2 whitespace-nowrap rounded-xl border px-3.5 py-2 text-xs font-semibold transition cursor-pointer shrink-0 ${
+                active
+                  ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                  : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-300 hover:text-indigo-600'
+              }`}
+            >
+              <Icon className="h-3.5 w-3.5" />
+              {sg.label}
+              <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold ${active ? 'bg-white/20' : 'bg-slate-100 text-slate-600'}`}>
+                {count}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Search bar */}
+      <div className="relative max-w-md">
+        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search by Tracking #, Recipient, or PIN code..."
+          className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/15 transition shadow-sm"
+        />
+      </div>
+
+      {/* Orders table */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         {isLoading ? (
-          <div className="p-12 text-center text-sm text-slate-500">Loading your deliveries...</div>
+          <div className="space-y-0">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="flex items-center gap-4 px-6 py-4 border-b border-slate-50 last:border-b-0">
+                <div className="skeleton h-4 w-40 rounded" />
+                <div className="skeleton h-4 w-28 ml-auto rounded" />
+                <div className="skeleton h-4 w-20 rounded" />
+              </div>
+            ))}
+          </div>
         ) : filteredOrders.length === 0 ? (
-          <div className="p-12 text-center">
-            <Package className="mx-auto h-12 w-12 text-slate-300" />
-            <h3 className="mt-3 text-sm font-bold text-slate-900">No shipments found</h3>
-            <p className="mt-1 text-xs text-slate-500">Try adjusting your search criteria or book a new shipment.</p>
+          <div className="py-16 text-center space-y-3">
+            <div className="flex h-16 w-16 mx-auto items-center justify-center rounded-2xl bg-slate-100">
+              <Package className="h-8 w-8 text-slate-300" />
+            </div>
+            <div>
+              <h3 className="font-bold text-slate-900">No shipments found</h3>
+              <p className="text-sm text-slate-500 mt-1">
+                {searchTerm || statusFilter !== 'ALL'
+                  ? 'Try adjusting your search or filter.'
+                  : 'Place your first delivery booking to see it here.'}
+              </p>
+            </div>
+            {!searchTerm && statusFilter === 'ALL' && (
+              <Link
+                to="/customer/orders/create"
+                className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 transition"
+              >
+                <PlusCircle className="h-4 w-4" /> Book First Shipment
+              </Link>
+            )}
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
+            <table className="w-full text-sm">
               <thead className="border-b border-slate-100 bg-slate-50 text-xs font-bold uppercase tracking-wider text-slate-500">
                 <tr>
-                  <th className="px-6 py-3">Tracking #</th>
-                  <th className="px-6 py-3">Date</th>
-                  <th className="px-6 py-3">Pickup Location</th>
-                  <th className="px-6 py-3">Drop Location</th>
-                  <th className="px-6 py-3">Weight (Billable)</th>
-                  <th className="px-6 py-3">Amount</th>
-                  <th className="px-6 py-3">Status</th>
-                  <th className="px-6 py-3 text-right">Actions</th>
+                  <th className="px-5 py-3 text-left">Tracking #</th>
+                  <th className="px-5 py-3 text-left hidden md:table-cell">Date</th>
+                  <th className="px-5 py-3 text-left">Route</th>
+                  <th className="px-5 py-3 text-left hidden sm:table-cell">Weight</th>
+                  <th className="px-5 py-3 text-left hidden sm:table-cell">Amount</th>
+                  <th className="px-5 py-3 text-left">Status</th>
+                  <th className="px-5 py-3 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {filteredOrders.map((order) => (
-                  <tr key={order.id} className="hover:bg-slate-50/80 transition">
-                    <td className="px-6 py-4 font-mono font-bold text-indigo-600">
-                      <Link to={`/customer/orders/${order.id}/track`} className="hover:underline">
+                  <tr key={order.id} className="hover:bg-slate-50/80 transition group">
+                    <td className="px-5 py-3.5">
+                      <Link
+                        to={`/customer/orders/${order.id}/track`}
+                        className="font-mono text-xs font-bold text-indigo-600 hover:text-indigo-700"
+                      >
                         {order.trackingNumber}
                       </Link>
+                      <div className="text-[10px] text-slate-400 mt-0.5">{order.customerType} · {order.paymentType}</div>
                     </td>
-                    <td className="px-6 py-4 text-xs text-slate-500">
+                    <td className="px-5 py-3.5 hidden md:table-cell text-xs text-slate-500">
                       {new Date(order.createdAt).toLocaleDateString()}
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="text-xs font-semibold text-slate-900">{order.pickupName}</div>
-                      <div className="text-[11px] text-slate-500">{order.pickupPincode}</div>
+                    <td className="px-5 py-3.5">
+                      <div className="text-xs font-semibold text-slate-900">{order.pickupPincode} → {order.dropPincode}</div>
+                      <div className="text-[11px] text-slate-400">{order.routeType?.replace('_', ' ')}</div>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="text-xs font-semibold text-slate-900">{order.dropName}</div>
-                      <div className="text-[11px] text-slate-500">{order.dropPincode}</div>
-                    </td>
-                    <td className="px-6 py-4 text-xs font-medium text-slate-700">
+                    <td className="px-5 py-3.5 hidden sm:table-cell text-xs font-medium text-slate-600">
                       {order.billableWeightKg} kg
                     </td>
-                    <td className="px-6 py-4 font-bold text-slate-900">
+                    <td className="px-5 py-3.5 hidden sm:table-cell font-bold text-slate-900 text-xs">
                       ₹{Number(order.totalCharge).toFixed(2)}
                     </td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-bold ${getStatusBadge(
-                          order.status
-                        )}`}
-                      >
-                        {order.status}
+                    <td className="px-5 py-3.5">
+                      <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[10px] font-bold ${getStatusBadge(order.status)}`}>
+                        {order.status.replace('_', ' ')}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-5 py-3.5 text-right">
                       <div className="flex items-center justify-end gap-2">
                         {order.status === 'FAILED' && (
                           <Link
                             to={`/customer/reschedule?orderId=${order.id}`}
-                            className="rounded bg-rose-50 px-2 py-1 text-xs font-bold text-rose-700 hover:bg-rose-100"
+                            className="rounded-lg bg-rose-50 border border-rose-200 px-2.5 py-1 text-xs font-bold text-rose-700 hover:bg-rose-100 transition"
                           >
-                            Reschedule
+                            <RotateCcw className="h-3 w-3 inline mr-1" />Reschedule
                           </Link>
                         )}
                         <Link
                           to={`/customer/orders/${order.id}/track`}
-                          className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50 hover:text-indigo-600"
+                          className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:border-indigo-300 hover:text-indigo-600 hover:bg-indigo-50 transition"
                         >
                           Track <ExternalLink className="h-3 w-3" />
                         </Link>
@@ -180,6 +204,13 @@ export const CustomerOrdersPage: React.FC = () => {
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+
+        {/* Table footer with count */}
+        {!isLoading && filteredOrders.length > 0 && (
+          <div className="border-t border-slate-100 px-6 py-3 text-xs text-slate-500 bg-slate-50">
+            Showing {filteredOrders.length} of {orders.length} total shipments
           </div>
         )}
       </div>

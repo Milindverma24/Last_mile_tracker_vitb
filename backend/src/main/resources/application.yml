@@ -36,12 +36,35 @@ spring:
       enabled: true
       path: /h2-console
 
+  mail:
+    host: ${EMAIL_HOST:smtp.gmail.com}
+    port: ${EMAIL_PORT:587}
+    username: ${EMAIL_USERNAME:}
+    password: ${EMAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
 app:
   jwt:
     secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
     expiration-ms: 86400000 # 24 hours
   cors:
     allowed-origins: "http://localhost:5173,http://localhost:5174,http://localhost:3000,http://127.0.0.1:5173,http://127.0.0.1:5174"
+  email:
+    enabled: ${EMAIL_ENABLED:true}
+    from: ${EMAIL_FROM:notifications@gatiman.in}
+    from-name: ${EMAIL_FROM_NAME:GATIMAN Logistics}
+    base-url: ${APP_BASE_URL:http://localhost:5173}
+    proximity-threshold-km: ${EMAIL_PROXIMITY_THRESHOLD_KM:0.5}
+    delay-cooldown-minutes: ${EMAIL_DELAY_COOLDOWN_MINUTES:30}
 
 razorpay:
   key-id: ${RAZORPAY_KEY_ID:rzp_test_gatiman123}
@@ -57,6 +80,9 @@ management:
   endpoint:
     health:
       show-details: always
+  health:
+    mail:
+      enabled: false
 
 springdoc:
   api-docs:

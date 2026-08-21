@@ -13,6 +13,7 @@ import {
   ShieldCheck,
   Activity,
   Bell,
+  Mail,
   Settings,
   User as UserIcon,
   LogOut,
@@ -30,6 +31,7 @@ export const AdminLayout: React.FC = () => {
   const navigation = [
     { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
     { name: 'Orders Dispatch', href: '/admin/orders', icon: Package },
+    { name: 'Email Monitoring', href: '/admin/emails', icon: Mail },
     { name: 'Reschedule Queue', href: '/admin/reschedules', icon: CalendarClock },
     { name: 'Fleet / Agents', href: '/admin/agents', icon: Truck },
     { name: 'Zones & Hubs', href: '/admin/zones', icon: Map },

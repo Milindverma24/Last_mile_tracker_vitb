@@ -49,6 +49,7 @@ import { AdminSystemHealthPage } from '../pages/admin/SystemHealthPage';
 import { AdminNotificationsPage } from '../pages/admin/NotificationsPage';
 import { AdminSettingsPage } from '../pages/admin/SettingsPage';
 import { AdminProfilePage } from '../pages/admin/ProfilePage';
+import { EmailMonitoringPage } from '../pages/admin/EmailMonitoringPage';
 
 export const AppRoutes: React.FC = () => {
   return (
@@ -123,6 +124,7 @@ export const AppRoutes: React.FC = () => {
         <Route path="dashboard" element={<AdminDashboardPage />} />
         <Route path="orders" element={<AdminOrdersPage />} />
         <Route path="orders/:id" element={<AdminOrderDetailPage />} />
+        <Route path="emails" element={<EmailMonitoringPage />} />
         <Route path="reschedules" element={<AdminRescheduleRequestsPage />} />
         <Route path="customers" element={<AdminCustomersPage />} />
         <Route path="agents" element={<AdminAgentsPage />} />

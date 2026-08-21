@@ -34,6 +34,10 @@ public class LiveTrackingServiceImpl implements LiveTrackingService {
     private final OrderRepository orderRepository;
     private final DeliveryAgentRepository deliveryAgentRepository;
     private final SimpMessagingTemplate messagingTemplate;
+    private final com.gatiman.service.EmailService emailService;
+
+    @org.springframework.beans.factory.annotation.Value("${app.email.proximity-threshold-km:0.5}")
+    private double proximityThresholdKm = 0.5;
 
     // High-performance concurrency-safe telemetry cache to avoid database contention on high-frequency GPS ticks
     private final Map<Long, LocationUpdatePayload> telemetryCache = new ConcurrentHashMap<>();
@@ -184,8 +188,16 @@ public class LiveTrackingServiceImpl implements LiveTrackingService {
             distanceKm = Math.round(directDistance * 1.25 * 10.0) / 10.0;
             if (distanceKm < 0.1) distanceKm = 0.1;
 
-            if (distanceKm <= 0.5) {
+            if (distanceKm <= proximityThresholdKm) {
                 nearDestination = true;
+                // Dispatch Near Destination email asynchronously (idempotent, won't duplicate)
+                if (isLive) {
+                    try {
+                        emailService.sendNearDestinationEmail(order, distanceKm, Math.max(1, (int) Math.round((distanceKm / speed) * 60.0)));
+                    } catch (Exception e) {
+                        log.debug("Non-fatal error dispatching proximity email: {}", e.getMessage());
+                    }
+                }
             }
 
             // ETA: (distance / speed) * 60 minutes

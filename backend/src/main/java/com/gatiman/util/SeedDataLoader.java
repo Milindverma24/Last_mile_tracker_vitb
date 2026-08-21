@@ -40,13 +40,13 @@ public class SeedDataLoader implements CommandLineRunner {
             return;
         }
 
-        log.info("⚡ Seeding GATIMAN platform initial data...");
+        log.info("⚡ Seeding GATIMAN platform initial data (1 Admin, 1 Customer, 1 Agent)...");
 
         String defaultEncodedPassword = passwordEncoder.encode("password123");
 
-        // 1. Create Default Users (Spec: admin@gatiman.local, customer@gatiman.local, agent1@gatiman.local, agent2@gatiman.local)
+        // 1. Exactly 1 Admin User
         User adminUser = User.builder()
-                .email("admin@gatiman.local")
+                .email("admin@gatiman.com")
                 .passwordHash(defaultEncodedPassword)
                 .firstName("Operations")
                 .lastName("Admin")
@@ -57,21 +57,9 @@ public class SeedDataLoader implements CommandLineRunner {
                 .build();
         userRepository.save(adminUser);
 
-        // Also alias admin@gatiman.com for convenience
-        User adminUserAlias = User.builder()
-                .email("admin@gatiman.com")
-                .passwordHash(defaultEncodedPassword)
-                .firstName("Operations")
-                .lastName("Admin")
-                .phoneNumber("+91 98765 43210")
-                .role(Role.ADMIN)
-                .status("ACTIVE")
-                .active(true)
-                .build();
-        userRepository.save(adminUserAlias);
-
+        // 2. Exactly 1 Customer User
         User customerUser = User.builder()
-                .email("customer@gatiman.local")
+                .email("customer@gatiman.com")
                 .passwordHash(defaultEncodedPassword)
                 .firstName("Priya")
                 .lastName("Sharma")
@@ -82,73 +70,28 @@ public class SeedDataLoader implements CommandLineRunner {
                 .build();
         userRepository.save(customerUser);
 
-        User customerUserAlias = User.builder()
-                .email("customer@gatiman.com")
-                .passwordHash(defaultEncodedPassword)
-                .firstName("Priya")
-                .lastName("Sharma")
-                .phoneNumber("+91 98111 22233")
-                .role(Role.CUSTOMER)
-                .status("ACTIVE")
-                .active(true)
-                .build();
-        userRepository.save(customerUserAlias);
-
-        User agentUser1 = User.builder()
-                .email("agent1@gatiman.local")
-                .passwordHash(defaultEncodedPassword)
-                .firstName("Rajesh")
-                .lastName("Kumar")
-                .phoneNumber("+91 98999 11223")
-                .role(Role.DELIVERY_AGENT)
-                .status("ACTIVE")
-                .active(true)
-                .build();
-        userRepository.save(agentUser1);
-
-        User agentUser2 = User.builder()
-                .email("agent2@gatiman.local")
-                .passwordHash(defaultEncodedPassword)
-                .firstName("Amit")
-                .lastName("Verma")
-                .phoneNumber("+91 98999 44556")
-                .role(Role.DELIVERY_AGENT)
-                .status("ACTIVE")
-                .active(true)
-                .build();
-        userRepository.save(agentUser2);
-
-        // Also alias agent for convenience
-        User agentUserAlias = User.builder()
-                .email("rajesh.agent@gatiman.com")
-                .passwordHash(defaultEncodedPassword)
-                .firstName("Rajesh")
-                .lastName("Kumar")
-                .phoneNumber("+91 98999 11223")
-                .role(Role.DELIVERY_AGENT)
-                .status("ACTIVE")
-                .active(true)
-                .build();
-        userRepository.save(agentUserAlias);
-
-        // 2. Create Customers
-        Customer customer1 = Customer.builder()
+        Customer customer = Customer.builder()
                 .user(customerUser)
                 .customerType(CustomerType.B2C)
                 .defaultPickupAddress("42, Sector 14, Hauz Khas, New Delhi")
                 .defaultPickupPincode("110016")
                 .build();
-        customerRepository.save(customer1);
+        customerRepository.save(customer);
 
-        Customer customerAlias = Customer.builder()
-                .user(customerUserAlias)
-                .customerType(CustomerType.B2C)
-                .defaultPickupAddress("42, Sector 14, Hauz Khas, New Delhi")
-                .defaultPickupPincode("110016")
+        // 3. Exactly 1 Delivery Agent User
+        User agentUser = User.builder()
+                .email("agent@gatiman.com")
+                .passwordHash(defaultEncodedPassword)
+                .firstName("Rajesh")
+                .lastName("Kumar")
+                .phoneNumber("+91 98999 11223")
+                .role(Role.DELIVERY_AGENT)
+                .status("ACTIVE")
+                .active(true)
                 .build();
-        customerRepository.save(customerAlias);
+        userRepository.save(agentUser);
 
-        // 3. Create Zones and Areas
+        // 4. Create Zones and Areas
         Zone southDelhi = Zone.builder()
                 .code("DL-SOUTH")
                 .name("South Delhi Express Zone")
@@ -209,9 +152,9 @@ public class SeedDataLoader implements CommandLineRunner {
 
         areaRepository.saveAll(List.of(hauzKhas, saket, gk, connaughtPlace, civilLines, dlfPhase2, golfCourse, noidaSec18, noidaSec62));
 
-        // 4. Create Delivery Agents
+        // 5. Exactly 1 Delivery Agent Record
         DeliveryAgent agent1 = DeliveryAgent.builder()
-                .user(agentUser1)
+                .user(agentUser)
                 .vehicleType(VehicleType.EV_SCOOTER)
                 .vehicleNumber("DL-03-EV-9821")
                 .isAvailable(true)
@@ -224,36 +167,6 @@ public class SeedDataLoader implements CommandLineRunner {
                 .status("ACTIVE")
                 .build();
         deliveryAgentRepository.save(agent1);
-
-        DeliveryAgent agent2 = DeliveryAgent.builder()
-                .user(agentUser2)
-                .vehicleType(VehicleType.BIKE)
-                .vehicleNumber("DL-08-BK-4521")
-                .isAvailable(true)
-                .active(true)
-                .maxActiveOrders(5)
-                .currentActiveOrders(0)
-                .assignedZone(northDelhi)
-                .currentLatitude(28.6315)
-                .currentLongitude(77.2167)
-                .status("ACTIVE")
-                .build();
-        deliveryAgentRepository.save(agent2);
-
-        DeliveryAgent agentAlias = DeliveryAgent.builder()
-                .user(agentUserAlias)
-                .vehicleType(VehicleType.EV_SCOOTER)
-                .vehicleNumber("DL-03-EV-9821")
-                .isAvailable(true)
-                .active(true)
-                .maxActiveOrders(5)
-                .currentActiveOrders(0)
-                .assignedZone(southDelhi)
-                .currentLatitude(28.5494)
-                .currentLongitude(77.2001)
-                .status("ACTIVE")
-                .build();
-        deliveryAgentRepository.save(agentAlias);
 
         // 5. Create Rate Cards
         // Rate Card 1: B2C Intra-Zone
@@ -381,7 +294,7 @@ public class SeedDataLoader implements CommandLineRunner {
         Order order1 = Order.builder()
                 .trackingNumber("GTM-20260820-001")
                 .orderNumber("GTM-20260820-001")
-                .customer(customer1)
+                .customer(customer)
                 .customerType(CustomerType.B2C)
                 .paymentType(PaymentType.COD)
                 .status(OrderStatus.OUT_FOR_DELIVERY)

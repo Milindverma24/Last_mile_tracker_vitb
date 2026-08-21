@@ -20,7 +20,7 @@ export const LoginPage: React.FC = () => {
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: 'customer@gatiman.local',
+      email: 'customer@gatiman.com',
       password: 'password123',
     },
   });
@@ -49,13 +49,7 @@ export const LoginPage: React.FC = () => {
 
   return (
     <div className="mx-auto w-full max-w-md">
-      {/* Mobile Branding */}
-      <div className="mb-8 flex items-center justify-center gap-2.5 lg:hidden">
-        <img src="/logo.png" alt="GATIMAN" className="h-9 w-9 object-contain" />
-        <span className="text-2xl font-black tracking-tight text-slate-900">GATIMAN</span>
-      </div>
-
-      <div className="mb-8 text-center sm:text-left">
+      <div className="mb-6 text-center sm:text-left">
         <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
           Welcome to GATIMAN
         </h1>
@@ -64,32 +58,32 @@ export const LoginPage: React.FC = () => {
         </p>
       </div>
 
-      {/* Quick Demo Persona Switcher */}
+      {/* Quick Persona Switcher (1 Admin, 1 Agent, 1 Customer) */}
       <div className="mb-6 rounded-xl border border-indigo-100 bg-indigo-50/60 p-3.5">
         <p className="mb-2 text-xs font-bold uppercase tracking-wider text-indigo-900">
-          🚀 Instant Demo Login (Click to Fill)
+          🚀 Instant Account Login (Click to Fill)
         </p>
         <div className="grid grid-cols-3 gap-2">
           <button
             type="button"
-            onClick={() => setDemoRole('admin@gatiman.local')}
-            className="flex flex-col items-center gap-1 rounded-lg border border-slate-200 bg-white p-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-indigo-500 hover:text-indigo-600"
+            onClick={() => setDemoRole('admin@gatiman.com')}
+            className="flex flex-col items-center gap-1 rounded-lg border border-slate-200 bg-white p-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-indigo-500 hover:text-indigo-600 cursor-pointer"
           >
             <Shield className="h-4 w-4 text-indigo-600" />
             Admin
           </button>
           <button
             type="button"
-            onClick={() => setDemoRole('agent1@gatiman.local')}
-            className="flex flex-col items-center gap-1 rounded-lg border border-slate-200 bg-white p-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-indigo-500 hover:text-indigo-600"
+            onClick={() => setDemoRole('agent@gatiman.com')}
+            className="flex flex-col items-center gap-1 rounded-lg border border-slate-200 bg-white p-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-indigo-500 hover:text-indigo-600 cursor-pointer"
           >
             <Truck className="h-4 w-4 text-emerald-600" />
             Agent
           </button>
           <button
             type="button"
-            onClick={() => setDemoRole('customer@gatiman.local')}
-            className="flex flex-col items-center gap-1 rounded-lg border border-slate-200 bg-white p-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-indigo-500 hover:text-indigo-600"
+            onClick={() => setDemoRole('customer@gatiman.com')}
+            className="flex flex-col items-center gap-1 rounded-lg border border-slate-200 bg-white p-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-indigo-500 hover:text-indigo-600 cursor-pointer"
           >
             <User className="h-4 w-4 text-blue-600" />
             Customer

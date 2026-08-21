@@ -6,20 +6,11 @@ export const AdminCustomersPage: React.FC = () => {
     {
       id: 1,
       name: 'Priya Sharma',
-      email: 'customer@gatiman.local',
+      email: 'customer@gatiman.com',
       phone: '+91 98111 22233',
       type: 'B2C',
       zone: 'South Delhi Express Zone (110016)',
-      totalBookings: 12,
-    },
-    {
-      id: 2,
-      name: 'Apex Global Logistics Pvt Ltd',
-      email: 'enterprise@apex.com',
-      phone: '+91 98222 55667',
-      type: 'B2B',
-      zone: 'Gurugram Cyber Hub (122002)',
-      totalBookings: 84,
+      totalBookings: 1,
     },
   ];
 
