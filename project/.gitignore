@@ -1,16 +1,11 @@
 # Node / Frontend dependencies & build artifacts
 node_modules/
 frontend/node_modules/
-project/node_modules/
-project/frontend/node_modules/
 dist/
 frontend/dist/
-project/frontend/dist/
 dist-ssr/
 frontend/dist-ssr/
-project/frontend/dist-ssr/
 *.local
-
 # Environment variables & secrets
 .env
 .env.*
@@ -21,21 +16,10 @@ frontend/.env.*
 backend/.env
 backend/.env.*
 !backend/.env.example
-project/.env
-project/.env.*
-!project/.env.example
-project/frontend/.env
-project/frontend/.env.*
-!project/frontend/.env.example
-project/backend/.env
-project/backend/.env.*
-!project/backend/.env.example
 
 # Java / Maven build artifacts
 target/
 backend/target/
-project/target/
-project/backend/target/
 *.class
 *.jar
 *.war
@@ -43,7 +27,6 @@ project/backend/target/
 *.nar
 *.rar
 *.zip
-gatiman_last_mile_delivery_source.zip
 hs_err_pid*
 replay_pid*
 .mvn/wrapper/maven-wrapper.jar
