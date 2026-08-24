@@ -16,7 +16,8 @@ import { PublicTrackingPage } from '../pages/public/PublicTrackingPage';
 
 // Auth Pages
 import { LoginPage } from '../pages/auth/LoginPage';
-import { RegisterPage } from '../pages/auth/RegisterPage';
+import { CustomerRegisterPage } from '../pages/auth/CustomerRegisterPage';
+import { DriverRegisterPage } from '../pages/auth/DriverRegisterPage';
 
 // Customer Pages
 import { CustomerDashboardPage } from '../pages/customer/DashboardPage';
@@ -54,9 +55,11 @@ import { EmailMonitoringPage } from '../pages/admin/EmailMonitoringPage';
 export const AppRoutes: React.FC = () => {
   return (
     <Routes>
-      {/* Public Landing & Public Tracking Routes */}
+      {/* Standalone Landing Page (Modern Industrial UI) */}
+      <Route path="/" element={<LandingPage />} />
+
+      {/* Public Tracking Routes */}
       <Route element={<PublicLayout />}>
-        <Route path="/" element={<LandingPage />} />
         <Route path="/track" element={<PublicTrackingPage />} />
         <Route path="/track/:trackingNumber" element={<PublicTrackingPage />} />
       </Route>
@@ -64,7 +67,10 @@ export const AppRoutes: React.FC = () => {
       {/* Public Auth Routes */}
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/register" element={<CustomerRegisterPage />} />
+        <Route path="/register/customer" element={<CustomerRegisterPage />} />
+        <Route path="/register/driver" element={<DriverRegisterPage />} />
+        <Route path="/register/agent" element={<DriverRegisterPage />} />
       </Route>
 
       {/* Customer Portal Routes */}

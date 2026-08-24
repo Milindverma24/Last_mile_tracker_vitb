@@ -1,29 +1,30 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { orderApi } from '../../api/orderApi';
 import { trackingApi, LiveTrackingData } from '../../api/trackingApi';
 import { Order } from '../../types';
 import { DeliveryVideoPlayer } from '../../components/common/DeliveryVideoPlayer';
 import {
-  Truck, Search, ArrowRight, Shield, Clock, MapPin, Navigation,
-  CheckCircle2, Zap, Radio, ChevronRight, AlertCircle, Sparkles,
-  Phone, Lock, Compass, Star, Users, Building2, Package,
-  TrendingUp, Award, Globe, Bell, Eye, BarChart3, Play,
+  Truck, Search, ArrowRight, Star, Users, Building2,
+  Radio, ChevronLeft, ChevronRight, AlertCircle, Play, X,
+  ChevronDown
 } from 'lucide-react';
 
 export const LandingPage: React.FC = () => {
-  const navigate = useNavigate();
   const [trackingInput, setTrackingInput] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [previewOrder, setPreviewOrder] = useState<Order | null>(null);
   const [previewLiveTracking, setPreviewLiveTracking] = useState<LiveTrackingData | null>(null);
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  const [activeFaq, setActiveFaq] = useState<number | null>(0);
+  const [activeServiceSlide, setActiveServiceSlide] = useState(0);
 
   const handleQuickTrackSubmit = async (e?: React.FormEvent, customId?: string) => {
     if (e) e.preventDefault();
     const cleanId = (customId || trackingInput).trim();
     if (!cleanId) {
-      setSearchError('Please enter a valid tracking number or Order ID');
+      setSearchError('Please enter a valid tracking number (e.g. GTM-20260824-196623)');
       return;
     }
     setIsSearching(true);
@@ -95,404 +96,577 @@ export const LandingPage: React.FC = () => {
     }
   };
 
-  const sampleTrackingNumbers = ['GTM-20260820-875171', 'GTM-20260820-000001', 'GTM-20260820-000002'];
+  const services = [
+    {
+      title: 'Same-Day Inter-City Express',
+      tag: 'Corridor Transit',
+      image: '/images/service_intercity_express.jpg',
+      desc: 'Scheduled direct hub transit connecting Delhi NCR, Jaipur, Chandigarh, and Agra within hours.',
+    },
+    {
+      title: 'Doorstep Hyperlocal Dispatch',
+      tag: 'On-Demand Pickup',
+      image: '/images/service_doorstep_hyperlocal.jpg',
+      desc: 'Instant doorstep collection and same-day city delivery for personal and business parcels.',
+    },
+    {
+      title: 'Heavy Cargo & Bulk Freight',
+      tag: 'Volumetric B2B',
+      image: '/images/service_heavy_freight.jpg',
+      desc: 'Full truckload and volumetric multi-carton commercial shipping with transparent weight slabs.',
+    },
+    {
+      title: 'EV Urban Fleet Delivery',
+      tag: 'Zero-Emission Last Mile',
+      image: '/images/service_ev_scooter_fleet.jpg',
+      desc: 'Eco-friendly electric scooters and delivery vans for fast, green last-mile urban dispatch.',
+    },
+  ];
+
+  const faqs = [
+    {
+      q: 'Which cities and corridors do you cover for inter-city delivery?',
+      a: 'GATIMAN connects all major hubs across Delhi NCR (Delhi, Noida, Gurugram, Ghaziabad, Faridabad) and high-speed inter-city corridors including Jaipur, Chandigarh, Lucknow, Agra, and Ludhiana.',
+    },
+    {
+      q: 'How quickly are inter-city consignments picked up and delivered?',
+      a: 'Doorstep pickups occur within 60 minutes of booking. Express corridor shipments reach destination hubs within 12 to 24 hours with continuous live GPS tracking.',
+    },
+    {
+      q: 'How do I track my package in real time?',
+      a: 'Simply enter your tracking number (e.g. GTM-20260824-196623) in our Live Radar to view live vehicle GPS coordinates, driver contact details, and sub-second ETA countdowns.',
+    },
+    {
+      q: 'How is volumetric weight calculated for parcel pricing?',
+      a: 'Volumetric weight is computed as (Length × Width × Height in cm) / 5000. Your billable amount is automatically determined by whichever is higher between actual dead weight and volumetric weight.',
+    },
+  ];
 
   return (
-    <div className="bg-white">
-
-      {/* ═══════════════════════════════════════════════════════
-          HERO SECTION — Cinematic High-Visibility Video Background
-      ═══════════════════════════════════════════════════════ */}
-      <section id="hero" className="relative overflow-hidden bg-slate-950 text-white min-h-[85vh] flex items-center">
-        {/* High-Visibility Background Video */}
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          src="/delivery-story.mp4"
-          className="absolute inset-0 h-full w-full object-cover opacity-85 scale-100"
-        />
-
-        {/* Soft Contrast Gradient (Keeps text legible while video remains vivid) */}
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/45 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/30" />
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32 w-full">
-          <div className="max-w-2xl space-y-8 animate-fade-in-up">
-            {/* Eyebrow badge */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/40 backdrop-blur-md px-4 py-1.5 text-xs font-semibold text-indigo-300">
-              <Sparkles className="h-3.5 w-3.5 text-indigo-400" />
-              <span>Delhi NCR's Premier Last-Mile Network</span>
+    <div className="min-h-screen bg-[#FDFDFD] text-slate-900 font-sans selection:bg-orange-500 selection:text-white">
+      
+      {/* ─────────────────────────────────────────────────────────────────────────────
+          1. FLOATING NAVIGATION BAR (Glass Capsule)
+      ───────────────────────────────────────────────────────────────────────────── */}
+      <header className="fixed top-4 inset-x-0 z-50 px-4 sm:px-8 max-w-7xl mx-auto pointer-events-none">
+        <div className="flex items-center justify-between gap-3 pointer-events-auto">
+          
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-2 group bg-white/90 backdrop-blur-md px-4 py-2.5 rounded-full border border-slate-200/80 shadow-sm transition hover:shadow-md">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center text-white font-black text-base shadow-sm">
+              G
             </div>
+            <span className="font-heading font-black text-xl tracking-tight text-slate-900 group-hover:text-orange-600 transition">
+              gatiman<span className="text-orange-600">.</span>
+            </span>
+          </Link>
 
-            {/* Main headline */}
-            <div className="space-y-4">
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white leading-[1.05] drop-shadow-md">
-                Your Delivery.
-                <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-sky-300 to-indigo-200">
-                  Tracked Every
-                </span>
-                <br />
-                Step of the Way.
+          {/* Center Navigation Capsule */}
+          <nav className="hidden md:flex items-center gap-1 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-slate-200/80 shadow-sm text-xs font-semibold text-slate-600">
+            <a href="#home" className="px-4 py-2 rounded-full bg-slate-900 text-white font-bold transition shadow-xs">
+              Home
+            </a>
+            <a href="#services" className="px-3.5 py-2 rounded-full hover:text-slate-900 transition flex items-center gap-1">
+              Services <ChevronDown className="w-3 h-3 text-slate-400" />
+            </a>
+            <a href="#tracking" className="px-3.5 py-2 rounded-full hover:text-slate-900 transition">
+              Live Radar
+            </a>
+            <a href="#faq" className="px-3.5 py-2 rounded-full hover:text-slate-900 transition">
+              FAQ
+            </a>
+          </nav>
+
+          {/* Right Action Buttons: Login, Driver Partner, and Customer Send Parcel */}
+          <div className="flex items-center gap-2">
+            <Link
+              to="/login"
+              className="hidden sm:inline-flex items-center justify-center px-4 py-2.5 rounded-full text-xs font-bold text-slate-700 bg-white/90 backdrop-blur-md border border-slate-200/80 hover:bg-slate-50 transition shadow-sm"
+            >
+              Login
+            </Link>
+
+            <Link
+              to="/register/driver"
+              className="hidden md:inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-full text-xs font-bold text-emerald-700 bg-emerald-50/90 backdrop-blur-md border border-emerald-200/80 hover:bg-emerald-100 transition shadow-sm"
+            >
+              <Truck className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Drive & Earn</span>
+            </Link>
+
+            <Link
+              to="/register/customer"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold text-white bg-gradient-to-r from-orange-600 via-orange-500 to-amber-500 hover:from-orange-700 hover:to-orange-600 transition shadow-md shadow-orange-500/20 group"
+            >
+              <span>Send Parcel</span>
+              <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center group-hover:translate-x-0.5 transition">
+                <ArrowRight className="w-3 h-3" />
+              </div>
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      {/* ─────────────────────────────────────────────────────────────────────────────
+          2. HERO SECTION WITH INDUSTRIAL CONTAINER BACKGROUND
+      ───────────────────────────────────────────────────────────────────────────── */}
+      <section id="home" className="relative pt-24 pb-12 px-4 sm:px-8 max-w-7xl mx-auto">
+        <div className="relative rounded-[2.5rem] overflow-hidden min-h-[580px] sm:min-h-[640px] flex flex-col justify-end p-6 sm:p-12 shadow-2xl border border-slate-200">
+          
+          {/* Background Image Container with Cinematic Lighting */}
+          <div 
+            className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 scale-105"
+            style={{ backgroundImage: `url('/images/gatiman_hero_container.jpg')` }}
+          >
+            {/* Cinematic Gradient Overlays for readable text */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/50" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/45 to-transparent" />
+          </div>
+
+          {/* Middle / Bottom Content Grid */}
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
+            
+            {/* Left: Bold Inter-City Delivery Typography */}
+            <div className="lg:col-span-8 space-y-6">
+              <h1 className="text-4xl sm:text-6xl md:text-7xl font-heading font-black text-white leading-[1.05] tracking-tight max-w-2xl">
+                Ready to accelerate your inter-city delivery?
               </h1>
-              <p className="text-lg sm:text-xl text-slate-200 leading-relaxed max-w-xl font-medium drop-shadow">
-                Know where your package is, how far it is, and when it will arrive — in real time. Powered by live GPS telemetry across Delhi NCR.
-              </p>
+              
+              <div className="flex flex-wrap items-center gap-3 pt-2">
+                <Link
+                  to="/register/customer"
+                  className="px-6 py-3.5 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/30 text-white font-bold text-sm transition flex items-center gap-2"
+                >
+                  <span>Book Doorstep Pickup</span>
+                  <ArrowRight className="w-4 h-4 text-orange-400" />
+                </Link>
+
+                <a
+                  href="#tracking"
+                  className="px-6 py-3.5 rounded-full bg-orange-600 hover:bg-orange-700 text-white font-bold text-sm transition shadow-lg shadow-orange-900/40 flex items-center gap-2"
+                >
+                  <Search className="w-4 h-4" />
+                  <span>Track Consignment</span>
+                </a>
+              </div>
             </div>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 pt-2">
-              <a
-                href="#quick-track"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-7 py-4 text-base font-bold text-white shadow-xl shadow-indigo-600/40 hover:bg-indigo-500 hover:scale-[1.02] transition cursor-pointer"
+            {/* Right: Floating "See how we work" Video Card */}
+            <div className="lg:col-span-4 flex justify-start lg:justify-end">
+              <div 
+                onClick={() => setIsVideoModalOpen(true)}
+                className="group cursor-pointer bg-gradient-to-br from-stone-900/90 via-amber-950/80 to-stone-900/90 backdrop-blur-xl border border-white/20 rounded-3xl p-4 sm:p-5 flex items-center justify-between gap-4 max-w-sm shadow-2xl hover:border-orange-500/50 transition-all duration-300 hover:scale-[1.02]"
               >
-                <Navigation className="h-5 w-5" />
-                Track My Delivery
-              </a>
-              <Link
-                to="/register"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/25 bg-black/30 backdrop-blur-md px-7 py-4 text-base font-bold text-white hover:bg-white/20 hover:border-white/40 transition"
-              >
-                Get Started Free
-                <ArrowRight className="h-5 w-5 text-slate-300" />
-              </Link>
+                <div>
+                  <div className="text-[11px] font-mono font-black text-orange-400 tracking-wider">
+                    01 <span className="text-white/40">/ 03</span>
+                  </div>
+                  <h3 className="text-lg font-bold text-white mt-1 leading-snug">
+                    See how dispatch works.
+                  </h3>
+                  <p className="text-xs text-white/70 mt-0.5">
+                    Real-time sorting & EV corridor dispatch.
+                  </p>
+                </div>
+
+                {/* Video Thumbnail with Play Badge */}
+                <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border border-white/30 shrink-0 shadow-md">
+                  <img 
+                    src="/images/video_worker_thumb.jpg" 
+                    alt="Operations Engineer" 
+                    className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
+                  />
+                  <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-full bg-white/90 text-slate-900 flex items-center justify-center shadow-lg group-hover:bg-orange-500 group-hover:text-white transition">
+                      <Play className="w-3.5 h-3.5 fill-current ml-0.5" />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
+
           </div>
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════
-          TRUST STRIP
-      ═══════════════════════════════════════════════════════ */}
-      <section className="border-y border-slate-100 bg-slate-50 py-5">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            {[
-              { icon: Radio, label: 'Real-Time GPS Tracking', color: 'text-indigo-600' },
-              { icon: Clock, label: 'Accurate ETA Prediction', color: 'text-blue-600' },
-              { icon: Shield, label: 'Secure Delivery', color: 'text-emerald-600' },
-              { icon: Zap, label: 'Instant Notifications', color: 'text-amber-600' },
-            ].map((item) => (
-              <div key={item.label} className="flex flex-col sm:flex-row items-center justify-center gap-2 text-sm font-semibold text-slate-700">
-                <item.icon className={`h-4 w-4 shrink-0 ${item.color}`} />
-                <span>{item.label}</span>
+      {/* ─────────────────────────────────────────────────────────────────────────────
+          3. REAL-TIME TRACKING LOOKUP RADAR BAR
+      ───────────────────────────────────────────────────────────────────────────── */}
+      <section id="tracking" className="px-4 sm:px-8 max-w-7xl mx-auto -mt-6 mb-16 relative z-20">
+        <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-xl border border-slate-200">
+          <form onSubmit={handleQuickTrackSubmit} className="flex flex-col md:flex-row items-center gap-3">
+            <div className="relative flex-1 w-full">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <Search className="h-5 w-5 text-orange-500" />
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════════════
-          QUICK TRACKING SECTION — Premium Side-by-Side Card Experience
-      ═══════════════════════════════════════════════════════ */}
-      <section id="quick-track" className="py-24 bg-gradient-to-b from-slate-50 via-white to-slate-50 border-t border-slate-100 relative overflow-hidden">
-        {/* Subtle decorative background glow */}
-        <div className="absolute top-1/2 left-0 -translate-y-1/2 w-96 h-96 rounded-full bg-indigo-500/5 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-blue-500/5 blur-3xl pointer-events-none" />
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            {/* Left Column: Premium Editorial Typography & Features */}
-            <div className="lg:col-span-5 space-y-8">
-              <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/20 bg-indigo-50/80 px-4 py-1.5 text-xs font-bold text-indigo-700 shadow-xs backdrop-blur-xs">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-600" />
-                </span>
-                <span className="tracking-wide uppercase text-[11px]">Sub-Second GPS Network</span>
-              </div>
-
-              <div className="space-y-4">
-                <h2 className="font-heading text-4xl sm:text-5xl font-black text-slate-900 tracking-tight leading-[1.1]">
-                  Track Your Parcel in{' '}
-                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-indigo-500 to-blue-600">
-                    Real Time
-                  </span>
-                </h2>
-                <p className="text-base text-slate-600 leading-relaxed font-normal">
-                  Enter your tracking number to instantly locate your delivery vehicle on interactive maps, inspect active road waypoints, monitor real-time ETA, and verify assigned driver credentials.
-                </p>
-              </div>
-
-              {/* Feature Highlights as Premium Cards */}
-              <div className="grid grid-cols-1 gap-3.5 pt-1">
-                {[
-                  {
-                    icon: Radio,
-                    color: 'text-indigo-600 bg-indigo-50 border-indigo-100',
-                    title: 'Live GPS Satellite Telemetry',
-                    desc: 'Continuous location broadcasts with bearing and speed updates.',
-                  },
-                  {
-                    icon: Clock,
-                    color: 'text-blue-600 bg-blue-50 border-blue-100',
-                    title: 'Dynamic Traffic-Aware ETA',
-                    desc: 'Calculates real-time Delhi NCR urban road congestion and distance.',
-                  },
-                  {
-                    icon: Shield,
-                    color: 'text-emerald-600 bg-emerald-50 border-emerald-100',
-                    title: 'Verified Partner Verification',
-                    desc: 'Instant driver identity, phone badge, and EV registration number.',
-                  },
-                  {
-                    icon: Zap,
-                    color: 'text-amber-600 bg-amber-50 border-amber-100',
-                    title: '500m Proximity Alerts',
-                    desc: 'Automated milestone notifications and email alerts prior to arrival.',
-                  },
-                ].map((item) => (
-                  <div
-                    key={item.title}
-                    className="flex items-start gap-3.5 p-4 rounded-lg bg-white/90 border border-slate-200 shadow-xs hover:border-indigo-200 hover:shadow-md transition-all duration-200"
-                  >
-                    <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-md border ${item.color} shadow-xs`}>
-                      <item.icon className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-bold text-slate-900 font-heading">{item.title}</h4>
-                      <p className="text-xs text-slate-500 mt-0.5 leading-normal">{item.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <input
+                type="text"
+                value={trackingInput}
+                onChange={(e) => setTrackingInput(e.target.value)}
+                placeholder="Enter GATIMAN tracking number (e.g. GTM-20260824-196623)..."
+                className="w-full pl-11 pr-4 py-3.5 text-sm bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 font-mono transition"
+              />
             </div>
+            
+            <button
+              type="submit"
+              disabled={isSearching}
+              className="w-full md:w-auto px-8 py-3.5 bg-slate-900 hover:bg-black text-white text-sm font-bold rounded-2xl transition flex items-center justify-center gap-2 shadow-md cursor-pointer disabled:opacity-50"
+            >
+              {isSearching ? <span className="animate-spin">↻</span> : <Radio className="w-4 h-4 text-orange-400" />}
+              <span>Track Live</span>
+            </button>
+          </form>
 
-            {/* Right Column: Clean Sleek Black Card to put ID and get details */}
-            <div className="lg:col-span-7">
-              <div className="bg-[#0b0e14] text-white rounded-2xl border border-slate-800 shadow-2xl p-6 sm:p-8 space-y-6">
-                {/* Header */}
-                <div className="flex items-center justify-between pb-4 border-b border-slate-800/80">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-md shadow-indigo-500/20 ring-2 ring-indigo-500/20">
-                      <Search className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <h3 className="font-heading text-lg font-black text-white tracking-tight">
-                        Live Shipment Lookup
-                      </h3>
-                      <p className="text-xs text-slate-400">
-                        Enter your tracking ID to view live coordinates &amp; status
-                      </p>
-                    </div>
-                  </div>
-                  <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 text-[11px] font-bold text-emerald-400">
-                    <span className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+          {searchError && (
+            <div className="mt-3 p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 font-semibold flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{searchError}</span>
+            </div>
+          )}
+
+          {/* Live Tracking Result Banner */}
+          {previewOrder && previewLiveTracking && (
+            <div className="mt-6 p-5 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-850 to-slate-900 border border-slate-700 text-white animate-in fade-in duration-300">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-700">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-orange-500 text-white">
+                      {previewOrder.status}
                     </span>
-                    Live GPS Telemetry
-                  </span>
+                    <span className="font-mono text-sm font-bold text-white">{previewOrder.trackingNumber}</span>
+                  </div>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Inter-City Corridor: <strong className="text-slate-200">{previewOrder.pickupPincode}</strong> ➔ <strong className="text-slate-200">{previewOrder.dropPincode}</strong> · ₹{previewOrder.totalCharge}
+                  </p>
                 </div>
 
-                {/* Tracking Input Form */}
-                <form onSubmit={handleQuickTrackSubmit} className="space-y-4">
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <div className="relative flex-1">
-                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-indigo-400" />
-                      <input
-                        type="text"
-                        value={trackingInput}
-                        onChange={(e) => {
-                          setTrackingInput(e.target.value);
-                          setSearchError(null);
-                        }}
-                        placeholder="Enter Tracking ID (e.g. GTM-20260820-875171)..."
-                        className="w-full rounded-xl border border-slate-700 bg-black/80 py-4 pl-12 pr-4 text-sm font-mono font-medium text-white placeholder-slate-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none transition shadow-inner"
-                      />
-                    </div>
-                    <button
-                      type="submit"
-                      disabled={isSearching}
-                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 px-7 py-4 text-sm font-bold text-white shadow-lg shadow-indigo-600/30 hover:shadow-indigo-600/40 transition disabled:opacity-50 cursor-pointer whitespace-nowrap"
-                    >
-                      {isSearching ? (
-                        <>
-                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                          <span>Locating...</span>
-                        </>
-                      ) : (
-                        <>
-                          <Navigation className="h-4 w-4" />
-                          <span>Track Delivery</span>
-                        </>
-                      )}
-                    </button>
-                  </div>
-                </form>
+                <Link
+                  to={`/track/${previewOrder.trackingNumber}`}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-xs font-bold text-white transition self-start sm:self-auto"
+                >
+                  <span>Open Full Radar</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
 
-                {/* Error Notice */}
-                {searchError && (
-                  <div className="rounded-xl border border-rose-500/30 bg-rose-950/40 p-4 text-xs text-rose-300 flex items-start gap-3 animate-fade-in">
-                    <AlertCircle className="h-5 w-5 text-rose-400 shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-bold">Shipment Not Found</p>
-                      <p className="mt-0.5 text-rose-300/80">{searchError}</p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Live Parcel Location & Details */}
-                {previewOrder && previewLiveTracking && (
-                  <div className="rounded-xl border border-slate-700/80 bg-slate-900/90 p-4 sm:p-5 space-y-4 animate-slide-up shadow-xl">
-                    {/* Header Strip */}
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-800">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono text-base font-black text-cyan-300">
-                            {previewOrder.trackingNumber}
-                          </span>
-                          <span className="rounded-md bg-indigo-950 border border-indigo-500/30 px-2 py-0.5 text-[10px] font-bold text-indigo-300 uppercase">
-                            {previewOrder.routeType || 'STANDARD'}
-                          </span>
-                        </div>
-                        <p className="text-xs text-slate-400 mt-0.5">
-                          Booked {new Date(previewOrder.createdAt).toLocaleDateString()} · {previewOrder.customerType} · {previewOrder.paymentType}
-                        </p>
-                      </div>
-                      <span className="self-start sm:self-auto rounded-full bg-emerald-500/20 border border-emerald-500/40 px-3.5 py-1 text-xs font-bold text-emerald-400 shadow-sm flex items-center gap-1.5">
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                        {previewOrder.status.replace('_', ' ')}
-                      </span>
-                    </div>
-
-                    {/* Live Transit Route Visualizer (Map Removed) */}
-                    <div className="rounded-xl overflow-hidden border border-slate-800 bg-slate-950/80 p-5 shadow-lg">
-                      <div className="flex items-center justify-between text-xs text-slate-400 mb-3">
-                        <span className="font-bold uppercase tracking-wider text-indigo-400">Live Route Dispatch</span>
-                        <span className="text-emerald-400 font-semibold flex items-center gap-1.5">
-                          <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
-                          Driver En-Route ({(previewLiveTracking as any)?.speedKmph || 34} km/h)
-                        </span>
-                      </div>
-                      <div className="relative flex items-center justify-between py-2">
-                        <div className="absolute left-6 right-6 top-1/2 -translate-y-1/2 h-1 bg-slate-800 rounded-full">
-                          <div className="h-full bg-gradient-to-r from-indigo-500 to-emerald-400 rounded-full w-2/3 animate-pulse" />
-                        </div>
-                        <div className="relative z-10 flex flex-col items-center gap-1">
-                          <div className="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs font-bold shadow-md shadow-indigo-500/30">
-                            <Package className="h-4 w-4" />
-                          </div>
-                          <span className="text-[11px] font-semibold text-slate-300">Origin Hub</span>
-                        </div>
-                        <div className="relative z-10 flex flex-col items-center gap-1">
-                          <div className="h-9 w-9 rounded-full bg-emerald-500 flex items-center justify-center text-white text-xs font-bold shadow-md shadow-emerald-500/30 animate-bounce">
-                            <Truck className="h-4 w-4" />
-                          </div>
-                          <span className="text-[11px] font-bold text-emerald-400">Driver Courier</span>
-                        </div>
-                        <div className="relative z-10 flex flex-col items-center gap-1">
-                          <div className="h-8 w-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 text-xs font-bold">
-                            <MapPin className="h-4 w-4" />
-                          </div>
-                          <span className="text-[11px] font-semibold text-slate-400">Destination</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Dynamic Telemetry Metrics Strip */}
-                    <div className="grid grid-cols-3 gap-2.5 text-center">
-                      <div className="bg-black/50 rounded-xl p-2.5 border border-slate-800">
-                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Estimated ETA</span>
-                        <div className="text-base font-black text-indigo-400 mt-0.5 font-heading">
-                          {previewLiveTracking.etaMinutes} mins
-                        </div>
-                      </div>
-                      <div className="bg-black/50 rounded-xl p-2.5 border border-slate-800">
-                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Distance Away</span>
-                        <div className="text-base font-black text-white mt-0.5 font-heading">
-                          {previewLiveTracking.distanceRemaining} km
-                        </div>
-                      </div>
-                      <div className="bg-black/50 rounded-xl p-2.5 border border-slate-800">
-                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Assigned Driver</span>
-                        <div className="text-xs font-bold text-slate-200 mt-1 truncate">
-                          {previewOrder.assignedAgentName || 'Rajesh Kumar'}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Pickup and Drop Details */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                      <div className="bg-black/40 rounded-xl p-3 border border-slate-800">
-                        <div className="flex items-center gap-1.5 text-slate-400 font-bold text-[10px] uppercase">
-                          <MapPin className="h-3 w-3 text-slate-400" />
-                          <span>Pickup Origin</span>
-                        </div>
-                        <div className="font-bold text-slate-200 mt-1 text-xs">{previewOrder.pickupName}</div>
-                        <div className="text-slate-400 truncate text-[11px] mt-0.5">{previewOrder.pickupAddress}</div>
-                      </div>
-                      <div className="bg-black/40 rounded-xl p-3 border border-indigo-900/50">
-                        <div className="flex items-center gap-1.5 text-cyan-400 font-bold text-[10px] uppercase">
-                          <MapPin className="h-3 w-3 text-cyan-400" />
-                          <span>Delivery Destination</span>
-                        </div>
-                        <div className="font-bold text-white mt-1 text-xs">{previewOrder.dropName}</div>
-                        <div className="text-slate-400 truncate text-[11px] mt-0.5">{previewOrder.dropAddress}</div>
-                      </div>
-                    </div>
-
-                    {/* Full Telemetry Link */}
-                    <div className="pt-1 flex justify-end">
-                      <Link
-                        to={`/track/${previewOrder.trackingNumber}`}
-                        className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 px-5 py-2.5 text-xs font-bold text-white shadow-md transition-all cursor-pointer"
-                      >
-                        <span>Open Full Screen Telemetry View</span>
-                        <ArrowRight className="h-3.5 w-3.5" />
-                      </Link>
-                    </div>
-                  </div>
-                )}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 text-xs">
+                <div>
+                  <span className="text-slate-400 block">Assigned Courier</span>
+                  <span className="font-bold text-white text-sm">{previewLiveTracking.deliveryPartner?.name || 'Rajesh Kumar'}</span>
+                </div>
+                <div>
+                  <span className="text-slate-400 block">Distance Remaining</span>
+                  <span className="font-bold text-emerald-400 text-sm">{previewLiveTracking.distanceRemaining || 3.2} km</span>
+                </div>
+                <div>
+                  <span className="text-slate-400 block">Estimated Arrival</span>
+                  <span className="font-bold text-amber-400 text-sm">~{previewLiveTracking.etaMinutes || 12} mins</span>
+                </div>
+                <div>
+                  <span className="text-slate-400 block">Fleet Vehicle</span>
+                  <span className="font-bold text-white text-sm">{previewLiveTracking.deliveryPartner?.vehicleNumber || 'EV-Fleet'}</span>
+                </div>
               </div>
             </div>
+          )}
+        </div>
+      </section>
+
+      {/* ─────────────────────────────────────────────────────────────────────────────
+          4. SERVICES MULTI-MODAL SLIDER (Inter-City Corridor Delivery)
+      ───────────────────────────────────────────────────────────────────────────── */}
+      <section id="services" className="py-16 px-4 sm:px-8 max-w-7xl mx-auto bg-slate-50/60 rounded-[3rem] border border-slate-200/60">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+          <div className="space-y-3">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-600 shadow-xs">
+              Inter-City Services
+            </span>
+            <h2 className="text-3xl sm:text-5xl font-heading font-black text-slate-900 tracking-tight">
+              All set for seamless inter-city logistics
+            </h2>
+          </div>
+
+          {/* Slider Pagination Controls */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setActiveServiceSlide((prev) => (prev === 0 ? services.length - 1 : prev - 1))}
+              className="w-11 h-11 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-900 hover:text-white flex items-center justify-center transition shadow-sm cursor-pointer"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => setActiveServiceSlide((prev) => (prev === services.length - 1 ? 0 : prev + 1))}
+              className="w-11 h-11 rounded-full bg-slate-900 text-white hover:bg-orange-600 flex items-center justify-center transition shadow-sm cursor-pointer"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Service Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {services.map((srv, idx) => (
+            <div
+              key={idx}
+              className="group rounded-3xl overflow-hidden bg-white border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col"
+            >
+              {/* Image Container */}
+              <div className="relative h-48 overflow-hidden">
+                <img
+                  src={srv.image}
+                  alt={srv.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                />
+                <div className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-[10px] font-bold text-white uppercase tracking-wider">
+                  {srv.tag}
+                </div>
+              </div>
+
+              {/* Body */}
+              <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                <div>
+                  <h3 className="text-lg font-bold text-slate-900 group-hover:text-orange-600 transition">
+                    {srv.title}
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                    {srv.desc}
+                  </p>
+                </div>
+
+                <Link
+                  to="/register"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-900 group-hover:text-orange-600 transition pt-2 border-t border-slate-100"
+                >
+                  <span>Explore Corridor Slabs</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ─────────────────────────────────────────────────────────────────────────────
+          5. TESTIMONIALS & TRUSTED COURIER NETWORK
+      ───────────────────────────────────────────────────────────────────────────── */}
+      <section className="py-20 px-4 sm:px-8 max-w-7xl mx-auto">
+        <div className="text-center space-y-3 max-w-2xl mx-auto">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-600">
+            Client Trust
+          </span>
+          <h2 className="text-3xl sm:text-5xl font-heading font-black text-slate-900 tracking-tight">
+            Trusted by businesses for daily inter-city shipping
+          </h2>
+        </div>
+
+        {/* Testimonial Quote Card with Floating Avatars */}
+        <div className="relative mt-12 max-w-3xl mx-auto bg-gradient-to-b from-slate-50 to-white rounded-3xl p-8 sm:p-12 border border-slate-200/80 shadow-lg text-center">
+          
+          {/* Avatar Cluster */}
+          <div className="flex items-center justify-center gap-2 mb-6">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar" className="w-9 h-9 rounded-full border-2 border-white shadow-xs object-cover" />
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" alt="Avatar" className="w-12 h-12 rounded-full border-2 border-orange-500 shadow-md object-cover" />
+            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80" alt="Avatar" className="w-9 h-9 rounded-full border-2 border-white shadow-xs object-cover" />
+          </div>
+
+          <p className="text-base sm:text-xl font-medium text-slate-700 leading-relaxed italic max-w-xl mx-auto">
+            "We count on Gatiman for our daily inter-city shipments and doorstep customer drops. Their real-time GPS telemetry, volumetric rate accuracy, and prompt milestone alerts keep our operations completely seamless."
+          </p>
+
+          <div className="mt-6">
+            <h4 className="font-bold text-slate-900 text-sm">Aarav Mehta</h4>
+            <p className="text-xs text-slate-500">Director of Operations · North India E-Commerce</p>
+          </div>
+        </div>
+
+        {/* Partners Logo Ticker */}
+        <div className="mt-16 text-center">
+          <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-6">
+            Integrated courier networks & enterprise partners
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-14 opacity-60 grayscale hover:grayscale-0 transition duration-300">
+            <span className="font-black font-heading text-lg sm:text-xl tracking-wider text-slate-800">DELHIVERY</span>
+            <span className="font-black font-heading text-xl sm:text-2xl tracking-tighter text-slate-800">BlueDart</span>
+            <span className="font-black font-heading text-xl sm:text-2xl tracking-tighter text-slate-800">DTDC</span>
+            <span className="font-black font-heading text-xl sm:text-2xl tracking-tighter text-slate-800">FedEx</span>
+            <span className="font-black font-heading text-lg sm:text-xl tracking-tight text-slate-800">Trackon</span>
           </div>
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════
-          COMPACT INFO FOOTER
-      ═══════════════════════════════════════════════════════ */}
-      <footer className="bg-[#0b0e14] text-slate-400 py-10 border-t border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            {/* Brand & Live Indicator */}
-            <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
-              <div className="flex items-center gap-2.5">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-md shadow-indigo-500/20">
-                  <Truck className="h-4 w-4" />
-                </div>
-                <span className="text-lg font-black tracking-tight text-white font-heading">GATIMAN</span>
-              </div>
-              <span className="hidden sm:inline text-slate-700">·</span>
-              <div className="flex items-center gap-2 text-xs text-emerald-400 font-medium">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-                </span>
-                <span>Delhi NCR Live Telemetry Network Active</span>
-              </div>
-            </div>
+      {/* ─────────────────────────────────────────────────────────────────────────────
+          6. FAQ ACCORDION SECTION (Tailored for Inter-City Delivery)
+      ───────────────────────────────────────────────────────────────────────────── */}
+      <section id="faq" className="py-16 px-4 sm:px-8 max-w-4xl mx-auto">
+        <div className="text-center space-y-3 mb-12">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-600">
+            FAQ
+          </span>
+          <h2 className="text-3xl sm:text-5xl font-heading font-black text-slate-900 tracking-tight">
+            Questions? Glad you asked
+          </h2>
+        </div>
 
-            {/* Quick Navigation Links */}
-            <div className="flex flex-wrap items-center justify-center gap-6 text-xs font-semibold text-slate-300">
-              <Link to="/track" className="hover:text-indigo-400 transition">Track Delivery</Link>
-              <Link to="/login" className="hover:text-indigo-400 transition">Driver &amp; Client Login</Link>
-              <Link to="/register" className="hover:text-indigo-400 transition">Create Account</Link>
-            </div>
+        <div className="space-y-4">
+          {faqs.map((item, idx) => {
+            const isOpen = activeFaq === idx;
+            return (
+              <div
+                key={idx}
+                onClick={() => setActiveFaq(isOpen ? null : idx)}
+                className={`rounded-2xl border transition-all duration-200 cursor-pointer overflow-hidden ${
+                  isOpen ? 'bg-white border-orange-500/40 shadow-md' : 'bg-slate-50/70 border-slate-200/80 hover:bg-white'
+                }`}
+              >
+                <div className="p-5 flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-mono font-bold text-xs shrink-0 ${
+                      isOpen ? 'bg-orange-600 text-white' : 'bg-slate-200 text-slate-700'
+                    }`}>
+                      0{idx + 1}
+                    </div>
+                    <h3 className="text-sm sm:text-base font-bold text-slate-900">
+                      {item.q}
+                    </h3>
+                  </div>
+                  <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform duration-200 ${isOpen ? 'rotate-180 text-orange-600' : ''}`} />
+                </div>
+
+                {isOpen && (
+                  <div className="px-5 pb-5 pt-0 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
+                    {item.a}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* ─────────────────────────────────────────────────────────────────────────────
+          7. CALL TO ACTION BANNER (Inter-City Dispatch)
+      ───────────────────────────────────────────────────────────────────────────── */}
+      <section className="py-12 px-4 sm:px-8 max-w-7xl mx-auto">
+        <div className="relative rounded-[2.5rem] overflow-hidden p-8 sm:p-14 bg-gradient-to-r from-slate-950 via-slate-900 to-black text-white shadow-2xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-8">
+          
+          {/* Background image overlay */}
+          <div 
+            className="absolute right-0 inset-y-0 w-full md:w-1/2 bg-cover bg-center opacity-30 pointer-events-none"
+            style={{ backgroundImage: `url('/images/gatiman_hero_container.jpg')` }}
+          />
+
+          <div className="relative z-10 space-y-4 max-w-xl">
+            <h2 className="text-3xl sm:text-5xl font-heading font-black tracking-tight leading-tight">
+              Ready to send your package to another city?
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Book doorstep pickup in seconds with automated driver dispatch, transparent volumetric quotes, and OTP-secured delivery.
+            </p>
           </div>
 
-          {/* Bottom Line */}
-          <div className="pt-6 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 text-center sm:text-left">
-            <p>© {new Date().getFullYear()} GATIMAN Logistics Platform. High-Speed Urban Last-Mile Tracking.</p>
-            <div className="flex items-center gap-4 text-[11px]">
-              <span>Delhi · Gurugram · Noida · Faridabad</span>
+          <div className="relative z-10 flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+            <Link
+              to="/register/customer"
+              className="px-8 py-4 rounded-full bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-orange-600 font-bold text-sm text-white transition shadow-lg shadow-orange-900/40 text-center flex items-center justify-center gap-2"
+            >
+              <span>Book Inter-City Pickup</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ─────────────────────────────────────────────────────────────────────────────
+          8. ENTERPRISE FOOTER
+      ───────────────────────────────────────────────────────────────────────────── */}
+      <footer className="pt-16 pb-12 px-4 sm:px-8 max-w-7xl mx-auto border-t border-slate-200 mt-12 text-xs text-slate-500">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
+          
+          <div className="col-span-2 space-y-3">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center text-white font-black text-sm">
+                G
+              </div>
+              <span className="font-heading font-black text-lg tracking-tight text-slate-900">
+                gatiman<span className="text-orange-600">.</span>
+              </span>
             </div>
+            <p className="text-xs text-slate-500 max-w-sm leading-relaxed">
+              Next-generation inter-city & urban logistics operating system with real-time GPS telemetry, volumetric rate cards, and automated EV fleet dispatch.
+            </p>
+          </div>
+
+          <div>
+            <h4 className="font-bold text-slate-900 mb-3 uppercase tracking-wider text-[11px]">Company</h4>
+            <ul className="space-y-2">
+              <li><a href="#home" className="hover:text-slate-900 transition">About Gatiman</a></li>
+              <li><a href="#services" className="hover:text-slate-900 transition">Inter-City Network</a></li>
+              <li><a href="#faq" className="hover:text-slate-900 transition">Fleet Hubs</a></li>
+              <li><Link to="/login" className="hover:text-slate-900 transition">Contact Operations</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold text-slate-900 mb-3 uppercase tracking-wider text-[11px]">Services</h4>
+            <ul className="space-y-2">
+              <li><a href="#services" className="hover:text-slate-900 transition">Same-Day Corridor Express</a></li>
+              <li><a href="#services" className="hover:text-slate-900 transition">Doorstep Hyperlocal</a></li>
+              <li><a href="#services" className="hover:text-slate-900 transition">Heavy Cargo Freight</a></li>
+              <li><a href="#services" className="hover:text-slate-900 transition">EV Urban Dispatch</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold text-slate-900 mb-3 uppercase tracking-wider text-[11px]">Tracking & Portals</h4>
+            <ul className="space-y-2">
+              <li><a href="#tracking" className="hover:text-slate-900 transition">Live Parcel Radar</a></li>
+              <li><a href="#faq" className="hover:text-slate-900 transition">Help Center & FAQ</a></li>
+              <li><Link to="/login" className="hover:text-slate-900 transition">Driver Portal</Link></li>
+              <li><Link to="/login" className="hover:text-slate-900 transition">Admin Console</Link></li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="pt-8 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px]">
+          <p>© 2026 GATIMAN Logistics Platform. All Rights Reserved.</p>
+          <div className="flex items-center gap-6">
+            <a href="#home" className="hover:text-slate-900 transition">Terms of Service</a>
+            <a href="#home" className="hover:text-slate-900 transition">Privacy Policy</a>
+            <a href="#home" className="hover:text-slate-900 transition">Security Overview</a>
           </div>
         </div>
       </footer>
+
+      {/* ─────────────────────────────────────────────────────────────────────────────
+          9. VIDEO PREVIEW MODAL
+      ───────────────────────────────────────────────────────────────────────────── */}
+      {isVideoModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="relative w-full max-w-4xl bg-slate-900 rounded-3xl overflow-hidden border border-slate-700 shadow-2xl">
+            <div className="flex items-center justify-between p-4 border-b border-slate-800">
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-orange-500 animate-pulse" />
+                <span className="text-xs font-bold text-white uppercase tracking-wider">
+                  GATIMAN Inter-City Operations Reel · Delhi NCR
+                </span>
+              </div>
+              <button
+                onClick={() => setIsVideoModalOpen(false)}
+                className="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="p-4">
+              <DeliveryVideoPlayer />
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
+

@@ -51,49 +51,50 @@ export const LoginPage: React.FC = () => {
   return (
     <div className="mx-auto w-full max-w-md">
       <div className="mb-6 text-center sm:text-left">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+        <h1 className="text-2xl font-black font-heading tracking-tight text-slate-900 sm:text-3xl">
           Welcome to GATIMAN
         </h1>
-        <p className="mt-2 text-sm text-slate-600">
-          Enter your credentials to access your logistics command center
+        <p className="mt-1.5 text-xs sm:text-sm text-slate-600">
+          Enter your credentials to access your delivery and logistics portal
         </p>
       </div>
 
-      {/* Quick Persona Switcher (1 Admin, 1 Agent, 1 Customer) */}
-      <div className="mb-6 rounded-xl border border-indigo-100 bg-indigo-50/60 p-3.5">
-        <p className="mb-2 text-xs font-bold uppercase tracking-wider text-indigo-900">
-          🚀 Instant Account Login (Click to Fill)
+      {/* Quick Persona Switcher (Admin, Agent, Customer) */}
+      <div className="mb-6 rounded-2xl border border-orange-200/60 bg-gradient-to-b from-orange-50/60 to-amber-50/30 p-3.5 shadow-xs">
+        <p className="mb-2 text-[11px] font-bold uppercase tracking-wider text-orange-950 flex items-center gap-1.5">
+          <span>⚡ Demo Quick Logins</span>
+          <span className="text-[10px] font-normal text-orange-700">(Click to pre-fill)</span>
         </p>
         <div className="grid grid-cols-3 gap-2">
           <button
             type="button"
-            onClick={() => setDemoRole('admin@gatiman.com')}
-            className="flex flex-col items-center gap-1 rounded-lg border border-slate-200 bg-white p-2 text-xs font-semibold text-slate-700 shadow-xs transition hover:border-indigo-500 hover:text-indigo-600 cursor-pointer"
+            onClick={() => setDemoRole('customer@gatiman.com')}
+            className="flex flex-col items-center gap-1 rounded-xl border border-slate-200 bg-white p-2.5 text-xs font-bold text-slate-800 shadow-xs transition hover:border-orange-500 hover:text-orange-600 cursor-pointer"
           >
-            <Shield className="h-4 w-4 text-indigo-600" />
-            Admin
+            <User className="h-4 w-4 text-orange-600" />
+            <span>Customer</span>
           </button>
           <button
             type="button"
             onClick={() => setDemoRole('agent@gatiman.com')}
-            className="flex flex-col items-center gap-1 rounded-lg border border-slate-200 bg-white p-2 text-xs font-semibold text-slate-700 shadow-xs transition hover:border-indigo-500 hover:text-indigo-600 cursor-pointer"
+            className="flex flex-col items-center gap-1 rounded-xl border border-slate-200 bg-white p-2.5 text-xs font-bold text-slate-800 shadow-xs transition hover:border-emerald-500 hover:text-emerald-700 cursor-pointer"
           >
             <Truck className="h-4 w-4 text-emerald-600" />
-            Agent
+            <span>Driver</span>
           </button>
           <button
             type="button"
-            onClick={() => setDemoRole('customer@gatiman.com')}
-            className="flex flex-col items-center gap-1 rounded-lg border border-slate-200 bg-white p-2 text-xs font-semibold text-slate-700 shadow-xs transition hover:border-indigo-500 hover:text-indigo-600 cursor-pointer"
+            onClick={() => setDemoRole('admin@gatiman.com')}
+            className="flex flex-col items-center gap-1 rounded-xl border border-slate-200 bg-white p-2.5 text-xs font-bold text-slate-800 shadow-xs transition hover:border-slate-800 hover:text-slate-900 cursor-pointer"
           >
-            <User className="h-4 w-4 text-blue-600" />
-            Customer
+            <Shield className="h-4 w-4 text-slate-800" />
+            <span>Admin</span>
           </button>
         </div>
       </div>
 
       {errorMessage && (
-        <div className="mb-6 flex items-start gap-3 rounded-lg border border-rose-200 bg-rose-50 p-3.5 text-sm text-rose-700">
+        <div className="mb-6 flex items-start gap-3 rounded-xl border border-rose-200 bg-rose-50 p-3.5 text-sm text-rose-700">
           <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" />
           <span>{errorMessage}</span>
         </div>
@@ -101,14 +102,14 @@ export const LoginPage: React.FC = () => {
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
-          <label className="block text-sm font-semibold text-slate-700">Email address</label>
+          <label className="block text-xs font-semibold text-slate-700">Email address</label>
           <div className="relative mt-1">
-            <Mail className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
+            <Mail className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input
               type="email"
               {...register('email')}
               placeholder="user@gatiman.local"
-              className="w-full rounded-lg border border-slate-300 py-2.5 pl-10 pr-3 text-sm text-slate-900 shadow-xs placeholder:text-slate-400 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
+              className="w-full rounded-xl border border-slate-300 py-2.5 pl-10 pr-3.5 text-sm text-slate-900 shadow-xs placeholder:text-slate-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
             />
           </div>
           {errors.email && <p className="mt-1 text-xs text-rose-600">{errors.email.message}</p>}
@@ -116,18 +117,18 @@ export const LoginPage: React.FC = () => {
 
         <div>
           <div className="flex items-center justify-between">
-            <label className="block text-sm font-semibold text-slate-700">Password</label>
-            <a href="#" className="text-xs font-medium text-indigo-600 hover:text-indigo-500">
+            <label className="block text-xs font-semibold text-slate-700">Password</label>
+            <a href="#" className="text-xs font-semibold text-orange-600 hover:text-orange-700">
               Forgot password?
             </a>
           </div>
           <div className="relative mt-1">
-            <Lock className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
+            <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input
               type="password"
               {...register('password')}
               placeholder="••••••••"
-              className="w-full rounded-lg border border-slate-300 py-2.5 pl-10 pr-3 text-sm text-slate-900 shadow-xs placeholder:text-slate-400 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
+              className="w-full rounded-xl border border-slate-300 py-2.5 pl-10 pr-3.5 text-sm text-slate-900 shadow-xs placeholder:text-slate-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
             />
           </div>
           {errors.password && <p className="mt-1 text-xs text-rose-600">{errors.password.message}</p>}
@@ -136,13 +137,14 @@ export const LoginPage: React.FC = () => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 py-3 text-sm font-semibold text-white shadow-xs transition hover:bg-indigo-500 disabled:opacity-50 cursor-pointer"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-orange-600 py-3 text-sm font-bold text-white shadow-md shadow-orange-500/20 transition disabled:opacity-50 cursor-pointer"
         >
           {isSubmitting ? (
             <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
           ) : (
             <>
-              Sign in to GATIMAN <ArrowRight className="h-4 w-4" />
+              <span>Log in to GATIMAN</span>
+              <ArrowRight className="h-4 w-4" />
             </>
           )}
         </button>
@@ -168,12 +170,18 @@ export const LoginPage: React.FC = () => {
         />
       </div>
 
-      <p className="mt-8 text-center text-sm text-slate-600">
-        Don't have an account?{' '}
-        <Link to="/register" className="font-semibold text-indigo-600 hover:text-indigo-500">
-          Create account
-        </Link>
-      </p>
+      <div className="mt-8 pt-5 border-t border-slate-200 text-center space-y-2 text-xs text-slate-600">
+        <p>
+          Don't have an account?{' '}
+          <Link to="/register/customer" className="font-bold text-orange-600 hover:text-orange-700">
+            Register as Customer
+          </Link>
+          {' · '}
+          <Link to="/register/driver" className="font-bold text-emerald-700 hover:text-emerald-800">
+            Join as Driver
+          </Link>
+        </p>
+      </div>
     </div>
   );
 };
