@@ -9,7 +9,29 @@
 [![Vite](https://img.shields.io/badge/Vite-8+-646CFF?style=flat&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-4169E1?style=flat&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 
+### 🌐 Hosted Production Application
+* **Frontend Web App (Vercel)**: [https://frontend-ten-lyart-76.vercel.app](https://frontend-ten-lyart-76.vercel.app)
+* **Backend API (Render)**: [https://last-mile-tracker-vitb.onrender.com](https://last-mile-tracker-vitb.onrender.com)
+* **OpenAPI 3.0 / Swagger UI**: [https://last-mile-tracker-vitb.onrender.com/swagger-ui.html](https://last-mile-tracker-vitb.onrender.com/swagger-ui.html)
+* **GitHub Repository**: [https://github.com/Milindverma24/Last_mile_tracker_vitb](https://github.com/Milindverma24/Last_mile_tracker_vitb)
+
 A production-grade, full-stack logistics management platform built for modern supply chains. GATIMAN features deterministic volumetric pricing (`(L × B × H) / 5000`), intelligent proximity auto-assignment, multi-attempt failed delivery recovery with customer rescheduling, append-only immutable tracking event audit logs, and distinct operational cockpits for **Customers**, **Delivery Agents**, and **Operations Admins**.
+
+---
+
+## 📸 Application Screenshots & User Interface
+
+### 1. Landing Page & Intelligent Dispatch Portal
+![GATIMAN Landing Page](docs/screenshots/landing_page.png)
+
+### 2. Live Public Tracking & Real-Time Telemetry
+![Public Tracking Page](docs/screenshots/tracking_page.png)
+
+### 3. Operations Admin Cockpit & Fleet Analytics
+![Admin Operations Cockpit](docs/screenshots/admin_dashboard.png)
+
+### 4. Real-Time Orders Dispatch Matrix
+![Admin Orders Dispatch Matrix](docs/screenshots/admin_orders.png)
 
 ---
 
@@ -200,7 +222,7 @@ Run backend unit test suite:
 cd backend
 mvn clean test
 ```
-**Results**: 13/13 unit tests passing (`AuthServiceTest`, `OrderServiceTest`, `ZoneServiceTest`, `RateCardServiceTest`, `AgentAssignmentServiceTest`, `TrackingServiceTest`).
+**Results**: 64 / 64 unit and integration tests passing (`AuthServiceTest`, `OrderServiceTest`, `ZoneServiceTest`, `RateCardServiceTest`, `AgentAssignmentServiceTest`, `PaymentServiceTest`, `EmailServiceTest`, `EmailTemplateServiceTest`, `TrackingServiceTest`, `ProfileServiceTest`, `RescheduleServiceTest`, `OrderStatusTransitionServiceTest`, `NotificationServiceTest`, `VolumetricWeightServiceTest`, `CodPricingServiceTest`, `ZoneDetectionServiceTest`).
 
 ---
 

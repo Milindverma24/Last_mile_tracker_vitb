@@ -402,10 +402,7 @@ export const LandingPage: React.FC = () => {
                 className="group cursor-pointer bg-gradient-to-br from-stone-900/90 via-amber-950/80 to-stone-900/90 backdrop-blur-xl border border-white/20 rounded-3xl p-4 sm:p-5 flex items-center justify-between gap-4 max-w-sm shadow-2xl hover:border-orange-500/50 transition-all duration-300 hover:scale-[1.02]"
               >
                 <div>
-                  <div className="text-[11px] font-mono font-black text-orange-400 tracking-wider">
-                    01 <span className="text-white/40">/ 03</span>
-                  </div>
-                  <h3 className="text-lg font-bold text-white mt-1 leading-snug">
+                  <h3 className="text-lg font-bold text-white leading-snug">
                     See how dispatch works.
                   </h3>
                   <p className="text-xs text-white/70 mt-0.5">
