@@ -21,16 +21,25 @@ A production-grade, full-stack logistics management platform built for modern su
 
 ## 📸 Application Screenshots & User Interface
 
-### 1. Landing Page & Intelligent Dispatch Portal
+### 1. Landing Page & Public Telemetry
 ![GATIMAN Landing Page](docs/screenshots/landing_page.png)
 
-### 2. Live Public Tracking & Real-Time Telemetry
+### 2. Customer Portal — Dashboard & Live Shipments
+![Customer Dashboard](docs/screenshots/customer_dashboard.png)
+
+### 3. Customer Portal — Doorstep Booking & Volumetric Rate Estimator
+![Customer Create Order Wizard](docs/screenshots/customer_create_order.png)
+
+### 4. Delivery Driver Partner Portal — Active Run Sheet & Handover
+![Agent Delivery Dashboard](docs/screenshots/agent_dashboard.png)
+
+### 5. Live Public Tracking & Real-Time Telemetry
 ![Public Tracking Page](docs/screenshots/tracking_page.png)
 
-### 3. Operations Admin Cockpit & Fleet Analytics
+### 6. Operations Admin Cockpit — Fleet Analytics & Health
 ![Admin Operations Cockpit](docs/screenshots/admin_dashboard.png)
 
-### 4. Real-Time Orders Dispatch Matrix
+### 7. Operations Admin Cockpit — Orders Dispatch Matrix
 ![Admin Orders Dispatch Matrix](docs/screenshots/admin_orders.png)
 
 ---
