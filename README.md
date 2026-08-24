@@ -33,15 +33,6 @@ It's built for urban delivery corridors (we use Delhi NCR as the reference model
 ### Landing Page
 ![Landing Page](docs/screenshots/landing_page.png)
 
-### Customer Dashboard
-![Customer Dashboard](docs/screenshots/customer_dashboard.png)
-
-### Order Creation — Volumetric Rate Estimator
-![Create Order Wizard](docs/screenshots/customer_create_order.png)
-
-### Delivery Agent Dashboard
-![Agent Dashboard](docs/screenshots/agent_dashboard.png)
-
 ### Public Tracking Page
 ![Tracking Page](docs/screenshots/tracking_page.png)
 
@@ -177,7 +168,7 @@ last_mile_delivery/
 ├── docker-compose.yml                   # PostgreSQL + Backend + Frontend
 ├── .env.example                         # Template for environment variables
 ├── SYSTEM_DESIGN.md                     # System design write-up (~800 words)
-├── DESIGN.md                            # Detailed technical design document
+├── ARCHITECTURE.md                      # Detailed technical architecture & specifications
 └── README.md
 ```
 
