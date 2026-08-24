@@ -43,8 +43,7 @@ project/backend/target/
 *.nar
 *.rar
 *.zip
-gatiman_last_mile_delivery_source.zip
-ALL PROJECT SUBMISSION DETAILS AS PER THE DOCUMENT GIVEN/
+!ALL PROJECT SUBMISSION DETAILS AS PER THE DOCUMENT GIVEN/*.zip
 hs_err_pid*
 replay_pid*
 .mvn/wrapper/maven-wrapper.jar
