@@ -41,10 +41,10 @@ export const AgentLayout: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 pb-24 md:pb-8">
       {/* Navbar */}
-      <nav className="sticky top-0 z-40 border-b border-slate-200 bg-white shadow-sm">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-5">
-            <div className="flex items-center gap-2">
+      <nav className="sticky top-0 z-40 border-b border-slate-200 bg-white shadow-xs">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-3 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-3 sm:gap-5 min-w-0">
+            <div className="flex items-center gap-2 shrink-0">
               <GatimanLogo to="/agent/dashboard" />
               <span className="hidden rounded-full bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-[10px] font-bold text-emerald-700 sm:inline-block">
                 Fleet Driver App
@@ -75,18 +75,19 @@ export const AgentLayout: React.FC = () => {
           </div>
 
           {/* Right controls */}
-          <div className="flex items-center gap-2.5 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
             {/* On/Off Duty toggle */}
             <button
               onClick={() => toggleAvailability.mutate(!isOnline)}
-              className={`flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-bold transition border cursor-pointer ${
+              className={`flex items-center gap-1.5 sm:gap-2 rounded-full px-2.5 sm:px-3.5 py-1.5 text-[11px] sm:text-xs font-bold transition border cursor-pointer ${
                 isOnline
                   ? 'bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100'
                   : 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100'
               }`}
             >
-              <span className={`h-2 w-2 rounded-full ${isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-rose-400'}`} />
-              <span>{isOnline ? 'ON DUTY' : 'OFF DUTY'}</span>
+              <span className={`h-2 w-2 rounded-full shrink-0 ${isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-rose-400'}`} />
+              <span className="hidden sm:inline">{isOnline ? 'ON DUTY' : 'OFF DUTY'}</span>
+              <span className="sm:hidden">{isOnline ? 'DUTY' : 'OFF'}</span>
             </button>
 
             {/* Navbar Refresh Button */}
@@ -117,12 +118,12 @@ export const AgentLayout: React.FC = () => {
       </nav>
 
       {/* Main content */}
-      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <main className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
         <Outlet />
       </main>
 
-      {/* Mobile Bottom Nav */}
-      <div className="fixed bottom-0 inset-x-0 z-40 border-t border-slate-200 bg-white shadow-lg md:hidden">
+      {/* Mobile Bottom Nav with Safe Area */}
+      <div className="fixed bottom-0 inset-x-0 z-40 border-t border-slate-200 bg-white shadow-lg md:hidden pb-safe">
         <div className="grid grid-cols-5 py-2">
           {navigation.map((item) => {
             const Icon = item.icon;

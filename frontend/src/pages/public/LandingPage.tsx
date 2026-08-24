@@ -7,7 +7,7 @@ import { DeliveryVideoPlayer } from '../../components/common/DeliveryVideoPlayer
 import { GatimanLogo } from '../../components/common/GatimanLogo';
 import {
   Truck, Search, ArrowRight, Star, Users, Building2,
-  Radio, ChevronLeft, ChevronRight, AlertCircle, Play, X,
+  Radio, ChevronLeft, ChevronRight, AlertCircle, Play, X, Menu,
   ChevronDown, Navigation, CheckCircle2, UserCheck, RefreshCw, Shield, MapPin, Clock, Phone, Package, ShieldCheck, User
 } from 'lucide-react';
 
@@ -36,6 +36,7 @@ export const LandingPage: React.FC = () => {
   const [previewLiveTracking, setPreviewLiveTracking] = useState<LiveTrackingData | null>(null);
   const [trackingTimeline, setTrackingTimeline] = useState<TrackingEvent[]>([]);
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeFaq, setActiveFaq] = useState<number | null>(0);
   const [activeServiceSlide, setActiveServiceSlide] = useState(0);
 
@@ -175,15 +176,15 @@ export const LandingPage: React.FC = () => {
       {/* ─────────────────────────────────────────────────────────────────────────────
           1. FLOATING NAVIGATION BAR (Glass Capsule with Track Live Radar)
       ───────────────────────────────────────────────────────────────────────────── */}
-      <header className="fixed top-4 inset-x-0 z-50 px-4 sm:px-8 max-w-7xl mx-auto pointer-events-none">
-        <div className="flex items-center justify-between gap-3 pointer-events-auto">
+      <header className="fixed top-4 inset-x-0 z-50 px-3 sm:px-8 max-w-7xl mx-auto pointer-events-none">
+        <div className="flex items-center justify-between gap-2 sm:gap-3 pointer-events-auto">
           
           {/* Logo with Scooter Icon */}
-          <div className="bg-white/90 backdrop-blur-md px-4 py-2 rounded-full border border-slate-200/80 shadow-sm transition hover:shadow-md">
+          <div className="bg-white/90 backdrop-blur-md px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full border border-slate-200/80 shadow-sm transition hover:shadow-md shrink-0">
             <GatimanLogo to="/" />
           </div>
 
-          {/* Center Navigation Capsule with Prominent Track Live Radar */}
+          {/* Desktop Center Navigation Capsule with Prominent Track Live Radar */}
           <nav className="hidden md:flex items-center gap-1.5 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-slate-200/80 shadow-sm text-xs font-semibold text-slate-600">
             <a href="#home" className="px-4 py-2 rounded-full bg-slate-900 text-white font-bold transition shadow-xs">
               Home
@@ -212,36 +213,109 @@ export const LandingPage: React.FC = () => {
             </a>
           </nav>
 
-          {/* Right Action Button: Login */}
+          {/* Right Action Buttons: Login + Mobile Menu Toggle */}
           <div className="flex items-center gap-2">
             <Link
               to="/login"
-              className="inline-flex items-center justify-center px-5 py-2.5 rounded-full text-xs font-bold text-slate-800 bg-white/90 backdrop-blur-md border border-slate-200/90 hover:bg-slate-900 hover:text-white transition shadow-sm"
+              className="inline-flex items-center justify-center px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs font-bold text-slate-800 bg-white/90 backdrop-blur-md border border-slate-200/90 hover:bg-slate-900 hover:text-white transition shadow-sm touch-target"
             >
               <span>Login</span>
             </Link>
+
+            {/* Mobile Menu Hamburger Button */}
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden flex h-9 w-9 items-center justify-center rounded-full bg-white/90 backdrop-blur-md border border-slate-200 text-slate-700 shadow-sm hover:bg-slate-100 transition cursor-pointer"
+              aria-label="Toggle navigation menu"
+            >
+              {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Navigation Drawer Modal */}
+        {mobileMenuOpen && (
+          <div className="md:hidden mt-2 p-4 bg-white/95 backdrop-blur-xl rounded-3xl border border-slate-200 shadow-2xl space-y-3 pointer-events-auto animate-in fade-in slide-in-from-top-2 duration-200">
+            <div className="flex flex-col space-y-1">
+              <a
+                href="#home"
+                onClick={() => setMobileMenuOpen(false)}
+                className="px-4 py-2.5 rounded-2xl text-xs font-bold text-slate-900 bg-slate-100 hover:bg-slate-200 transition"
+              >
+                Home
+              </a>
+              <a
+                href="#services"
+                onClick={() => setMobileMenuOpen(false)}
+                className="px-4 py-2.5 rounded-2xl text-xs font-bold text-slate-700 hover:bg-slate-50 transition"
+              >
+                Services & Logistics Hub
+              </a>
+              <a
+                href="#tracking"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setMobileMenuOpen(false);
+                  document.getElementById('tracking')?.scrollIntoView({ behavior: 'smooth' });
+                  const input = document.getElementById('tracking-radar-input') as HTMLInputElement | null;
+                  if (input) input.focus();
+                }}
+                className="px-4 py-2.5 rounded-2xl text-xs font-bold text-orange-700 bg-orange-50 border border-orange-200/80 transition flex items-center justify-between"
+              >
+                <span className="flex items-center gap-2">
+                  <Radio className="w-3.5 h-3.5 text-orange-600 animate-pulse" />
+                  <span>Track Live Radar</span>
+                </span>
+                <span className="text-[10px] text-orange-600 font-bold uppercase">Active</span>
+              </a>
+              <a
+                href="#faq"
+                onClick={() => setMobileMenuOpen(false)}
+                className="px-4 py-2.5 rounded-2xl text-xs font-bold text-slate-700 hover:bg-slate-50 transition"
+              >
+                FAQ & Help Center
+              </a>
+            </div>
+
+            <div className="pt-2 border-t border-slate-100 grid grid-cols-2 gap-2">
+              <Link
+                to="/register/customer"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-center py-2.5 px-3 rounded-2xl bg-gradient-to-r from-orange-600 to-amber-500 text-white font-bold text-xs shadow-xs"
+              >
+                Customer Portal
+              </Link>
+              <Link
+                to="/register/driver"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-center py-2.5 px-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-xs shadow-xs"
+              >
+                Driver Portal
+              </Link>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* ─────────────────────────────────────────────────────────────────────────────
-          FLOATING RIGHT-SIDE ACTION DOCK (Truck & Customer Hub)
+          FLOATING RIGHT-SIDE ACTION DOCK (Responsive: Bottom-Right on Mobile, Center-Right on Desktop)
       ───────────────────────────────────────────────────────────────────────────── */}
-      <aside className="fixed right-3 sm:right-5 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-3 pointer-events-auto">
-        <div className="flex flex-col gap-2.5 p-2 bg-white/90 backdrop-blur-2xl rounded-full border border-slate-200/90 shadow-2xl shadow-slate-900/15">
+      <aside className="fixed right-3 bottom-6 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 z-40 flex flex-col gap-3 pointer-events-auto">
+        <div className="flex flex-col gap-2 p-1.5 sm:p-2 bg-white/90 backdrop-blur-2xl rounded-full border border-slate-200/90 shadow-2xl shadow-slate-900/15">
           
           {/* 1. Driver Button (Truck Icon) */}
           <div className="relative group flex items-center justify-center">
             <Link
               to="/register/driver"
-              className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-md shadow-emerald-600/30 hover:scale-110 active:scale-95 transition-all duration-200"
+              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-md shadow-emerald-600/30 hover:scale-110 active:scale-95 transition-all duration-200"
               aria-label="Sign in as Driver"
             >
-              <Truck className="w-5 h-5" />
+              <Truck className="w-4 h-4 sm:w-5 sm:h-5" />
             </Link>
 
-            {/* Premium Left-Sliding Glass Tooltip */}
-            <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 hidden group-hover:flex items-center pointer-events-none animate-in fade-in slide-in-from-right-3 duration-200">
+            {/* Premium Left-Sliding Glass Tooltip (Desktop Only) */}
+            <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 hidden sm:group-hover:flex items-center pointer-events-none animate-in fade-in slide-in-from-right-3 duration-200">
               <div className="bg-slate-950/95 backdrop-blur-md text-white text-xs px-3.5 py-2 rounded-2xl border border-slate-800 shadow-2xl whitespace-nowrap flex flex-col">
                 <span className="font-bold text-white flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -256,14 +330,14 @@ export const LandingPage: React.FC = () => {
           <div className="relative group flex items-center justify-center">
             <Link
               to="/register/customer"
-              className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-to-tr from-orange-600 to-amber-500 text-white flex items-center justify-center shadow-md shadow-orange-600/30 hover:scale-110 active:scale-95 transition-all duration-200"
+              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-tr from-orange-600 to-amber-500 text-white flex items-center justify-center shadow-md shadow-orange-600/30 hover:scale-110 active:scale-95 transition-all duration-200"
               aria-label="Sign in as Customer"
             >
-              <User className="w-5 h-5" />
+              <User className="w-4 h-4 sm:w-5 sm:h-5" />
             </Link>
 
-            {/* Premium Left-Sliding Glass Tooltip */}
-            <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 hidden group-hover:flex items-center pointer-events-none animate-in fade-in slide-in-from-right-3 duration-200">
+            {/* Premium Left-Sliding Glass Tooltip (Desktop Only) */}
+            <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 hidden sm:group-hover:flex items-center pointer-events-none animate-in fade-in slide-in-from-right-3 duration-200">
               <div className="bg-slate-950/95 backdrop-blur-md text-white text-xs px-3.5 py-2 rounded-2xl border border-slate-800 shadow-2xl whitespace-nowrap flex flex-col">
                 <span className="font-bold text-white flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />

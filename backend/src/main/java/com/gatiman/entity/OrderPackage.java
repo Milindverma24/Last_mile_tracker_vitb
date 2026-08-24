@@ -21,6 +21,7 @@ public class OrderPackage {
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
+    @Column(columnDefinition = "TEXT")
     private String packageDescription;
 
     @Column(nullable = false, precision = 8, scale = 2)

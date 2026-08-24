@@ -194,12 +194,45 @@ export const CustomerOrderTrackingPage: React.FC = () => {
       )}
 
       {/* Visual Milestone Progression Track */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500 mb-6">
+      <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm">
+        <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500 mb-4 sm:mb-6">
           Delivery Progress Milestones
         </h2>
 
-        <div className="relative flex items-center justify-between">
+        {/* Mobile Vertical Stepper (< 640px) */}
+        <div className="sm:hidden space-y-3">
+          {steps.map((step, idx) => {
+            const isCompleted = currentStepIdx >= idx;
+            const isCurrent = currentStepIdx === idx;
+
+            return (
+              <div key={step.status} className="flex items-center gap-3">
+                <div
+                  className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold transition shrink-0 ${
+                    isCompleted
+                      ? 'bg-orange-600 text-white shadow-xs'
+                      : 'border border-slate-200 bg-slate-100 text-slate-400'
+                  } ${isCurrent ? 'ring-2 ring-orange-200' : ''}`}
+                >
+                  {isCompleted ? <CheckCircle2 className="h-4 w-4" /> : idx + 1}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className={`text-xs font-bold truncate ${isCurrent ? 'text-orange-600' : isCompleted ? 'text-slate-900' : 'text-slate-400'}`}>
+                    {step.label}
+                  </p>
+                </div>
+                {isCurrent && (
+                  <span className="text-[10px] font-bold text-orange-600 uppercase bg-orange-50 px-2 py-0.5 rounded-full border border-orange-200">
+                    Current
+                  </span>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Desktop / Tablet Horizontal Track (>= 640px) */}
+        <div className="hidden sm:flex relative items-center justify-between">
           {/* Background Bar */}
           <div className="absolute left-0 top-1/2 -translate-y-1/2 h-1 w-full bg-slate-100" />
           <div

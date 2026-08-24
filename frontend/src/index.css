@@ -216,33 +216,54 @@ input:focus, textarea:focus, select:focus {
   z-index: 2;
 }
 
-/* Mobile bottom nav safe area */
+/* Mobile safe area padding utilities */
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
   .pb-safe {
-    padding-bottom: env(safe-area-inset-bottom);
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+  }
+  .pt-safe {
+    padding-top: max(0.5rem, env(safe-area-inset-top));
   }
 }
 
+/* Touch-friendly target minimums for mobile */
+@media (max-width: 768px) {
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
 
-/* Custom modern scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* Responsive table styling with smooth momentum scrolling */
+.table-responsive-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
 }
-::-webkit-scrollbar-track {
-  background: transparent;
+
+.table-responsive-wrapper::-webkit-scrollbar {
+  height: 4px;
 }
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 9999px;
+
+/* Fluid responsive typography utilities */
+.text-fluid-hero {
+  font-size: clamp(2rem, 5vw + 1rem, 3.75rem);
+  line-height: 1.1;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+
+.text-fluid-h1 {
+  font-size: clamp(1.5rem, 3vw + 0.75rem, 2.5rem);
+  line-height: 1.2;
+}
+
+.text-fluid-h2 {
+  font-size: clamp(1.25rem, 2.5vw + 0.5rem, 2rem);
+  line-height: 1.25;
 }
 
 /* Glassmorphic card styling */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(226, 232, 240, 0.8);
@@ -267,3 +288,4 @@ input:focus, textarea:focus, select:focus {
   box-shadow: 0 0 10px currentColor;
   opacity: 0.3;
 }
+

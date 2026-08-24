@@ -132,6 +132,31 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
+    @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleHttpMessageNotReadable(org.springframework.http.converter.HttpMessageNotReadableException ex) {
+        log.warn("Malformed JSON request received: {}", ex.getMessage());
+        ErrorResponse response = ErrorResponse.builder()
+                .success(false)
+                .message("Malformed or unreadable JSON request body. Please check request format and syntax.")
+                .errorCode("MALFORMED_JSON_REQUEST")
+                .timestamp(Instant.now())
+                .build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(org.springframework.dao.DataIntegrityViolationException ex) {
+        log.warn("Data integrity constraint violation: {}", ex.getMessage());
+        String msg = "Database constraint violation: A record with this unique identifier or email already exists.";
+        ErrorResponse response = ErrorResponse.builder()
+                .success(false)
+                .message(msg)
+                .errorCode("DATA_INTEGRITY_VIOLATION")
+                .timestamp(Instant.now())
+                .build();
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
         log.error("Unhandled server exception: {}", ex.getMessage(), ex);

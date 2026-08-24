@@ -23,6 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -85,7 +86,6 @@ public class PaymentServiceTest {
     @DisplayName("Should create Razorpay order with calculated amount in paise")
     void testCreateRazorpayOrder() {
         when(orderRepository.findById(100L)).thenReturn(Optional.of(testOrder));
-        when(orderRepository.save(any(Order.class))).thenReturn(testOrder);
 
         RazorpayOrderResponse response = paymentService.createRazorpayOrder(100L, testUser);
 
@@ -97,7 +97,7 @@ public class PaymentServiceTest {
         assertEquals("INR", response.getCurrency());
         assertEquals("rzp_test_gatiman123", response.getKeyId());
         assertTrue(response.getRazorpayOrderId().startsWith("order_"));
-        verify(orderRepository).save(testOrder);
+        verify(orderRepository).updateRazorpayOrderId(eq(100L), anyString());
     }
 
     @Test
@@ -110,7 +110,6 @@ public class PaymentServiceTest {
 
         testOrder.setRazorpayOrderId(rzpOrderId);
         when(orderRepository.findById(100L)).thenReturn(Optional.of(testOrder));
-        when(orderRepository.save(any(Order.class))).thenReturn(testOrder);
 
         RazorpayVerifyRequest request = RazorpayVerifyRequest.builder()
                 .orderId(100L)
@@ -123,8 +122,7 @@ public class PaymentServiceTest {
 
         assertTrue(response.isVerified());
         assertEquals(PaymentStatus.PAID, response.getPaymentStatus());
-        assertEquals(PaymentStatus.PAID, testOrder.getPaymentStatus());
-        assertEquals(rzpPaymentId, testOrder.getRazorpayPaymentId());
+        verify(orderRepository).updatePaymentDetails(eq(100L), eq(PaymentStatus.PAID), eq(rzpPaymentId), eq(validSignature), any(Instant.class));
         verify(trackingEventRepository).save(any(TrackingEvent.class));
         verify(auditService).logAction(eq("customer@gatiman.local"), any(), eq("PAYMENT_VERIFIED"), eq("Order"), eq(100L), anyString());
     }
@@ -146,7 +144,6 @@ public class PaymentServiceTest {
                 .build();
 
         assertThrows(BusinessRuleException.class, () -> paymentService.verifyPayment(request, testUser));
-        assertEquals(PaymentStatus.FAILED, testOrder.getPaymentStatus());
-        verify(orderRepository).save(testOrder);
+        verify(orderRepository).updatePaymentDetails(eq(100L), eq(PaymentStatus.FAILED), eq(rzpPaymentId), eq("invalid_tampered_signature_12345"), any(Instant.class));
     }
 }

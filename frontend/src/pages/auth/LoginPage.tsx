@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { loginSchema, LoginFormData } from '../../schemas/authSchema';
 import { useAuth } from '../../context/AuthContext';
 import { GoogleSignInButton } from '../../components/auth/GoogleSignInButton';
-import { Mail, Lock, ArrowRight, AlertCircle, Shield, Truck, User } from 'lucide-react';
+import { Mail, Lock, ArrowRight, AlertCircle, User, Truck, Shield } from 'lucide-react';
 
 export const LoginPage: React.FC = () => {
   const { login } = useAuth();
@@ -50,85 +50,92 @@ export const LoginPage: React.FC = () => {
 
   return (
     <div className="mx-auto w-full max-w-md">
-      <div className="mb-6 text-center sm:text-left">
-        <h1 className="text-2xl font-black font-heading tracking-tight text-slate-900 sm:text-3xl">
+      
+      {/* Welcome Title & Subtitle */}
+      <div className="mb-6 text-left">
+        <h1 className="text-3xl sm:text-4xl font-black font-heading tracking-tight text-slate-900">
           Welcome to GATIMAN
         </h1>
-        <p className="mt-1.5 text-xs sm:text-sm text-slate-600">
+        <p className="mt-2 text-sm text-slate-600">
           Enter your credentials to access your delivery and logistics portal
         </p>
       </div>
 
-      {/* Quick Persona Switcher (Admin, Agent, Customer) */}
-      <div className="mb-6 rounded-2xl border border-orange-200/60 bg-gradient-to-b from-orange-50/60 to-amber-50/30 p-3.5 shadow-xs">
-        <p className="mb-2 text-[11px] font-bold uppercase tracking-wider text-orange-950 flex items-center gap-1.5">
-          <span>⚡ Demo Quick Logins</span>
-          <span className="text-[10px] font-normal text-orange-700">(Click to pre-fill)</span>
+      {/* Demo Quick Logins Card */}
+      <div className="mb-6 rounded-2xl border border-orange-200 bg-orange-50/40 p-4 shadow-2xs">
+        <p className="mb-3 text-xs font-bold text-amber-900 flex items-center gap-1.5 uppercase tracking-wide">
+          <span className="text-amber-600">⚡</span>
+          <span>DEMO QUICK LOGINS</span>
+          <span className="text-[11px] font-normal text-amber-700/90 lowercase">(click to pre-fill)</span>
         </p>
-        <div className="grid grid-cols-3 gap-2">
+        
+        <div className="grid grid-cols-3 gap-3">
           <button
             type="button"
             onClick={() => setDemoRole('customer@gatiman.com')}
-            className="flex flex-col items-center gap-1 rounded-xl border border-slate-200 bg-white p-2.5 text-xs font-bold text-slate-800 shadow-xs transition hover:border-orange-500 hover:text-orange-600 cursor-pointer"
+            className="flex flex-col items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white py-3 px-2 text-xs font-bold text-slate-800 shadow-xs hover:border-orange-500 hover:text-orange-600 transition cursor-pointer"
           >
-            <User className="h-4 w-4 text-orange-600" />
+            <User className="h-5 w-5 text-orange-600" />
             <span>Customer</span>
           </button>
+
           <button
             type="button"
             onClick={() => setDemoRole('agent@gatiman.com')}
-            className="flex flex-col items-center gap-1 rounded-xl border border-slate-200 bg-white p-2.5 text-xs font-bold text-slate-800 shadow-xs transition hover:border-emerald-500 hover:text-emerald-700 cursor-pointer"
+            className="flex flex-col items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white py-3 px-2 text-xs font-bold text-slate-800 shadow-xs hover:border-emerald-500 hover:text-emerald-700 transition cursor-pointer"
           >
-            <Truck className="h-4 w-4 text-emerald-600" />
+            <Truck className="h-5 w-5 text-emerald-600" />
             <span>Driver</span>
           </button>
+
           <button
             type="button"
             onClick={() => setDemoRole('admin@gatiman.com')}
-            className="flex flex-col items-center gap-1 rounded-xl border border-slate-200 bg-white p-2.5 text-xs font-bold text-slate-800 shadow-xs transition hover:border-slate-800 hover:text-slate-900 cursor-pointer"
+            className="flex flex-col items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white py-3 px-2 text-xs font-bold text-slate-800 shadow-xs hover:border-slate-800 hover:text-slate-900 transition cursor-pointer"
           >
-            <Shield className="h-4 w-4 text-slate-800" />
+            <Shield className="h-5 w-5 text-slate-800" />
             <span>Admin</span>
           </button>
         </div>
       </div>
 
       {errorMessage && (
-        <div className="mb-6 flex items-start gap-3 rounded-xl border border-rose-200 bg-rose-50 p-3.5 text-sm text-rose-700">
-          <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" />
+        <div className="mb-5 flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50 p-3.5 text-xs font-medium text-rose-800">
+          <AlertCircle className="h-4 w-4 text-rose-600 shrink-0 mt-0.5" />
           <span>{errorMessage}</span>
         </div>
       )}
 
+      {/* Main Authentication Form */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
-          <label className="block text-xs font-semibold text-slate-700">Email address</label>
-          <div className="relative mt-1">
+          <label className="block text-xs font-bold text-slate-700 mb-1.5">Email address</label>
+          <div className="relative">
             <Mail className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input
               type="email"
               {...register('email')}
-              placeholder="user@gatiman.local"
-              className="w-full rounded-xl border border-slate-300 py-2.5 pl-10 pr-3.5 text-sm text-slate-900 shadow-xs placeholder:text-slate-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+              placeholder="customer@gatiman.com"
+              className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-3.5 text-sm text-slate-900 shadow-2xs placeholder:text-slate-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 transition"
             />
           </div>
           {errors.email && <p className="mt-1 text-xs text-rose-600">{errors.email.message}</p>}
         </div>
 
         <div>
-          <div className="flex items-center justify-between">
-            <label className="block text-xs font-semibold text-slate-700">Password</label>
+          <div className="flex items-center justify-between mb-1.5">
+            <label className="block text-xs font-bold text-slate-700">Password</label>
             <a href="#" className="text-xs font-semibold text-orange-600 hover:text-orange-700">
               Forgot password?
             </a>
           </div>
-          <div className="relative mt-1">
+          <div className="relative">
             <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input
               type="password"
               {...register('password')}
-              placeholder="••••••••"
-              className="w-full rounded-xl border border-slate-300 py-2.5 pl-10 pr-3.5 text-sm text-slate-900 shadow-xs placeholder:text-slate-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+              placeholder="••••••••••••"
+              className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-3.5 text-sm text-slate-900 shadow-2xs placeholder:text-slate-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 transition"
             />
           </div>
           {errors.password && <p className="mt-1 text-xs text-rose-600">{errors.password.message}</p>}
@@ -137,7 +144,7 @@ export const LoginPage: React.FC = () => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-orange-600 py-3 text-sm font-bold text-white shadow-md shadow-orange-500/20 transition disabled:opacity-50 cursor-pointer"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-700 hover:to-orange-600 py-3 text-sm font-bold text-white shadow-md shadow-orange-500/20 hover:shadow-lg hover:shadow-orange-500/25 transition active:scale-[0.99] disabled:opacity-50 cursor-pointer pt-3"
         >
           {isSubmitting ? (
             <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
@@ -150,14 +157,14 @@ export const LoginPage: React.FC = () => {
         </button>
       </form>
 
-      {/* Google OAuth Login Section */}
-      <div className="mt-6">
+      {/* Google OAuth Section */}
+      <div className="mt-5">
         <div className="relative mb-4">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-slate-200" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-slate-50 px-3 text-slate-400 font-bold tracking-wider">
+            <span className="bg-slate-50 px-3 text-slate-400 font-semibold tracking-wider">
               Or continue with
             </span>
           </div>
@@ -170,17 +177,16 @@ export const LoginPage: React.FC = () => {
         />
       </div>
 
-      <div className="mt-8 pt-5 border-t border-slate-200 text-center space-y-2 text-xs text-slate-600">
-        <p>
-          Don't have an account?{' '}
-          <Link to="/register/customer" className="font-bold text-orange-600 hover:text-orange-700">
-            Register as Customer
-          </Link>
-          {' · '}
-          <Link to="/register/driver" className="font-bold text-emerald-700 hover:text-emerald-800">
-            Join as Driver
-          </Link>
-        </p>
+      {/* Single Minimal Sign Up Line */}
+      <div className="mt-6 pt-4 border-t border-slate-200/80 text-center text-xs text-slate-500">
+        Don't have an account?{' '}
+        <Link to="/register/customer" className="font-semibold text-orange-600 hover:text-orange-700 hover:underline">
+          Register as Customer
+        </Link>
+        {' · '}
+        <Link to="/register/driver" className="font-semibold text-emerald-700 hover:text-emerald-800 hover:underline">
+          Join as Driver
+        </Link>
       </div>
     </div>
   );
