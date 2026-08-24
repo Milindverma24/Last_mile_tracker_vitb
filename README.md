@@ -31,16 +31,16 @@ It's built for urban delivery corridors (we use Delhi NCR as the reference model
 ## Screenshots
 
 ### Landing Page
-![Landing Page](project/docs/screenshots/landing_page.png)
+![Landing Page](docs/screenshots/landing_page.png)
 
 ### Public Tracking Page
-![Tracking Page](project/docs/screenshots/tracking_page.png)
+![Tracking Page](docs/screenshots/tracking_page.png)
 
 ### Admin Operations Cockpit
-![Admin Dashboard](project/docs/screenshots/admin_dashboard.png)
+![Admin Dashboard](docs/screenshots/admin_dashboard.png)
 
 ### Admin Orders Dispatch Matrix
-![Admin Orders](project/docs/screenshots/admin_orders.png)
+![Admin Orders](docs/screenshots/admin_orders.png)
 
 ---
 
@@ -133,50 +133,47 @@ The frontend communicates with the backend via REST APIs and WebSocket connectio
 
 ```
 last_mile_delivery/
-├── project/                             # Complete project codebase
-│   ├── backend/
-│   │   ├── pom.xml                      # Maven dependencies
-│   │   ├── Dockerfile
-│   │   └── src/main/java/com/gatiman/
-│   │       ├── controller/              # 12 REST controllers
-│   │       ├── service/impl/            # Business logic (pricing, zones, assignment, orders)
-│   │       ├── entity/                  # 18 JPA entities
-│   │       ├── enums/                   # OrderStatus, Role, VehicleType, RouteType, etc.
-│   │       ├── repository/              # Spring Data JPA repositories
-│   │       ├── security/                # JWT filter, token provider, user details
-│   │       ├── config/                  # Security, CORS, WebSocket, OpenAPI config
-│   │       ├── exception/               # Global exception handler
-│   │       ├── dto/                     # Request/response DTOs
-│   │       └── util/                    # SeedDataLoader (demo data on startup)
-│   │
-│   ├── frontend/
-│   │   ├── package.json
-│   │   ├── Dockerfile / nginx.conf
-│   │   └── src/
-│   │       ├── api/                     # Axios client + API modules
-│   │       ├── components/              # Reusable UI components
-│   │       ├── pages/
-│   │       │   ├── customer/            # Dashboard, CreateOrder, Orders, Track, Reschedule
-│   │       │   ├── agent/               # Dashboard, Deliveries, History
-│   │       │   └── admin/               # Dashboard, Orders, Zones, RateCards, Agents, Analytics
-│   │       ├── hooks/                   # TanStack Query hooks
-│   │       ├── context/                 # AuthContext (JWT session)
-│   │       ├── routes/                  # ProtectedRoute, RoleRoute
-│   │       ├── schemas/                 # Zod validation schemas
-│   │       └── types/                   # TypeScript interfaces
-│   │
-│   ├── docs/screenshots/                # 7 UI screenshots (embedded above)
-│   ├── database/                        # Database scripts & schema docs
-│   ├── docker-compose.yml               # Multi-container orchestration (postgres, backend, frontend)
-│   ├── render.yaml                      # Render cloud deployment blueprint
-│   ├── vercel.json                      # Vercel edge SPA routing
-│   ├── LICENSE                          # MIT License
-│   └── .env.example                     # Sanitized configuration template
+├── backend/
+│   ├── pom.xml                          # Maven dependencies
+│   ├── Dockerfile
+│   └── src/main/java/com/gatiman/
+│       ├── controller/                  # 12 REST controllers
+│       ├── service/impl/                # Business logic (pricing, zones, assignment, orders)
+│       ├── entity/                      # 18 JPA entities
+│       ├── enums/                       # OrderStatus, Role, VehicleType, RouteType, etc.
+│       ├── repository/                  # Spring Data JPA repositories
+│       ├── security/                    # JWT filter, token provider, user details
+│       ├── config/                      # Security, CORS, WebSocket, OpenAPI config
+│       ├── exception/                   # Global exception handler
+│       ├── dto/                         # Request/response DTOs
+│       └── util/                        # SeedDataLoader (demo data on startup)
 │
-├── gatiman_last_mile_delivery_source.zip # Packaged source archive
-├── README.md                            # Complete setup & developer documentation
+├── frontend/
+│   ├── package.json
+│   ├── Dockerfile / nginx.conf
+│   └── src/
+│       ├── api/                         # Axios client + API modules
+│       ├── components/                  # Reusable UI components
+│       ├── pages/
+│       │   ├── customer/                # Dashboard, CreateOrder, Orders, Track, Reschedule
+│       │   ├── agent/                   # Dashboard, Deliveries, History
+│       │   └── admin/                   # Dashboard, Orders, Zones, RateCards, Agents, Analytics
+│       ├── hooks/                       # TanStack Query hooks
+│       ├── context/                     # AuthContext (JWT session)
+│       ├── routes/                      # ProtectedRoute, RoleRoute
+│       ├── schemas/                     # Zod validation schemas
+│       └── types/                       # TypeScript interfaces
+│
+├── docs/screenshots/                    # 7 UI screenshots (embedded above)
+├── database/                            # Database scripts & schema docs
+├── docker-compose.yml                   # Multi-container orchestration (postgres, backend, frontend)
+├── render.yaml                          # Render cloud deployment blueprint
+├── vercel.json                          # Vercel edge SPA routing
+├── LICENSE                              # MIT License
+├── .env.example                         # Sanitized configuration template
 ├── SYSTEM_DESIGN.md                     # System design write-up (~800 words)
-└── ARCHITECTURE.md                      # Detailed technical architecture & specifications
+├── ARCHITECTURE.md                      # Detailed technical architecture & specifications
+└── README.md
 ```
 
 ---
@@ -203,7 +200,7 @@ cd Last_mile_tracker_vitb
 ### 2. Configure environment variables
 
 ```bash
-cp .env.example project/.env
+cp .env.example .env
 ```
 
 For basic local development, the defaults work — the in-memory H2 database requires zero setup.
@@ -211,7 +208,7 @@ For basic local development, the defaults work — the in-memory H2 database req
 ### 3. Start the backend (port 8088)
 
 ```bash
-cd project/backend
+cd backend
 mvn spring-boot:run
 ```
 
@@ -225,7 +222,7 @@ On first run, `SeedDataLoader` auto-provisions demo zones, rate cards, delivery 
 ### 4. Start the frontend (port 5173)
 
 ```bash
-cd project/frontend
+cd frontend
 npm install
 npm run dev
 ```
@@ -247,7 +244,6 @@ Then restart the backend. Hibernate `ddl-auto: update` creates the schema automa
 ### 6. Docker Compose (everything at once)
 
 ```bash
-cd project
 docker-compose up --build
 ```
 
