@@ -17,11 +17,11 @@ services:
       - key: DATABASE_USERNAME
         value: gatiman_user
       - key: DATABASE_PASSWORD
-        value: wHezuvYJQZ5jfU4AmRmd0Avq5WOk6CGu
+        sync: false
       - key: DATABASE_DRIVER
         value: org.postgresql.Driver
       - key: JWT_SECRET
-        value: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+        generateValue: true
       - key: EMAIL_ENABLED
         value: "true"
       - key: EMAIL_HOST
@@ -29,17 +29,17 @@ services:
       - key: EMAIL_PORT
         value: "465"
       - key: EMAIL_USERNAME
-        value: mili241105@gmail.com
+        sync: false
       - key: EMAIL_PASSWORD
-        value: hcossvokjfxvjuhi
+        sync: false
       - key: EMAIL_FROM
         value: mili241105@gmail.com
       - key: EMAIL_FROM_NAME
         value: GATIMAN Logistics
       - key: RAZORPAY_KEY_ID
-        value: rzp_test_TTNaA35CVbi6kG
+        sync: false
       - key: RAZORPAY_KEY_SECRET
-        value: JYOxId2dBdxzrurDVrwsy1Ws
+        sync: false
 
   # 2. GATIMAN Frontend Web App (React Vite)
   - type: web
