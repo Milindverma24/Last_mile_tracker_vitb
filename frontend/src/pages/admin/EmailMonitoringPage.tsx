@@ -138,10 +138,12 @@ export const EmailMonitoringPage: React.FC = () => {
       if (searchTerm.trim()) params.search = searchTerm.trim();
 
       const data = await emailApi.getEmailLogs(params);
-      setLogs(data.content);
-      setTotalPages(data.totalPages);
+      const items = Array.isArray(data?.content) ? data.content : Array.isArray(data) ? data : [];
+      setLogs(items);
+      setTotalPages(data?.totalPages || (items.length > 0 ? 1 : 0));
     } catch (e) {
       console.error('Failed to load email logs', e);
+      setLogs([]);
     } finally {
       setIsLoading(false);
     }

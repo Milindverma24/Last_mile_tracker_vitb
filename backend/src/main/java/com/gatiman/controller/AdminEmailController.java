@@ -50,7 +50,23 @@ public class AdminEmailController {
             @RequestParam(defaultValue = "15") int size
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<EmailLog> logs = emailLogRepository.searchLogs(status, eventType, search, pageable);
+        String term = (search != null && !search.isBlank()) ? search.trim() : null;
+
+        Page<EmailLog> logs;
+        if (term != null) {
+            logs = emailLogRepository.findByTrackingNumberContainingIgnoreCaseOrRecipientEmailContainingIgnoreCaseOrSubjectContainingIgnoreCase(
+                    term, term, term, pageable
+            );
+        } else if (status != null && eventType != null) {
+            logs = emailLogRepository.findByStatusAndEventType(status, eventType, pageable);
+        } else if (status != null) {
+            logs = emailLogRepository.findByStatus(status, pageable);
+        } else if (eventType != null) {
+            logs = emailLogRepository.findByEventType(eventType, pageable);
+        } else {
+            logs = emailLogRepository.findAll(pageable);
+        }
+
         return ResponseEntity.ok(ApiResponse.ok(logs));
     }
 

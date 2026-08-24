@@ -31,16 +31,12 @@ public interface EmailLogRepository extends JpaRepository<EmailLog, Long> {
 
     Page<EmailLog> findByEventType(EmailEventType eventType, Pageable pageable);
 
-    @Query("SELECT e FROM EmailLog e WHERE " +
-           "(:status IS NULL OR e.status = :status) AND " +
-           "(:eventType IS NULL OR e.eventType = :eventType) AND " +
-           "(:searchTerm IS NULL OR LOWER(e.trackingNumber) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-           " LOWER(e.recipientEmail) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-           " LOWER(e.subject) LIKE LOWER(CONCAT('%', :searchTerm, '%')))")
-    Page<EmailLog> searchLogs(
-            @Param("status") EmailStatus status,
-            @Param("eventType") EmailEventType eventType,
-            @Param("searchTerm") String searchTerm,
+    Page<EmailLog> findByStatusAndEventType(EmailStatus status, EmailEventType eventType, Pageable pageable);
+
+    Page<EmailLog> findByTrackingNumberContainingIgnoreCaseOrRecipientEmailContainingIgnoreCaseOrSubjectContainingIgnoreCase(
+            String trackingNumber,
+            String recipientEmail,
+            String subject,
             Pageable pageable
     );
 
