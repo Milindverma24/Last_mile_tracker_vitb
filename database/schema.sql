@@ -5,20 +5,31 @@
 -- 1. USERS TABLE
 CREATE TABLE IF NOT EXISTS users (
     id BIGSERIAL PRIMARY KEY,
-    version BIGINT DEFAULT 0,
+    uuid VARCHAR(255) NOT NULL UNIQUE,
     email VARCHAR(255) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
     first_name VARCHAR(100) NOT NULL,
-    last_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100),
     phone_number VARCHAR(30),
+    profile_image_url TEXT,
+    address TEXT,
+    city VARCHAR(100),
+    state VARCHAR(100),
+    pin_code VARCHAR(20),
+    email_verified BOOLEAN NOT NULL DEFAULT TRUE,
+    phone_verified BOOLEAN NOT NULL DEFAULT TRUE,
+    last_login_at TIMESTAMP WITH TIME ZONE,
     role VARCHAR(30) NOT NULL DEFAULT 'CUSTOMER', -- 'ADMIN', 'CUSTOMER', 'DELIVERY_AGENT'
     active BOOLEAN NOT NULL DEFAULT TRUE,
+    status VARCHAR(30) NOT NULL DEFAULT 'ACTIVE',
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+CREATE INDEX IF NOT EXISTS idx_users_uuid ON users(uuid);
 CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
+CREATE INDEX IF NOT EXISTS idx_users_status ON users(status);
 
 -- 2. CUSTOMERS TABLE
 CREATE TABLE IF NOT EXISTS customers (
