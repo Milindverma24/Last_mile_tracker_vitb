@@ -64,6 +64,9 @@ public class SecurityConfig {
                         // Public Price Preview & Tracking Lookup
                         .requestMatchers(HttpMethod.POST, "/api/orders/calculate-charge").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/orders/track/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/orders/*/tracking").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/deliveries/*/tracking").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/deliveries/track/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/zones").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/rate-cards").permitAll()
 
