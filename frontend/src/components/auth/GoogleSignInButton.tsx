@@ -252,7 +252,7 @@ export const GoogleSignInButton: React.FC<Props> = ({
             </button>
 
             <div className="mb-5 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 border border-indigo-100">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50 border border-orange-100">
                 <svg className="h-6 w-6" viewBox="0 0 24 24">
                   <path
                     fill="#4285F4"
@@ -290,11 +290,11 @@ export const GoogleSignInButton: React.FC<Props> = ({
                     onClick={() => setSelectedType('B2C')}
                     className={`flex flex-col items-center gap-1.5 rounded-xl border p-3 text-center transition cursor-pointer ${
                       selectedType === 'B2C'
-                        ? 'border-indigo-600 bg-indigo-50/80 text-indigo-900 shadow-xs'
+                        ? 'border-orange-600 bg-orange-50/80 text-orange-950 shadow-xs'
                         : 'border-slate-200 bg-slate-50/50 text-slate-600 hover:border-slate-300'
                     }`}
                   >
-                    <User className={`h-5 w-5 ${selectedType === 'B2C' ? 'text-indigo-600' : 'text-slate-400'}`} />
+                    <User className={`h-5 w-5 ${selectedType === 'B2C' ? 'text-orange-600' : 'text-slate-400'}`} />
                     <span className="text-xs font-bold">Personal (B2C)</span>
                     <span className="text-[10px] text-slate-500 leading-tight">Individual sender</span>
                   </button>
@@ -304,11 +304,11 @@ export const GoogleSignInButton: React.FC<Props> = ({
                     onClick={() => setSelectedType('B2B')}
                     className={`flex flex-col items-center gap-1.5 rounded-xl border p-3 text-center transition cursor-pointer ${
                       selectedType === 'B2B'
-                        ? 'border-indigo-600 bg-indigo-50/80 text-indigo-900 shadow-xs'
+                        ? 'border-orange-600 bg-orange-50/80 text-orange-950 shadow-xs'
                         : 'border-slate-200 bg-slate-50/50 text-slate-600 hover:border-slate-300'
                     }`}
                   >
-                    <Building className={`h-5 w-5 ${selectedType === 'B2B' ? 'text-indigo-600' : 'text-slate-400'}`} />
+                    <Building className={`h-5 w-5 ${selectedType === 'B2B' ? 'text-orange-600' : 'text-slate-400'}`} />
                     <span className="text-xs font-bold">Business (B2B)</span>
                     <span className="text-[10px] text-slate-500 leading-tight">Corporate & GST</span>
                   </button>
@@ -325,7 +325,7 @@ export const GoogleSignInButton: React.FC<Props> = ({
                     value={emailInput}
                     onChange={(e) => setEmailInput(e.target.value)}
                     placeholder="your-name@gmail.com"
-                    className="w-full rounded-lg border border-slate-300 py-2 pl-9 pr-3 text-sm text-slate-900 shadow-xs placeholder:text-slate-400 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
+                    className="w-full rounded-lg border border-slate-300 py-2 pl-9 pr-3 text-sm text-slate-900 shadow-xs placeholder:text-slate-400 focus:border-orange-600 focus:outline-none focus:ring-1 focus:ring-orange-600"
                   />
                 </div>
               </div>
@@ -338,7 +338,7 @@ export const GoogleSignInButton: React.FC<Props> = ({
                   value={nameInput}
                   onChange={(e) => setNameInput(e.target.value)}
                   placeholder="e.g. Rahul Sharma"
-                  className="mt-1 w-full rounded-lg border border-slate-300 py-2 px-3 text-sm text-slate-900 shadow-xs placeholder:text-slate-400 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
+                  className="mt-1 w-full rounded-lg border border-slate-300 py-2 px-3 text-sm text-slate-900 shadow-xs placeholder:text-slate-400 focus:border-orange-600 focus:outline-none focus:ring-1 focus:ring-orange-600"
                 />
               </div>
 
@@ -353,7 +353,7 @@ export const GoogleSignInButton: React.FC<Props> = ({
                     value={phoneInput}
                     onChange={(e) => setPhoneInput(e.target.value)}
                     placeholder="+91 98765 43210"
-                    className="w-full rounded-lg border border-slate-300 py-2 pl-9 pr-3 text-sm text-slate-900 shadow-xs placeholder:text-slate-400 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
+                    className="w-full rounded-lg border border-slate-300 py-2 pl-9 pr-3 text-sm text-slate-900 shadow-xs placeholder:text-slate-400 focus:border-orange-600 focus:outline-none focus:ring-1 focus:ring-orange-600"
                   />
                 </div>
               </div>
@@ -361,7 +361,7 @@ export const GoogleSignInButton: React.FC<Props> = ({
               {/* Address Coordinates */}
               <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3 space-y-2.5">
                 <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-700">
-                  <MapPin className="h-3.5 w-3.5 text-indigo-600" />
+                  <MapPin className="h-3.5 w-3.5 text-orange-600" />
                   Primary Delivery Address *
                 </div>
 
@@ -373,7 +373,7 @@ export const GoogleSignInButton: React.FC<Props> = ({
                     value={addressInput}
                     onChange={(e) => setAddressInput(e.target.value)}
                     placeholder="e.g. Flat 402, Greenfield Apartments"
-                    className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-900 shadow-xs focus:border-indigo-600 focus:outline-none"
+                    className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-900 shadow-xs focus:border-orange-600 focus:outline-none"
                   />
                 </div>
 
@@ -385,7 +385,7 @@ export const GoogleSignInButton: React.FC<Props> = ({
                       value={cityInput}
                       onChange={(e) => setCityInput(e.target.value)}
                       placeholder="New Delhi"
-                      className="mt-1 w-full rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs text-slate-900 shadow-xs focus:border-indigo-600 focus:outline-none"
+                      className="mt-1 w-full rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs text-slate-900 shadow-xs focus:border-orange-600 focus:outline-none"
                     />
                   </div>
                   <div>
@@ -395,7 +395,7 @@ export const GoogleSignInButton: React.FC<Props> = ({
                       value={stateInput}
                       onChange={(e) => setStateInput(e.target.value)}
                       placeholder="Delhi"
-                      className="mt-1 w-full rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs text-slate-900 shadow-xs focus:border-indigo-600 focus:outline-none"
+                      className="mt-1 w-full rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs text-slate-900 shadow-xs focus:border-orange-600 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -409,7 +409,7 @@ export const GoogleSignInButton: React.FC<Props> = ({
                     value={pinCodeInput}
                     onChange={(e) => setPinCodeInput(e.target.value)}
                     placeholder="110016"
-                    className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-900 shadow-xs focus:border-indigo-600 focus:outline-none font-mono"
+                    className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-900 shadow-xs focus:border-orange-600 focus:outline-none font-mono"
                   />
                 </div>
               </div>
@@ -424,7 +424,7 @@ export const GoogleSignInButton: React.FC<Props> = ({
                       value={companyName}
                       onChange={(e) => setCompanyName(e.target.value)}
                       placeholder="e.g. Acme Logistics Pvt Ltd"
-                      className="mt-1 w-full rounded-lg border border-slate-300 py-1.5 px-3 text-xs text-slate-900 shadow-xs focus:border-indigo-600 focus:outline-none"
+                      className="mt-1 w-full rounded-lg border border-slate-300 py-1.5 px-3 text-xs text-slate-900 shadow-xs focus:border-orange-600 focus:outline-none"
                     />
                   </div>
                   <div>
@@ -434,7 +434,7 @@ export const GoogleSignInButton: React.FC<Props> = ({
                       value={gstNumber}
                       onChange={(e) => setGstNumber(e.target.value.toUpperCase())}
                       placeholder="07AAAAA0000A1Z5"
-                      className="mt-1 w-full rounded-lg border border-slate-300 py-1.5 px-3 text-xs text-slate-900 shadow-xs focus:border-indigo-600 focus:outline-none"
+                      className="mt-1 w-full rounded-lg border border-slate-300 py-1.5 px-3 text-xs text-slate-900 shadow-xs focus:border-orange-600 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -451,7 +451,7 @@ export const GoogleSignInButton: React.FC<Props> = ({
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-xs font-bold text-white shadow-md hover:bg-indigo-500 transition cursor-pointer disabled:opacity-50"
+                  className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-orange-600 px-4 py-2.5 text-xs font-bold text-white shadow-md hover:bg-orange-500 transition cursor-pointer disabled:opacity-50"
                 >
                   {isLoading ? 'Signing In...' : 'Confirm & Sign In'}
                   <ArrowRight className="h-4 w-4" />

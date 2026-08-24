@@ -40,7 +40,7 @@ export const AdminSystemHealthPage: React.FC = () => {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
-            <Activity className="h-7 w-7 text-indigo-600" />
+            <Activity className="h-7 w-7 text-orange-600" />
             System Observability & Node Health
           </h1>
           <p className="text-sm text-slate-500">
@@ -84,16 +84,16 @@ export const AdminSystemHealthPage: React.FC = () => {
               <p className="text-xs text-slate-500 mt-1">Uptime: {formatUptime(health?.uptimeSeconds)}</p>
             </div>
 
-            <div className="rounded-2xl border border-indigo-200 bg-indigo-50/50 p-5 shadow-sm">
+            <div className="rounded-2xl border border-orange-200 bg-orange-50/50 p-5 shadow-sm">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold uppercase tracking-wider text-indigo-800">Database Engine</span>
-                <Database className="h-5 w-5 text-indigo-600" />
+                <Database className="h-5 w-5 text-orange-600" />
               </div>
               <div className="mt-3 flex items-baseline gap-2">
-                <p className="text-xl font-bold text-indigo-900 truncate">
+                <p className="text-xl font-bold text-orange-950 truncate">
                   {health?.databaseStatus === 'CONNECTED' ? 'PostgreSQL' : 'Connecting'}
                 </p>
-                <span className="text-xs font-bold px-2 py-0.5 rounded bg-indigo-100 text-indigo-700">
+                <span className="text-xs font-bold px-2 py-0.5 rounded bg-orange-100 text-orange-700">
                   {health?.dbQueryLatencyMs}ms
                 </span>
               </div>
@@ -103,7 +103,7 @@ export const AdminSystemHealthPage: React.FC = () => {
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold uppercase tracking-wider text-slate-500">HikariCP Pool</span>
-                <Zap className="h-5 w-5 text-indigo-500" />
+                <Zap className="h-5 w-5 text-orange-500" />
               </div>
               <div className="mt-3 flex items-baseline gap-2">
                 <p className="text-3xl font-black text-slate-900">
@@ -113,7 +113,7 @@ export const AdminSystemHealthPage: React.FC = () => {
               </div>
               <div className="mt-2 h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
                 <div
-                  className="h-full bg-indigo-600 rounded-full transition-all duration-300"
+                  className="h-full bg-orange-600 rounded-full transition-all duration-300"
                   style={{ width: `${Math.min(100, ((health?.activeDbConnections || 1) / (health?.maxDbPoolSize || 20)) * 100)}%` }}
                 />
               </div>
@@ -122,7 +122,7 @@ export const AdminSystemHealthPage: React.FC = () => {
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Fleet & In-Flight</span>
-                <Truck className="h-5 w-5 text-indigo-500" />
+                <Truck className="h-5 w-5 text-orange-500" />
               </div>
               <div className="mt-3 flex items-baseline gap-2">
                 <p className="text-3xl font-black text-slate-900">{health?.activeOrdersInFlight}</p>
@@ -138,17 +138,17 @@ export const AdminSystemHealthPage: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                    <Cpu className="h-5 w-5 text-indigo-600" />
+                    <Cpu className="h-5 w-5 text-orange-600" />
                     JVM Heap & Memory Allocation
                   </h3>
                   <p className="text-xs text-slate-500">Runtime memory consumption and garbage collection buffer</p>
                 </div>
-                <span className="text-sm font-black text-indigo-600">{health?.memoryUsagePercent}% Used</span>
+                <span className="text-sm font-black text-orange-600">{health?.memoryUsagePercent}% Used</span>
               </div>
 
               <div className="h-3 w-full rounded-full bg-slate-100 overflow-hidden">
                 <div
-                  className="h-full bg-indigo-600 rounded-full transition-all duration-500"
+                  className="h-full bg-orange-600 rounded-full transition-all duration-500"
                   style={{ width: `${health?.memoryUsagePercent || 0}%` }}
                 />
               </div>

@@ -84,7 +84,7 @@ export const DeliveryVideoPlayer: React.FC<Props> = ({
           onClick={togglePlay}
           className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-xs cursor-pointer transition"
         >
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-indigo-600/90 text-white shadow-2xl hover:scale-110 hover:bg-indigo-600 transition">
+          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-orange-600/90 text-white shadow-2xl hover:scale-110 hover:bg-orange-600 transition">
             <Play className="h-8 w-8 translate-x-0.5 fill-white" />
           </div>
         </div>
@@ -106,7 +106,7 @@ export const DeliveryVideoPlayer: React.FC<Props> = ({
         {/* Progress Bar */}
         <div className="w-full bg-white/20 h-1.5 rounded-full overflow-hidden mb-3 cursor-pointer">
           <div
-            className="bg-indigo-500 h-full transition-all duration-150"
+            className="bg-orange-500 h-full transition-all duration-150"
             style={{ width: `${progress}%` }}
           />
         </div>

@@ -159,7 +159,7 @@ export const CompleteProfileModal: React.FC = () => {
         </button>
 
         <div className="flex items-start gap-4 border-b border-slate-100 pb-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-orange-50 border border-orange-100 text-orange-600">
             <Sparkles className="h-6 w-6" />
           </div>
           <div>
@@ -195,7 +195,7 @@ export const CompleteProfileModal: React.FC = () => {
                   onChange={handleChange}
                   placeholder="First Name"
                   required
-                  className="w-full rounded-xl border border-slate-300 py-2.5 pl-9 pr-3 text-sm text-slate-900 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500/15 focus:outline-none"
+                  className="w-full rounded-xl border border-slate-300 py-2.5 pl-9 pr-3 text-sm text-slate-900 focus:border-orange-600 focus:ring-2 focus:ring-orange-500/15 focus:outline-none"
                 />
               </div>
             </div>
@@ -209,7 +209,7 @@ export const CompleteProfileModal: React.FC = () => {
                 value={formData.lastName}
                 onChange={handleChange}
                 placeholder="Last Name"
-                className="w-full rounded-xl border border-slate-300 py-2.5 px-3 text-sm text-slate-900 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500/15 focus:outline-none"
+                className="w-full rounded-xl border border-slate-300 py-2.5 px-3 text-sm text-slate-900 focus:border-orange-600 focus:ring-2 focus:ring-orange-500/15 focus:outline-none"
               />
             </div>
           </div>
@@ -228,7 +228,7 @@ export const CompleteProfileModal: React.FC = () => {
                 onChange={handleChange}
                 placeholder="+91 98111 22233"
                 required
-                className="w-full rounded-xl border border-slate-300 py-2.5 pl-9 pr-3 text-sm text-slate-900 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500/15 focus:outline-none"
+                className="w-full rounded-xl border border-slate-300 py-2.5 pl-9 pr-3 text-sm text-slate-900 focus:border-orange-600 focus:ring-2 focus:ring-orange-500/15 focus:outline-none"
               />
             </div>
           </div>
@@ -247,7 +247,7 @@ export const CompleteProfileModal: React.FC = () => {
                 onChange={handleChange}
                 placeholder="e.g. Flat 402, Greenfield Apartments, Ring Road"
                 required
-                className="w-full rounded-xl border border-slate-300 py-2.5 pl-9 pr-3 text-sm text-slate-900 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500/15 focus:outline-none"
+                className="w-full rounded-xl border border-slate-300 py-2.5 pl-9 pr-3 text-sm text-slate-900 focus:border-orange-600 focus:ring-2 focus:ring-orange-500/15 focus:outline-none"
               />
             </div>
           </div>
@@ -264,7 +264,7 @@ export const CompleteProfileModal: React.FC = () => {
                 value={formData.city}
                 onChange={handleChange}
                 placeholder="New Delhi"
-                className="w-full rounded-xl border border-slate-300 py-2.5 px-3 text-sm text-slate-900 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500/15 focus:outline-none"
+                className="w-full rounded-xl border border-slate-300 py-2.5 px-3 text-sm text-slate-900 focus:border-orange-600 focus:ring-2 focus:ring-orange-500/15 focus:outline-none"
               />
             </div>
             <div>
@@ -277,7 +277,7 @@ export const CompleteProfileModal: React.FC = () => {
                 value={formData.state}
                 onChange={handleChange}
                 placeholder="Delhi"
-                className="w-full rounded-xl border border-slate-300 py-2.5 px-3 text-sm text-slate-900 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500/15 focus:outline-none"
+                className="w-full rounded-xl border border-slate-300 py-2.5 px-3 text-sm text-slate-900 focus:border-orange-600 focus:ring-2 focus:ring-orange-500/15 focus:outline-none"
               />
             </div>
             <div>
@@ -292,7 +292,7 @@ export const CompleteProfileModal: React.FC = () => {
                 onChange={handleChange}
                 placeholder="110016"
                 required
-                className="w-full rounded-xl border border-slate-300 py-2.5 px-3 text-sm text-slate-900 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500/15 focus:outline-none font-mono"
+                className="w-full rounded-xl border border-slate-300 py-2.5 px-3 text-sm text-slate-900 focus:border-orange-600 focus:ring-2 focus:ring-orange-500/15 focus:outline-none font-mono"
               />
             </div>
           </div>
@@ -309,7 +309,7 @@ export const CompleteProfileModal: React.FC = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-2.5 text-sm font-bold text-white shadow-md hover:bg-indigo-700 transition cursor-pointer disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-xl bg-orange-600 px-6 py-2.5 text-sm font-bold text-white shadow-md hover:bg-orange-700 transition cursor-pointer disabled:opacity-50"
             >
               {isSubmitting ? (
                 'Saving...'

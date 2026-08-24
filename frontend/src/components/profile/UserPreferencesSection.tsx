@@ -35,7 +35,7 @@ export const UserPreferencesSection: React.FC<Props> = ({ preferences, onSave, i
     <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 space-y-6">
       <div className="border-b border-slate-100 pb-4">
         <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-          <Globe className="h-5 w-5 text-indigo-600" />
+          <Globe className="h-5 w-5 text-orange-600" />
           Localization & Display Preferences
         </h2>
         <p className="text-xs text-slate-500">Configure language, time standard, and date formats</p>
@@ -63,7 +63,7 @@ export const UserPreferencesSection: React.FC<Props> = ({ preferences, onSave, i
           <select
             value={formData.language}
             onChange={(e) => setFormData({ ...formData, language: e.target.value })}
-            className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-sm text-slate-900 focus:border-indigo-600 focus:outline-none"
+            className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-sm text-slate-900 focus:border-orange-600 focus:outline-none"
           >
             <option value="en">English (Default)</option>
             <option value="hi">हिन्दी (Hindi)</option>
@@ -77,7 +77,7 @@ export const UserPreferencesSection: React.FC<Props> = ({ preferences, onSave, i
           <select
             value={formData.timezone}
             onChange={(e) => setFormData({ ...formData, timezone: e.target.value })}
-            className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-sm text-slate-900 focus:border-indigo-600 focus:outline-none"
+            className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-sm text-slate-900 focus:border-orange-600 focus:outline-none"
           >
             <option value="Asia/Kolkata">India Standard Time (IST - UTC+05:30)</option>
             <option value="UTC">Coordinated Universal Time (UTC)</option>
@@ -91,7 +91,7 @@ export const UserPreferencesSection: React.FC<Props> = ({ preferences, onSave, i
           <select
             value={formData.dateFormat}
             onChange={(e) => setFormData({ ...formData, dateFormat: e.target.value })}
-            className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-sm text-slate-900 focus:border-indigo-600 focus:outline-none"
+            className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-sm text-slate-900 focus:border-orange-600 focus:outline-none"
           >
             <option value="DD/MM/YYYY">DD/MM/YYYY (e.g. 20/08/2026)</option>
             <option value="YYYY-MM-DD">YYYY-MM-DD (e.g. 2026-08-20)</option>
@@ -103,7 +103,7 @@ export const UserPreferencesSection: React.FC<Props> = ({ preferences, onSave, i
           <button
             type="submit"
             disabled={isLoading}
-            className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold shadow hover:bg-indigo-500 disabled:opacity-50 transition"
+            className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl bg-orange-600 text-white text-xs font-bold shadow hover:bg-orange-500 disabled:opacity-50 transition"
           >
             {isLoading ? 'Saving Preferences...' : 'Save Display Preferences'}
           </button>

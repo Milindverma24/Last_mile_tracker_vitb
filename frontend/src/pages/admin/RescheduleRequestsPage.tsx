@@ -80,7 +80,7 @@ export const AdminRescheduleRequestsPage: React.FC = () => {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
-            <CalendarClock className="h-7 w-7 text-indigo-600" />
+            <CalendarClock className="h-7 w-7 text-orange-600" />
             Customer Reschedule Queue
           </h1>
           <p className="text-sm text-slate-500">
@@ -96,7 +96,7 @@ export const AdminRescheduleRequestsPage: React.FC = () => {
               onClick={() => setStatusFilter(st)}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
                 statusFilter === st
-                  ? 'bg-indigo-600 text-white shadow'
+                  ? 'bg-orange-600 text-white shadow'
                   : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
               }`}
             >
@@ -138,7 +138,7 @@ export const AdminRescheduleRequestsPage: React.FC = () => {
           placeholder="Search by tracking number, customer name, destination zone..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-900 shadow-sm focus:border-indigo-600 focus:outline-none"
+          className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-900 shadow-sm focus:border-orange-600 focus:outline-none"
         />
       </div>
 
@@ -169,7 +169,7 @@ export const AdminRescheduleRequestsPage: React.FC = () => {
                 {filteredRequests.map((req) => (
                   <tr key={req.id} className="hover:bg-slate-50/60 transition">
                     <td className="py-3 px-4">
-                      <span className="font-mono font-bold text-indigo-700">{req.trackingNumber}</span>
+                      <span className="font-mono font-bold text-orange-700">{req.trackingNumber}</span>
                       <p className="text-xs text-slate-500">{req.dropZoneName}</p>
                     </td>
                     <td className="py-3 px-4">
@@ -178,7 +178,7 @@ export const AdminRescheduleRequestsPage: React.FC = () => {
                     </td>
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-1.5 font-semibold text-slate-800">
-                        <CalendarClock className="h-4 w-4 text-indigo-600" />
+                        <CalendarClock className="h-4 w-4 text-orange-600" />
                         {req.requestedDate}
                       </div>
                       <p className="text-xs text-slate-500">{req.preferredTimeSlot || 'Standard Delivery Window'}</p>
@@ -276,7 +276,7 @@ export const AdminRescheduleRequestsPage: React.FC = () => {
                 <select
                   value={overrideAgentId || ''}
                   onChange={(e) => setOverrideAgentId(e.target.value ? Number(e.target.value) : undefined)}
-                  className="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 focus:border-indigo-600 focus:outline-none"
+                  className="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 focus:border-orange-600 focus:outline-none"
                 >
                   <option value="">⚡ Auto-assign nearest available driver in zone (Recommended)</option>
                   {agents.map((a) => (
@@ -299,7 +299,7 @@ export const AdminRescheduleRequestsPage: React.FC = () => {
                   value={rejectionReason}
                   onChange={(e) => setRejectionReason(e.target.value)}
                   placeholder="e.g. Schedule capacity full on requested date. Please select another slot..."
-                  className="w-full rounded-lg border border-slate-300 px-3.5 py-2 text-sm text-slate-900 focus:border-indigo-600 focus:outline-none"
+                  className="w-full rounded-lg border border-slate-300 px-3.5 py-2 text-sm text-slate-900 focus:border-orange-600 focus:outline-none"
                 />
               </div>
             )}

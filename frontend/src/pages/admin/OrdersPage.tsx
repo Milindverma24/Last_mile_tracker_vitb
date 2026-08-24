@@ -80,8 +80,8 @@ export const AdminOrdersPage: React.FC = () => {
       case 'OUT_FOR_DELIVERY':
         return {
           label: 'Out for Delivery',
-          classes: 'bg-indigo-50 text-indigo-700 border-indigo-200',
-          dot: 'bg-indigo-500 animate-pulse',
+          classes: 'bg-orange-50 text-orange-700 border-orange-200',
+          dot: 'bg-orange-500 animate-pulse',
         };
       case 'IN_TRANSIT':
         return {
@@ -135,7 +135,7 @@ export const AdminOrdersPage: React.FC = () => {
         return { label: 'Inter-State', bg: 'bg-purple-50 text-purple-700 border-purple-200' };
       case 'INTER_ZONE':
       case 'INTER_CITY':
-        return { label: 'Inter-City', bg: 'bg-indigo-50 text-indigo-700 border-indigo-200' };
+        return { label: 'Inter-City', bg: 'bg-orange-50 text-orange-700 border-orange-200' };
       case 'INTRA_ZONE':
       case 'INTRA_CITY':
       default:
@@ -204,7 +204,7 @@ export const AdminOrdersPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200/80 pb-5">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2.5">
-            <Package className="h-6 w-6 text-indigo-600" />
+            <Package className="h-6 w-6 text-orange-600" />
             Dispatch & Order Management
           </h1>
           <p className="text-xs text-slate-500 mt-1">
@@ -215,7 +215,7 @@ export const AdminOrdersPage: React.FC = () => {
         <div className="flex items-center gap-2.5">
           <button
             onClick={() => setShowCreateModal(true)}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-3.5 py-2 text-xs font-bold text-white shadow-2xs hover:bg-indigo-700 transition cursor-pointer"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-orange-600 px-3.5 py-2 text-xs font-bold text-white shadow-2xs hover:bg-orange-700 transition cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" /> Book Customer Dispatch
           </button>
@@ -223,7 +223,7 @@ export const AdminOrdersPage: React.FC = () => {
             onClick={() => refetch()}
             className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 shadow-2xs hover:bg-slate-50 transition cursor-pointer"
           >
-            <RefreshCw className="h-3.5 w-3.5 text-indigo-600" /> Refresh Dispatches
+            <RefreshCw className="h-3.5 w-3.5 text-orange-600" /> Refresh Dispatches
           </button>
         </div>
       </div>
@@ -251,7 +251,7 @@ export const AdminOrdersPage: React.FC = () => {
               onClick={() => setStatusTab(tab.id)}
               className={`flex items-center gap-2 rounded-xl px-3.5 py-1.5 text-xs font-bold transition cursor-pointer ${
                 statusTab === tab.id
-                  ? 'bg-indigo-600 text-white shadow-xs'
+                  ? 'bg-orange-600 text-white shadow-xs'
                   : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
               }`}
             >
@@ -280,7 +280,7 @@ export const AdminOrdersPage: React.FC = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search tracking #, customer, recipient, or PIN..."
-              className="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2 pl-9 pr-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-indigo-600 focus:bg-white focus:outline-none transition"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2 pl-9 pr-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-orange-600 focus:bg-white focus:outline-none transition"
             />
           </div>
 
@@ -289,7 +289,7 @@ export const AdminOrdersPage: React.FC = () => {
             <select
               value={routeFilter}
               onChange={(e) => setRouteFilter(e.target.value)}
-              className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-700 focus:border-indigo-600 focus:bg-white focus:outline-none cursor-pointer"
+              className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-700 focus:border-orange-600 focus:bg-white focus:outline-none cursor-pointer"
             >
               <option value="ALL">All Routes (Local & Regional)</option>
               <option value="INTRA_ZONE">Intra-City (Local)</option>
@@ -304,7 +304,7 @@ export const AdminOrdersPage: React.FC = () => {
       <div className="rounded-2xl border border-slate-200 bg-white shadow-2xs overflow-hidden">
         {isLoading ? (
           <div className="p-16 text-center text-xs font-semibold text-slate-400">
-            <RefreshCw className="h-6 w-6 animate-spin mx-auto text-indigo-600 mb-2" />
+            <RefreshCw className="h-6 w-6 animate-spin mx-auto text-orange-600 mb-2" />
             Loading parcel dispatches...
           </div>
         ) : filteredOrders.length === 0 ? (
@@ -340,7 +340,7 @@ export const AdminOrdersPage: React.FC = () => {
                       <td className="px-5 py-4">
                         <Link
                           to={`/admin/orders/${order.id}`}
-                          className="font-mono font-bold text-indigo-600 hover:text-indigo-800 hover:underline inline-flex items-center gap-1"
+                          className="font-mono font-bold text-orange-600 hover:text-indigo-800 hover:underline inline-flex items-center gap-1"
                         >
                           {order.trackingNumber}
                         </Link>
@@ -356,7 +356,7 @@ export const AdminOrdersPage: React.FC = () => {
                           <span className="font-medium">{order.customerType || 'B2C'}</span>
                           <span>•</span>
                           <span className="inline-flex items-center gap-1 font-bold text-slate-700">
-                            {order.paymentType === 'COD' ? <Banknote className="h-3 w-3 text-emerald-600" /> : <CreditCard className="h-3 w-3 text-indigo-600" />}
+                            {order.paymentType === 'COD' ? <Banknote className="h-3 w-3 text-emerald-600" /> : <CreditCard className="h-3 w-3 text-orange-600" />}
                             ₹{Number(order.totalCharge).toFixed(2)}
                           </span>
                         </div>
@@ -389,7 +389,7 @@ export const AdminOrdersPage: React.FC = () => {
                       <td className="px-5 py-4">
                         {order.assignedAgentName ? (
                           <div className="flex items-center gap-2">
-                            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-50 border border-indigo-100 text-[10px] font-bold text-indigo-700 uppercase">
+                            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-orange-50 border border-orange-100 text-[10px] font-bold text-orange-700 uppercase">
                               {order.assignedAgentName.slice(0, 2)}
                             </div>
                             <span className="font-bold text-slate-800">{order.assignedAgentName}</span>
@@ -418,7 +418,7 @@ export const AdminOrdersPage: React.FC = () => {
                             <>
                               <button
                                 onClick={() => handleAutoAssign(order.id)}
-                                className="inline-flex items-center gap-1 rounded-lg bg-indigo-600 px-2.5 py-1 text-[11px] font-bold text-white shadow-2xs hover:bg-indigo-500 transition cursor-pointer"
+                                className="inline-flex items-center gap-1 rounded-lg bg-orange-600 px-2.5 py-1 text-[11px] font-bold text-white shadow-2xs hover:bg-orange-500 transition cursor-pointer"
                                 title="Smart GPS Proximity Auto-Dispatch"
                               >
                                 <Zap className="h-3 w-3" /> Auto
@@ -460,7 +460,7 @@ export const AdminOrdersPage: React.FC = () => {
                   Dispatch Parcel #{selectedOrderForManual.trackingNumber}
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Weight: <strong className="text-slate-800">{selectedOrderForManual.billableWeightKg} kg</strong> · Vehicle Tier: <strong className="text-indigo-600">{getVehicleMeta(selectedOrderForManual.billableWeightKg).label}</strong>
+                  Weight: <strong className="text-slate-800">{selectedOrderForManual.billableWeightKg} kg</strong> · Vehicle Tier: <strong className="text-orange-600">{getVehicleMeta(selectedOrderForManual.billableWeightKg).label}</strong>
                 </p>
               </div>
               <button
@@ -484,7 +484,7 @@ export const AdminOrdersPage: React.FC = () => {
                 <select
                   value={selectedAgentId}
                   onChange={(e) => setSelectedAgentId(e.target.value ? Number(e.target.value) : '')}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-xs font-semibold text-slate-800 focus:border-indigo-600 focus:bg-white focus:outline-none"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-xs font-semibold text-slate-800 focus:border-orange-600 focus:bg-white focus:outline-none"
                 >
                   <option value="">-- Choose active delivery driver --</option>
                   {agents.map((agent) => {
@@ -514,7 +514,7 @@ export const AdminOrdersPage: React.FC = () => {
               <button
                 onClick={handleManualAssignConfirm}
                 disabled={!selectedAgentId}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2 font-bold text-white shadow-sm hover:bg-indigo-500 disabled:opacity-50 transition cursor-pointer"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-orange-600 px-4 py-2 font-bold text-white shadow-sm hover:bg-orange-500 disabled:opacity-50 transition cursor-pointer"
               >
                 <Send className="h-3.5 w-3.5" /> Confirm Dispatch
               </button>

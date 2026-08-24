@@ -154,7 +154,7 @@ export const AdminCreateOrderModal: React.FC<AdminCreateOrderModalProps> = ({
       <div className="relative w-full max-w-3xl rounded-2xl bg-white p-6 shadow-2xl border border-slate-200 my-8">
         <div className="flex items-center justify-between border-b border-slate-100 pb-4">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50 text-orange-600">
               <Package className="h-5 w-5" />
             </div>
             <div>
@@ -179,16 +179,16 @@ export const AdminCreateOrderModal: React.FC<AdminCreateOrderModalProps> = ({
 
         <form onSubmit={handleSubmit} className="mt-4 space-y-4">
           {/* Customer Selection */}
-          <div className="rounded-xl border border-indigo-100 bg-indigo-50/40 p-3.5 space-y-2">
+          <div className="rounded-xl border border-orange-100 bg-orange-50/40 p-3.5 space-y-2">
             <label className="block text-xs font-bold text-indigo-950 flex items-center gap-1.5">
-              <User className="h-3.5 w-3.5 text-indigo-600" /> Select Customer Account
+              <User className="h-3.5 w-3.5 text-orange-600" /> Select Customer Account
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="sm:col-span-2">
                 <select
                   value={selectedCustomerId}
                   onChange={(e) => handleCustomerChange(Number(e.target.value))}
-                  className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-2xs focus:border-indigo-500 focus:outline-hidden"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-2xs focus:border-orange-500 focus:outline-hidden"
                 >
                   {customers.map((c) => (
                     <option key={c.id} value={c.id}>
@@ -302,7 +302,7 @@ export const AdminCreateOrderModal: React.FC<AdminCreateOrderModalProps> = ({
           {/* Package Weight & Dimensions */}
           <div className="rounded-xl border border-slate-200 bg-white p-3.5 space-y-2.5">
             <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-              <Package className="h-3.5 w-3.5 text-indigo-600" /> Package Specifications
+              <Package className="h-3.5 w-3.5 text-orange-600" /> Package Specifications
             </span>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
               <div>
@@ -388,7 +388,7 @@ export const AdminCreateOrderModal: React.FC<AdminCreateOrderModalProps> = ({
             <button
               type="submit"
               disabled={isSubmitting || isCalculating}
-              className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2 text-xs font-bold text-white shadow-xs hover:bg-indigo-700 disabled:opacity-50 transition cursor-pointer"
+              className="inline-flex items-center gap-2 rounded-xl bg-orange-600 px-5 py-2 text-xs font-bold text-white shadow-xs hover:bg-orange-700 disabled:opacity-50 transition cursor-pointer"
             >
               {isSubmitting ? 'Creating Dispatch...' : 'Confirm & Auto-Dispatch'}
               <ArrowRight className="h-3.5 w-3.5" />

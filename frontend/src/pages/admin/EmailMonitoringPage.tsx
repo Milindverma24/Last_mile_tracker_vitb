@@ -44,14 +44,14 @@ const EVENT_TYPE_CONFIG: Record<
   EmailEventType,
   { label: string; badgeColor: string; Icon: React.ElementType; iconColor: string; category: string }
 > = {
-  ORDER_CREATED: { label: 'Order Created', badgeColor: 'bg-indigo-50 text-indigo-700 border-indigo-200', Icon: FileText, iconColor: 'text-indigo-600', category: 'Booking' },
+  ORDER_CREATED: { label: 'Order Created', badgeColor: 'bg-orange-50 text-orange-700 border-orange-200', Icon: FileText, iconColor: 'text-orange-600', category: 'Booking' },
   ORDER_CONFIRMED: { label: 'Order Confirmed', badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200', Icon: CheckCircle2, iconColor: 'text-emerald-600', category: 'Booking' },
   AGENT_ASSIGNED: { label: 'Partner Assigned', badgeColor: 'bg-blue-50 text-blue-700 border-blue-200', Icon: UserCheck, iconColor: 'text-blue-600', category: 'Booking' },
   ORDER_PREPARING: { label: 'Preparing', badgeColor: 'bg-amber-50 text-amber-700 border-amber-200', Icon: PackageCheck, iconColor: 'text-amber-600', category: 'Booking' },
   ORDER_READY: { label: 'Ready for Pickup', badgeColor: 'bg-amber-50 text-amber-700 border-amber-200', Icon: PackageCheck, iconColor: 'text-amber-600', category: 'Booking' },
   PICKED_UP: { label: 'Picked Up', badgeColor: 'bg-violet-50 text-violet-700 border-violet-200', Icon: PackageCheck, iconColor: 'text-violet-600', category: 'In Transit' },
-  ON_THE_WAY: { label: 'Out for Delivery', badgeColor: 'bg-indigo-50 text-indigo-700 border-indigo-200', Icon: Truck, iconColor: 'text-indigo-600', category: 'In Transit' },
-  OUT_FOR_DELIVERY: { label: 'Out for Delivery', badgeColor: 'bg-indigo-50 text-indigo-700 border-indigo-200', Icon: Truck, iconColor: 'text-indigo-600', category: 'In Transit' },
+  ON_THE_WAY: { label: 'Out for Delivery', badgeColor: 'bg-orange-50 text-orange-700 border-orange-200', Icon: Truck, iconColor: 'text-orange-600', category: 'In Transit' },
+  OUT_FOR_DELIVERY: { label: 'Out for Delivery', badgeColor: 'bg-orange-50 text-orange-700 border-orange-200', Icon: Truck, iconColor: 'text-orange-600', category: 'In Transit' },
   NEAR_DESTINATION: { label: 'Near Destination', badgeColor: 'bg-purple-50 text-purple-700 border-purple-200', Icon: MapPin, iconColor: 'text-purple-600', category: 'In Transit' },
   DELIVERED: { label: 'Delivered', badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200', Icon: CheckCircle2, iconColor: 'text-emerald-600', category: 'In Transit' },
   DELIVERY_CANCELLED: { label: 'Cancelled', badgeColor: 'bg-slate-100 text-slate-700 border-slate-200', Icon: X, iconColor: 'text-slate-600', category: 'Exceptions' },
@@ -222,7 +222,7 @@ export const EmailMonitoringPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-5">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2.5">
-            <Mail className="h-6 w-6 text-indigo-600" />
+            <Mail className="h-6 w-6 text-orange-600" />
             Email Notification Hub
           </h1>
           <p className="text-xs text-slate-500 mt-1">
@@ -238,11 +238,11 @@ export const EmailMonitoringPage: React.FC = () => {
             }}
             className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 shadow-2xs hover:bg-slate-50 transition cursor-pointer"
           >
-            <RefreshCw className="h-3.5 w-3.5 text-indigo-600" /> Refresh
+            <RefreshCw className="h-3.5 w-3.5 text-orange-600" /> Refresh
           </button>
           <button
             onClick={() => setActiveTab('test')}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-3.5 py-2 text-xs font-bold text-white shadow-2xs hover:bg-indigo-500 transition cursor-pointer"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-orange-600 px-3.5 py-2 text-xs font-bold text-white shadow-2xs hover:bg-orange-500 transition cursor-pointer"
           >
             <Send className="h-3.5 w-3.5" /> Dispatch Test Email
           </button>
@@ -290,12 +290,12 @@ export const EmailMonitoringPage: React.FC = () => {
         </div>
 
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs">
-          <div className="flex items-center justify-between text-indigo-400">
+          <div className="flex items-center justify-between text-orange-400">
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Active Relay</span>
-            <Server className="h-4 w-4 text-indigo-600" />
+            <Server className="h-4 w-4 text-orange-600" />
           </div>
           <div className="mt-1 flex items-baseline gap-2">
-            <span className="text-xl font-black text-indigo-700">Gmail / Brevo</span>
+            <span className="text-xl font-black text-orange-700">Gmail / Brevo</span>
           </div>
           <p className="mt-1 text-[11px] text-emerald-600 font-semibold flex items-center gap-1">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -310,7 +310,7 @@ export const EmailMonitoringPage: React.FC = () => {
           onClick={() => setActiveTab('logs')}
           className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition cursor-pointer ${
             activeTab === 'logs'
-              ? 'bg-indigo-600 text-white shadow-xs'
+              ? 'bg-orange-600 text-white shadow-xs'
               : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
           }`}
         >
@@ -321,7 +321,7 @@ export const EmailMonitoringPage: React.FC = () => {
           onClick={() => setActiveTab('gallery')}
           className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition cursor-pointer ${
             activeTab === 'gallery'
-              ? 'bg-indigo-600 text-white shadow-xs'
+              ? 'bg-orange-600 text-white shadow-xs'
               : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
           }`}
         >
@@ -332,7 +332,7 @@ export const EmailMonitoringPage: React.FC = () => {
           onClick={() => setActiveTab('test')}
           className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition cursor-pointer ${
             activeTab === 'test'
-              ? 'bg-indigo-600 text-white shadow-xs'
+              ? 'bg-orange-600 text-white shadow-xs'
               : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
           }`}
         >
@@ -353,7 +353,7 @@ export const EmailMonitoringPage: React.FC = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search tracking #, recipient email, or subject..."
-                className="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2 pl-9 pr-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-indigo-600 focus:bg-white focus:outline-none transition"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2 pl-9 pr-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-orange-600 focus:bg-white focus:outline-none transition"
               />
             </form>
 
@@ -366,7 +366,7 @@ export const EmailMonitoringPage: React.FC = () => {
                     setEventTypeFilter(e.target.value);
                     setPage(0);
                   }}
-                  className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-700 focus:border-indigo-600 focus:bg-white focus:outline-none cursor-pointer"
+                  className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-700 focus:border-orange-600 focus:bg-white focus:outline-none cursor-pointer"
                 >
                   <option value="ALL">All Event Milestones</option>
                   {ALL_EVENT_TYPES.map((et) => (
@@ -387,7 +387,7 @@ export const EmailMonitoringPage: React.FC = () => {
                     }}
                     className={`rounded-lg px-2.5 py-1 text-[11px] font-bold transition cursor-pointer ${
                       statusFilter === st
-                        ? 'bg-white text-indigo-700 shadow-2xs'
+                        ? 'bg-white text-orange-700 shadow-2xs'
                         : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
@@ -402,7 +402,7 @@ export const EmailMonitoringPage: React.FC = () => {
           <div className="rounded-2xl border border-slate-200 bg-white shadow-2xs overflow-hidden">
             {isLoading ? (
               <div className="p-16 text-center text-xs font-semibold text-slate-400">
-                <RefreshCw className="h-6 w-6 animate-spin mx-auto text-indigo-600 mb-2" />
+                <RefreshCw className="h-6 w-6 animate-spin mx-auto text-orange-600 mb-2" />
                 Querying email transmission audit logs...
               </div>
             ) : logs.length === 0 ? (
@@ -481,7 +481,7 @@ export const EmailMonitoringPage: React.FC = () => {
                             </span>
                           </td>
 
-                          <td className="px-5 py-4 font-mono font-bold text-indigo-600">
+                          <td className="px-5 py-4 font-mono font-bold text-orange-600">
                             <Link to={`/track/${logItem.trackingNumber}`} target="_blank" className="hover:underline inline-flex items-center gap-1">
                               {logItem.trackingNumber}
                               <ExternalLink className="h-3 w-3 text-slate-400" />
@@ -518,7 +518,7 @@ export const EmailMonitoringPage: React.FC = () => {
                               )}
                               <button
                                 onClick={() => setPreviewLog(logItem)}
-                                className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-bold text-slate-700 hover:bg-slate-50 hover:text-indigo-600 transition cursor-pointer shadow-2xs"
+                                className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-bold text-slate-700 hover:bg-slate-50 hover:text-orange-600 transition cursor-pointer shadow-2xs"
                               >
                                 <Eye className="h-3 w-3" /> Inspect HTML
                               </button>
@@ -589,7 +589,7 @@ export const EmailMonitoringPage: React.FC = () => {
                           onClick={() => loadGalleryTemplate(type)}
                           className={`w-full flex items-center justify-between rounded-xl px-3 py-2 text-xs font-bold transition cursor-pointer text-left ${
                             active
-                              ? 'bg-indigo-600 text-white shadow-xs'
+                              ? 'bg-orange-600 text-white shadow-xs'
                               : 'bg-slate-50/70 text-slate-700 hover:bg-slate-100 border border-slate-100'
                           }`}
                         >
@@ -626,7 +626,7 @@ export const EmailMonitoringPage: React.FC = () => {
                   <button
                     onClick={() => setViewMode('desktop')}
                     className={`p-1.5 rounded-lg transition cursor-pointer ${
-                      viewMode === 'desktop' ? 'bg-white text-indigo-600 shadow-2xs' : 'text-slate-500 hover:text-slate-800'
+                      viewMode === 'desktop' ? 'bg-white text-orange-600 shadow-2xs' : 'text-slate-500 hover:text-slate-800'
                     }`}
                     title="Desktop Preview (640px)"
                   >
@@ -635,7 +635,7 @@ export const EmailMonitoringPage: React.FC = () => {
                   <button
                     onClick={() => setViewMode('mobile')}
                     className={`p-1.5 rounded-lg transition cursor-pointer ${
-                      viewMode === 'mobile' ? 'bg-white text-indigo-600 shadow-2xs' : 'text-slate-500 hover:text-slate-800'
+                      viewMode === 'mobile' ? 'bg-white text-orange-600 shadow-2xs' : 'text-slate-500 hover:text-slate-800'
                     }`}
                     title="Mobile View (375px)"
                   >
@@ -644,7 +644,7 @@ export const EmailMonitoringPage: React.FC = () => {
                   <button
                     onClick={() => setViewMode('code')}
                     className={`p-1.5 rounded-lg transition cursor-pointer ${
-                      viewMode === 'code' ? 'bg-white text-indigo-600 shadow-2xs' : 'text-slate-500 hover:text-slate-800'
+                      viewMode === 'code' ? 'bg-white text-orange-600 shadow-2xs' : 'text-slate-500 hover:text-slate-800'
                     }`}
                     title="HTML Source Code"
                   >
@@ -664,7 +664,7 @@ export const EmailMonitoringPage: React.FC = () => {
                     setTestEventType(galleryEventType);
                     setActiveTab('test');
                   }}
-                  className="inline-flex items-center gap-1 rounded-xl bg-indigo-600 px-3 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-indigo-500 transition cursor-pointer"
+                  className="inline-flex items-center gap-1 rounded-xl bg-orange-600 px-3 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-orange-500 transition cursor-pointer"
                 >
                   <Send className="h-3.5 w-3.5" /> Test Send
                 </button>
@@ -678,7 +678,7 @@ export const EmailMonitoringPage: React.FC = () => {
                 <span className="text-slate-400">Order #GTM-20260820-875171</span>
               </div>
               <div className="text-slate-700 font-sans font-semibold text-xs truncate">
-                Subject: <span className="text-indigo-700 font-bold">{EVENT_TYPE_CONFIG[galleryEventType]?.label} — GATIMAN Delivery Update</span>
+                Subject: <span className="text-orange-700 font-bold">{EVENT_TYPE_CONFIG[galleryEventType]?.label} — GATIMAN Delivery Update</span>
               </div>
             </div>
 
@@ -686,7 +686,7 @@ export const EmailMonitoringPage: React.FC = () => {
             <div className="rounded-2xl border border-slate-200 bg-slate-100/90 p-5 shadow-2xs flex justify-center min-h-[500px]">
               {galleryLoading ? (
                 <div className="h-96 flex flex-col items-center justify-center text-xs text-slate-500">
-                  <RefreshCw className="h-6 w-6 animate-spin text-indigo-600 mb-2" />
+                  <RefreshCw className="h-6 w-6 animate-spin text-orange-600 mb-2" />
                   Rendering email template...
                 </div>
               ) : viewMode === 'code' ? (
@@ -718,7 +718,7 @@ export const EmailMonitoringPage: React.FC = () => {
         <div className="max-w-2xl mx-auto rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-2xs space-y-6">
           <div>
             <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-              <Send className="h-5 w-5 text-indigo-600" />
+              <Send className="h-5 w-5 text-orange-600" />
               Dispatch Test Milestone Email
             </h2>
             <p className="text-xs text-slate-500 mt-1">
@@ -737,7 +737,7 @@ export const EmailMonitoringPage: React.FC = () => {
                 value={testEmail}
                 onChange={(e) => setTestEmail(e.target.value)}
                 placeholder="e.g. anshverma24112005@gmail.com"
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs text-slate-900 focus:border-indigo-500 focus:bg-white focus:outline-none"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs text-slate-900 focus:border-orange-500 focus:bg-white focus:outline-none"
               />
             </div>
 
@@ -748,7 +748,7 @@ export const EmailMonitoringPage: React.FC = () => {
               <select
                 value={testEventType}
                 onChange={(e) => setTestEventType(e.target.value as EmailEventType)}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs text-slate-900 focus:border-indigo-500 focus:bg-white focus:outline-none font-bold"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs text-slate-900 focus:border-orange-500 focus:bg-white focus:outline-none font-bold"
               >
                 {ALL_EVENT_TYPES.map((type) => (
                   <option key={type} value={type}>
@@ -782,7 +782,7 @@ export const EmailMonitoringPage: React.FC = () => {
               <button
                 type="submit"
                 disabled={testSending}
-                className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-2.5 text-xs font-bold text-white shadow-2xs hover:bg-indigo-500 transition disabled:opacity-50 cursor-pointer"
+                className="inline-flex items-center gap-2 rounded-xl bg-orange-600 px-6 py-2.5 text-xs font-bold text-white shadow-2xs hover:bg-orange-500 transition disabled:opacity-50 cursor-pointer"
               >
                 {testSending ? (
                   <>

@@ -41,7 +41,7 @@ export const ProfileHeader: React.FC<Props> = ({ profile, onUpdateImage }) => {
       case 'ADMIN':
         return {
           label: 'Operations HQ Admin',
-          bg: 'bg-indigo-500/10 text-indigo-700 border-indigo-200',
+          bg: 'bg-orange-500/10 text-orange-700 border-orange-200',
         };
       case 'DELIVERY_AGENT':
         return {
@@ -182,17 +182,17 @@ export const ProfileHeader: React.FC<Props> = ({ profile, onUpdateImage }) => {
               <img
                 src={profile.profileImageUrl}
                 alt={profile.fullName}
-                className="h-20 w-20 rounded-2xl object-cover border-2 border-indigo-600 shadow-md"
+                className="h-20 w-20 rounded-2xl object-cover border-2 border-orange-600 shadow-md"
               />
             ) : (
-              <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-800 text-2xl font-black text-white shadow-md">
+              <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-600 to-indigo-800 text-2xl font-black text-white shadow-md">
                 {profile.firstName ? profile.firstName.charAt(0).toUpperCase() : 'U'}
               </div>
             )}
 
             <button
               onClick={() => setShowPhotoModal(true)}
-              className="absolute -bottom-2 -right-2 flex h-8 w-8 items-center justify-center rounded-xl bg-slate-900 text-white shadow-lg hover:bg-indigo-600 transition cursor-pointer"
+              className="absolute -bottom-2 -right-2 flex h-8 w-8 items-center justify-center rounded-xl bg-slate-900 text-white shadow-lg hover:bg-orange-600 transition cursor-pointer"
               title="Change profile picture"
             >
               <Camera className="h-4 w-4" />
@@ -264,7 +264,7 @@ export const ProfileHeader: React.FC<Props> = ({ profile, onUpdateImage }) => {
                 onClick={() => setActiveUploadMode('device')}
                 className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-bold transition cursor-pointer ${
                   activeUploadMode === 'device'
-                    ? 'bg-white text-indigo-600 shadow-xs'
+                    ? 'bg-white text-orange-600 shadow-xs'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -276,7 +276,7 @@ export const ProfileHeader: React.FC<Props> = ({ profile, onUpdateImage }) => {
                 onClick={() => setActiveUploadMode('url')}
                 className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-bold transition cursor-pointer ${
                   activeUploadMode === 'url'
-                    ? 'bg-white text-indigo-600 shadow-xs'
+                    ? 'bg-white text-orange-600 shadow-xs'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -305,11 +305,11 @@ export const ProfileHeader: React.FC<Props> = ({ profile, onUpdateImage }) => {
                 />
 
                 {selectedFilePreview ? (
-                  <div className="flex items-center gap-4 p-4 rounded-xl border border-indigo-100 bg-indigo-50/40">
+                  <div className="flex items-center gap-4 p-4 rounded-xl border border-orange-100 bg-orange-50/40">
                     <img
                       src={selectedFilePreview}
                       alt="Preview"
-                      className="h-16 w-16 rounded-xl object-cover border-2 border-indigo-600 shadow-sm"
+                      className="h-16 w-16 rounded-xl object-cover border-2 border-orange-600 shadow-sm"
                     />
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-bold text-slate-800 truncate">{selectedFileName}</p>
@@ -317,7 +317,7 @@ export const ProfileHeader: React.FC<Props> = ({ profile, onUpdateImage }) => {
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="text-xs font-bold text-indigo-600 hover:text-indigo-700 mt-1 cursor-pointer"
+                        className="text-xs font-bold text-orange-600 hover:text-orange-700 mt-1 cursor-pointer"
                       >
                         Choose different photo
                       </button>
@@ -342,11 +342,11 @@ export const ProfileHeader: React.FC<Props> = ({ profile, onUpdateImage }) => {
                     onClick={() => fileInputRef.current?.click()}
                     className={`flex flex-col items-center justify-center p-8 rounded-2xl border-2 border-dashed transition cursor-pointer ${
                       isDragging
-                        ? 'border-indigo-600 bg-indigo-50/60'
-                        : 'border-slate-300 hover:border-indigo-400 bg-slate-50/50 hover:bg-indigo-50/20'
+                        ? 'border-orange-600 bg-orange-50/60'
+                        : 'border-slate-300 hover:border-orange-400 bg-slate-50/50 hover:bg-orange-50/20'
                     }`}
                   >
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-sm border border-slate-200 mb-3 text-indigo-600">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-sm border border-slate-200 mb-3 text-orange-600">
                       <Upload className="h-6 w-6" />
                     </div>
                     <p className="text-xs font-bold text-slate-800 text-center">
@@ -372,7 +372,7 @@ export const ProfileHeader: React.FC<Props> = ({ profile, onUpdateImage }) => {
                     placeholder="https://images.unsplash.com/..."
                     value={photoUrlInput}
                     onChange={(e) => setPhotoUrlInput(e.target.value)}
-                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500/15 focus:outline-none transition font-mono"
+                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 focus:border-orange-600 focus:ring-2 focus:ring-orange-500/15 focus:outline-none transition font-mono"
                   />
                 </div>
 
@@ -427,7 +427,7 @@ export const ProfileHeader: React.FC<Props> = ({ profile, onUpdateImage }) => {
                     (activeUploadMode === 'device' && !selectedFilePreview) ||
                     (activeUploadMode === 'url' && !photoUrlInput.trim())
                   }
-                  className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold shadow-sm hover:bg-indigo-500 disabled:opacity-40 transition cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl bg-orange-600 text-white text-xs font-bold shadow-sm hover:bg-orange-500 disabled:opacity-40 transition cursor-pointer"
                 >
                   {isSaving ? 'Saving...' : 'Save Avatar'}
                 </button>

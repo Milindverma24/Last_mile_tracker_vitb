@@ -130,8 +130,8 @@ export const LiveDeliveryMap: React.FC<Props> = ({ trackingData, className = '' 
       // 3. Driver Vehicle Marker
       const driverIconHtml = `
         <div class="relative flex items-center justify-center">
-          <div class="absolute h-11 w-11 rounded-full bg-indigo-500/30 animate-pulse"></div>
-          <div style="transform: rotate(${heading}deg); transition: transform 0.4s ease;" class="relative flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-xl border-2 border-white ring-4 ring-indigo-500/40">
+          <div class="absolute h-11 w-11 rounded-full bg-orange-500/30 animate-pulse"></div>
+          <div style="transform: rotate(${heading}deg); transition: transform 0.4s ease;" class="relative flex h-10 w-10 items-center justify-center rounded-2xl bg-orange-600 text-white shadow-xl border-2 border-white ring-4 ring-orange-500/40">
             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/>
             </svg>
@@ -210,7 +210,7 @@ export const LiveDeliveryMap: React.FC<Props> = ({ trackingData, className = '' 
         <button
           type="button"
           onClick={handleRecenter}
-          className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/95 text-slate-700 shadow-md backdrop-blur border border-slate-200 hover:bg-indigo-50 hover:text-indigo-600 transition cursor-pointer"
+          className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/95 text-slate-700 shadow-md backdrop-blur border border-slate-200 hover:bg-orange-50 hover:text-orange-600 transition cursor-pointer"
           title="Recenter on Delivery Partner"
         >
           <Navigation className="h-4 w-4" />
@@ -238,7 +238,7 @@ export const LiveDeliveryMap: React.FC<Props> = ({ trackingData, className = '' 
         <span className="text-slate-600">•</span>
         <span className="font-semibold text-slate-200">{trackingData?.distanceRemaining ?? 0} km away</span>
         <span className="text-slate-600">•</span>
-        <span className="font-bold text-indigo-400">{trackingData?.etaMinutes ?? 0} min ETA</span>
+        <span className="font-bold text-orange-400">{trackingData?.etaMinutes ?? 0} min ETA</span>
       </div>
     </div>
   );

@@ -154,7 +154,7 @@ export const RazorpayCheckoutModal: React.FC<Props> = ({ orderId, onSuccess, onC
         {/* Modal Header */}
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-sm">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-600 text-white shadow-sm">
               <CreditCard className="h-5 w-5" />
             </div>
             <div>
@@ -180,7 +180,7 @@ export const RazorpayCheckoutModal: React.FC<Props> = ({ orderId, onSuccess, onC
 
         {loading ? (
           <div className="py-8 text-center text-slate-500 space-y-3">
-            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent" />
+            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-orange-600 border-t-transparent" />
             <p className="text-xs font-semibold">Initiating Razorpay payment order...</p>
           </div>
         ) : verifying ? (
@@ -202,7 +202,7 @@ export const RazorpayCheckoutModal: React.FC<Props> = ({ orderId, onSuccess, onC
               </div>
               <div className="flex justify-between text-slate-600">
                 <span>Razorpay Reference:</span>
-                <span className="font-mono text-[11px] text-indigo-600 font-semibold">{orderDetails.razorpayOrderId}</span>
+                <span className="font-mono text-[11px] text-orange-600 font-semibold">{orderDetails.razorpayOrderId}</span>
               </div>
               <div className="pt-2 border-t border-slate-200 flex justify-between items-baseline">
                 <span className="font-bold text-slate-800">Total Payable:</span>
@@ -211,12 +211,12 @@ export const RazorpayCheckoutModal: React.FC<Props> = ({ orderId, onSuccess, onC
             </div>
 
             {/* Supported Payment Channels */}
-            <div className="rounded-xl border border-indigo-100 bg-indigo-50/50 p-3 text-[11px] text-indigo-900 flex items-center justify-between">
+            <div className="rounded-xl border border-orange-100 bg-orange-50/50 p-3 text-[11px] text-orange-950 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4 text-indigo-600" />
+                <ShieldCheck className="h-4 w-4 text-orange-600" />
                 <span>UPI, Cards, NetBanking, Wallets</span>
               </div>
-              <span className="font-bold text-indigo-700">Instant Verification</span>
+              <span className="font-bold text-orange-700">Instant Verification</span>
             </div>
 
             {/* Launch Buttons */}
@@ -224,7 +224,7 @@ export const RazorpayCheckoutModal: React.FC<Props> = ({ orderId, onSuccess, onC
               <button
                 type="button"
                 onClick={handleLaunchRazorpay}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 py-3 text-sm font-bold text-white shadow hover:bg-indigo-500 transition"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-orange-600 py-3 text-sm font-bold text-white shadow hover:bg-orange-500 transition"
               >
                 <Lock className="h-4 w-4" />
                 Pay ₹{Number(orderDetails.amount).toFixed(2)} with Razorpay

@@ -88,7 +88,7 @@ export const PersonalInformationSection: React.FC<Props> = ({ profile, onSave, i
       <div className="flex items-center justify-between border-b border-slate-100 pb-4">
         <div>
           <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <User className="h-5 w-5 text-indigo-600" />
+            <User className="h-5 w-5 text-orange-600" />
             Personal Information
           </h2>
           <p className="text-xs text-slate-500">Contact coordinates and primary delivery address</p>
@@ -129,7 +129,7 @@ export const PersonalInformationSection: React.FC<Props> = ({ profile, onSave, i
                 type="text"
                 value={formData.firstName}
                 onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm text-slate-900 focus:border-indigo-600 focus:outline-none"
+                className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm text-slate-900 focus:border-orange-600 focus:outline-none"
                 required
               />
             </div>
@@ -142,7 +142,7 @@ export const PersonalInformationSection: React.FC<Props> = ({ profile, onSave, i
                 type="text"
                 value={formData.lastName}
                 onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm text-slate-900 focus:border-indigo-600 focus:outline-none"
+                className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm text-slate-900 focus:border-orange-600 focus:outline-none"
               />
             </div>
 
@@ -167,7 +167,7 @@ export const PersonalInformationSection: React.FC<Props> = ({ profile, onSave, i
                 placeholder="+91 98111 22233"
                 value={formData.phoneNumber}
                 onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
-                className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm text-slate-900 focus:border-indigo-600 focus:outline-none"
+                className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm text-slate-900 focus:border-orange-600 focus:outline-none"
               />
             </div>
           </div>
@@ -181,7 +181,7 @@ export const PersonalInformationSection: React.FC<Props> = ({ profile, onSave, i
               placeholder="e.g. 42, Hauz Khas Village, Near Deer Park"
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-              className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm text-slate-900 focus:border-indigo-600 focus:outline-none"
+              className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm text-slate-900 focus:border-orange-600 focus:outline-none"
             />
           </div>
 
@@ -193,7 +193,7 @@ export const PersonalInformationSection: React.FC<Props> = ({ profile, onSave, i
                 placeholder="e.g. New Delhi"
                 value={formData.city}
                 onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm text-slate-900 focus:border-indigo-600 focus:outline-none"
+                className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm text-slate-900 focus:border-orange-600 focus:outline-none"
               />
             </div>
 
@@ -204,7 +204,7 @@ export const PersonalInformationSection: React.FC<Props> = ({ profile, onSave, i
                 placeholder="e.g. Delhi"
                 value={formData.state}
                 onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm text-slate-900 focus:border-indigo-600 focus:outline-none"
+                className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm text-slate-900 focus:border-orange-600 focus:outline-none"
               />
             </div>
 
@@ -217,7 +217,7 @@ export const PersonalInformationSection: React.FC<Props> = ({ profile, onSave, i
                 placeholder="e.g. 110016"
                 value={formData.pinCode}
                 onChange={(e) => setFormData({ ...formData, pinCode: e.target.value })}
-                className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm text-slate-900 focus:border-indigo-600 focus:outline-none"
+                className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm text-slate-900 focus:border-orange-600 focus:outline-none"
               />
             </div>
           </div>
@@ -233,7 +233,7 @@ export const PersonalInformationSection: React.FC<Props> = ({ profile, onSave, i
             <button
               type="submit"
               disabled={isLoading}
-              className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold shadow hover:bg-indigo-500 disabled:opacity-50 transition"
+              className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl bg-orange-600 text-white text-xs font-bold shadow hover:bg-orange-500 disabled:opacity-50 transition"
             >
               <Check className="h-3.5 w-3.5" />
               {isLoading ? 'Saving Changes...' : 'Save Changes'}

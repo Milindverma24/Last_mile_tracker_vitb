@@ -19,7 +19,7 @@ export const AccountInformationSection: React.FC<Props> = ({ profile }) => {
     <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 space-y-6">
       <div className="border-b border-slate-100 pb-4">
         <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-          <ShieldCheck className="h-5 w-5 text-indigo-600" />
+          <ShieldCheck className="h-5 w-5 text-orange-600" />
           Account & Authentication Credentials
         </h2>
         <p className="text-xs text-slate-500">System identifier keys, verification flags, and lifecycle history</p>
@@ -48,7 +48,7 @@ export const AccountInformationSection: React.FC<Props> = ({ profile }) => {
 
         <div className="rounded-xl border border-slate-200/80 bg-slate-50/50 p-4">
           <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Assigned Platform Role</span>
-          <p className="mt-1 font-bold text-indigo-600">{profile.role}</p>
+          <p className="mt-1 font-bold text-orange-600">{profile.role}</p>
         </div>
 
         <div className="rounded-xl border border-slate-200/80 bg-slate-50/50 p-4">

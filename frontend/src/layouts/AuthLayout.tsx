@@ -1,51 +1,36 @@
 import React from 'react';
 import { Outlet, Link } from 'react-router-dom';
-import { Zap, ShieldCheck, MapPin, Gauge, ArrowLeft, Radio, Package, Sparkles } from 'lucide-react';
+import { ArrowLeft, ShieldCheck, Gauge, Radio, Zap } from 'lucide-react';
+import { GatimanLogo } from '../components/common/GatimanLogo';
 
 export const AuthLayout: React.FC = () => {
   return (
-    <div className="flex min-h-screen bg-[#FDFDFD]">
+    <div className="flex min-h-screen bg-slate-50">
       
       {/* ─────────────────────────────────────────────────────────────────────────────
-          1. LEFT BRANDING HERO (Cinematic Logistics Hub on Desktop)
+          1. LEFT HERO SIDEBAR (Photorealistic Twilight Hub)
       ───────────────────────────────────────────────────────────────────────────── */}
-      <div className="relative hidden w-1/2 flex-col justify-between overflow-hidden bg-slate-950 p-12 text-white lg:flex border-r border-slate-800">
-        
-        {/* Cinematic Background Image */}
-        <img
-          src="/images/auth_logistics_hub.jpg"
-          alt="GATIMAN Inter-City Freight Operations Hub"
-          className="absolute inset-0 h-full w-full object-cover scale-105 transition duration-1000"
-        />
-        
-        {/* High-tech Gradient Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/85 to-slate-950/70" />
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/60 to-transparent" />
+      <div 
+        className="relative hidden w-1/2 flex-col justify-between p-12 lg:flex overflow-hidden bg-cover bg-center border-r border-slate-800"
+        style={{ backgroundImage: `url('/images/auth_logistics_hub.jpg')` }}
+      >
+        {/* Dark Film Grade Backdrop Overlays with High Vibrancy */}
+        <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-[1px]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/50 to-slate-950/70" />
         
         {/* Ambient Glows */}
-        <div className="absolute -left-20 -top-20 h-80 w-80 rounded-full bg-orange-600/20 blur-3xl" />
-        <div className="absolute -bottom-20 -right-20 h-80 w-80 rounded-full bg-amber-500/15 blur-3xl" />
+        <div className="absolute -left-20 -top-20 h-80 w-80 rounded-full bg-orange-600/25 blur-3xl" />
+        <div className="absolute -bottom-20 -right-20 h-80 w-80 rounded-full bg-amber-500/20 blur-3xl" />
 
-        {/* Brand Header */}
-        <div className="relative z-10 space-y-4">
-          <Link to="/" className="inline-flex items-center gap-2.5 group">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center text-white font-black text-lg shadow-md shadow-orange-500/20 group-hover:scale-105 transition">
-              G
-            </div>
-            <span className="font-heading font-black text-2xl tracking-tight text-white group-hover:text-orange-400 transition">
-              gatiman<span className="text-orange-500">.</span>
-            </span>
-          </Link>
-
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-[11px] font-bold text-orange-400 uppercase tracking-wider mb-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span>Inter-City Freight Network</span>
-            </div>
-            <p className="text-sm text-slate-300 font-medium max-w-md leading-relaxed">
-              Next-generation logistics operating system with real-time GPS telemetry, volumetric rate cards, and automated EV fleet dispatch.
-            </p>
+        {/* Brand Header with Crisp White Logo */}
+        <div className="relative z-10 space-y-3">
+          <div className="inline-block bg-slate-900/80 backdrop-blur-xl px-4 py-2 rounded-full border border-white/20 shadow-xl">
+            <GatimanLogo to="/" textColor="text-white" />
           </div>
+
+          <p className="text-sm text-slate-200 font-medium max-w-md leading-relaxed">
+            Next-generation logistics operating system with real-time GPS telemetry, volumetric rate cards, and automated EV fleet dispatch.
+          </p>
         </div>
 
         {/* Value Prop Highlights (Frosted Glass Cards) */}
@@ -113,14 +98,9 @@ export const AuthLayout: React.FC = () => {
             <span>Back to Home</span>
           </Link>
 
-          <Link to="/" className="flex items-center gap-2 lg:hidden">
-            <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center text-white font-black text-sm">
-              G
-            </div>
-            <span className="font-heading font-black text-lg tracking-tight text-slate-900">
-              gatiman<span className="text-orange-600">.</span>
-            </span>
-          </Link>
+          <div className="lg:hidden">
+            <GatimanLogo to="/" />
+          </div>
         </div>
 
         {/* Form Container */}
@@ -130,7 +110,7 @@ export const AuthLayout: React.FC = () => {
 
         {/* Right Footer */}
         <div className="pt-4 text-center text-xs text-slate-400">
-          GATIMAN Logistics Platform · <Link to="/track" className="text-orange-600 hover:underline font-semibold">Track Live Shipment</Link>
+          GATIMAN Logistics Platform · <Link to="/#tracking" className="text-orange-600 hover:underline font-semibold">Track Live Shipment</Link>
         </div>
       </div>
 

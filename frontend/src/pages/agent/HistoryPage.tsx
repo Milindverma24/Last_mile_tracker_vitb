@@ -29,7 +29,7 @@ export const AgentHistoryPage: React.FC = () => {
                 className="flex items-center justify-between rounded-xl border border-slate-100 p-4 hover:bg-slate-50"
               >
                 <div>
-                  <span className="font-mono text-xs font-bold text-indigo-600">{order.trackingNumber}</span>
+                  <span className="font-mono text-xs font-bold text-orange-600">{order.trackingNumber}</span>
                   <p className="text-sm font-bold text-slate-900">{order.dropName} ({order.dropPincode})</p>
                   <p className="text-xs text-slate-400">{new Date(order.updatedAt).toLocaleString()}</p>
                 </div>

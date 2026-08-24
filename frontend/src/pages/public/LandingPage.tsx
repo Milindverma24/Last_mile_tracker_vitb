@@ -2,13 +2,31 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { orderApi } from '../../api/orderApi';
 import { trackingApi, LiveTrackingData } from '../../api/trackingApi';
-import { Order } from '../../types';
+import { Order, TrackingEvent, OrderStatus } from '../../types';
 import { DeliveryVideoPlayer } from '../../components/common/DeliveryVideoPlayer';
+import { GatimanLogo } from '../../components/common/GatimanLogo';
 import {
   Truck, Search, ArrowRight, Star, Users, Building2,
   Radio, ChevronLeft, ChevronRight, AlertCircle, Play, X,
-  ChevronDown
+  ChevronDown, Navigation, CheckCircle2, UserCheck, RefreshCw, Shield, MapPin, Clock, Phone, Package, ShieldCheck, User
 } from 'lucide-react';
+
+const deliverySteps: { status: OrderStatus; label: string; icon: React.ElementType }[] = [
+  { status: 'CREATED', label: 'Order Created', icon: Package },
+  { status: 'ASSIGNED', label: 'Driver Assigned', icon: UserCheck },
+  { status: 'PICKED_UP', label: 'Picked Up', icon: Package },
+  { status: 'IN_TRANSIT', label: 'In Transit', icon: Truck },
+  { status: 'OUT_FOR_DELIVERY', label: 'Out for Delivery', icon: Navigation },
+  { status: 'DELIVERED', label: 'Delivered', icon: CheckCircle2 },
+];
+
+const getStepIndex = (status?: OrderStatus) => {
+  const map: Partial<Record<OrderStatus, number>> = {
+    CREATED: 0, ASSIGNED: 1, PICKED_UP: 2, IN_TRANSIT: 3,
+    OUT_FOR_DELIVERY: 4, DELIVERED: 5, FAILED: 4, RESCHEDULED: 4,
+  };
+  return status ? (map[status] ?? 0) : 0;
+};
 
 export const LandingPage: React.FC = () => {
   const [trackingInput, setTrackingInput] = useState('');
@@ -16,6 +34,7 @@ export const LandingPage: React.FC = () => {
   const [searchError, setSearchError] = useState<string | null>(null);
   const [previewOrder, setPreviewOrder] = useState<Order | null>(null);
   const [previewLiveTracking, setPreviewLiveTracking] = useState<LiveTrackingData | null>(null);
+  const [trackingTimeline, setTrackingTimeline] = useState<TrackingEvent[]>([]);
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [activeFaq, setActiveFaq] = useState<number | null>(0);
   const [activeServiceSlide, setActiveServiceSlide] = useState(0);
@@ -31,9 +50,17 @@ export const LandingPage: React.FC = () => {
     setSearchError(null);
     setPreviewOrder(null);
     setPreviewLiveTracking(null);
+    setTrackingTimeline([]);
     try {
       const order = await orderApi.trackByNumber(cleanId);
       setPreviewOrder(order);
+
+      try {
+        const events = await orderApi.getTrackingTimeline(order.id);
+        setTrackingTimeline(events);
+      } catch {
+        setTrackingTimeline([]);
+      }
 
       try {
         const live = await trackingApi.getLiveTracking(order.id);
@@ -146,66 +173,109 @@ export const LandingPage: React.FC = () => {
     <div className="min-h-screen bg-[#FDFDFD] text-slate-900 font-sans selection:bg-orange-500 selection:text-white">
       
       {/* ─────────────────────────────────────────────────────────────────────────────
-          1. FLOATING NAVIGATION BAR (Glass Capsule)
+          1. FLOATING NAVIGATION BAR (Glass Capsule with Track Live Radar)
       ───────────────────────────────────────────────────────────────────────────── */}
       <header className="fixed top-4 inset-x-0 z-50 px-4 sm:px-8 max-w-7xl mx-auto pointer-events-none">
         <div className="flex items-center justify-between gap-3 pointer-events-auto">
           
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group bg-white/90 backdrop-blur-md px-4 py-2.5 rounded-full border border-slate-200/80 shadow-sm transition hover:shadow-md">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center text-white font-black text-base shadow-sm">
-              G
-            </div>
-            <span className="font-heading font-black text-xl tracking-tight text-slate-900 group-hover:text-orange-600 transition">
-              gatiman<span className="text-orange-600">.</span>
-            </span>
-          </Link>
+          {/* Logo with Scooter Icon */}
+          <div className="bg-white/90 backdrop-blur-md px-4 py-2 rounded-full border border-slate-200/80 shadow-sm transition hover:shadow-md">
+            <GatimanLogo to="/" />
+          </div>
 
-          {/* Center Navigation Capsule */}
-          <nav className="hidden md:flex items-center gap-1 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-slate-200/80 shadow-sm text-xs font-semibold text-slate-600">
+          {/* Center Navigation Capsule with Prominent Track Live Radar */}
+          <nav className="hidden md:flex items-center gap-1.5 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-slate-200/80 shadow-sm text-xs font-semibold text-slate-600">
             <a href="#home" className="px-4 py-2 rounded-full bg-slate-900 text-white font-bold transition shadow-xs">
               Home
             </a>
             <a href="#services" className="px-3.5 py-2 rounded-full hover:text-slate-900 transition flex items-center gap-1">
               Services <ChevronDown className="w-3 h-3 text-slate-400" />
             </a>
-            <a href="#tracking" className="px-3.5 py-2 rounded-full hover:text-slate-900 transition">
-              Live Radar
+            
+            {/* Prominent Track Live Radar Nav Button */}
+            <a
+              href="#tracking"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById('tracking')?.scrollIntoView({ behavior: 'smooth' });
+                const input = document.getElementById('tracking-radar-input') as HTMLInputElement | null;
+                if (input) input.focus();
+              }}
+              className="px-3.5 py-1.5 rounded-full font-bold text-orange-700 bg-orange-100/80 hover:bg-orange-200/80 border border-orange-300/80 transition flex items-center gap-1.5 shadow-xs"
+            >
+              <Radio className="w-3.5 h-3.5 text-orange-600 animate-pulse" />
+              <span>Track Live Radar</span>
             </a>
+
             <a href="#faq" className="px-3.5 py-2 rounded-full hover:text-slate-900 transition">
               FAQ
             </a>
           </nav>
 
-          {/* Right Action Buttons: Login, Driver Partner, and Customer Send Parcel */}
+          {/* Right Action Button: Login */}
           <div className="flex items-center gap-2">
             <Link
               to="/login"
-              className="hidden sm:inline-flex items-center justify-center px-4 py-2.5 rounded-full text-xs font-bold text-slate-700 bg-white/90 backdrop-blur-md border border-slate-200/80 hover:bg-slate-50 transition shadow-sm"
+              className="inline-flex items-center justify-center px-5 py-2.5 rounded-full text-xs font-bold text-slate-800 bg-white/90 backdrop-blur-md border border-slate-200/90 hover:bg-slate-900 hover:text-white transition shadow-sm"
             >
-              Login
-            </Link>
-
-            <Link
-              to="/register/driver"
-              className="hidden md:inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-full text-xs font-bold text-emerald-700 bg-emerald-50/90 backdrop-blur-md border border-emerald-200/80 hover:bg-emerald-100 transition shadow-sm"
-            >
-              <Truck className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Drive & Earn</span>
-            </Link>
-
-            <Link
-              to="/register/customer"
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold text-white bg-gradient-to-r from-orange-600 via-orange-500 to-amber-500 hover:from-orange-700 hover:to-orange-600 transition shadow-md shadow-orange-500/20 group"
-            >
-              <span>Send Parcel</span>
-              <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center group-hover:translate-x-0.5 transition">
-                <ArrowRight className="w-3 h-3" />
-              </div>
+              <span>Login</span>
             </Link>
           </div>
         </div>
       </header>
+
+      {/* ─────────────────────────────────────────────────────────────────────────────
+          FLOATING RIGHT-SIDE ACTION DOCK (Truck & Customer Hub)
+      ───────────────────────────────────────────────────────────────────────────── */}
+      <aside className="fixed right-3 sm:right-5 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-3 pointer-events-auto">
+        <div className="flex flex-col gap-2.5 p-2 bg-white/90 backdrop-blur-2xl rounded-full border border-slate-200/90 shadow-2xl shadow-slate-900/15">
+          
+          {/* 1. Driver Button (Truck Icon) */}
+          <div className="relative group flex items-center justify-center">
+            <Link
+              to="/register/driver"
+              className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-md shadow-emerald-600/30 hover:scale-110 active:scale-95 transition-all duration-200"
+              aria-label="Sign in as Driver"
+            >
+              <Truck className="w-5 h-5" />
+            </Link>
+
+            {/* Premium Left-Sliding Glass Tooltip */}
+            <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 hidden group-hover:flex items-center pointer-events-none animate-in fade-in slide-in-from-right-3 duration-200">
+              <div className="bg-slate-950/95 backdrop-blur-md text-white text-xs px-3.5 py-2 rounded-2xl border border-slate-800 shadow-2xl whitespace-nowrap flex flex-col">
+                <span className="font-bold text-white flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>Sign in as Driver</span>
+                </span>
+                <span className="text-[10px] text-emerald-400 font-medium mt-0.5">New Driver Onboarding ➔</span>
+              </div>
+            </div>
+          </div>
+
+          {/* 2. Customer Button (Person / User Icon) */}
+          <div className="relative group flex items-center justify-center">
+            <Link
+              to="/register/customer"
+              className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-to-tr from-orange-600 to-amber-500 text-white flex items-center justify-center shadow-md shadow-orange-600/30 hover:scale-110 active:scale-95 transition-all duration-200"
+              aria-label="Sign in as Customer"
+            >
+              <User className="w-5 h-5" />
+            </Link>
+
+            {/* Premium Left-Sliding Glass Tooltip */}
+            <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 hidden group-hover:flex items-center pointer-events-none animate-in fade-in slide-in-from-right-3 duration-200">
+              <div className="bg-slate-950/95 backdrop-blur-md text-white text-xs px-3.5 py-2 rounded-2xl border border-slate-800 shadow-2xl whitespace-nowrap flex flex-col">
+                <span className="font-bold text-white flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
+                  <span>Sign in as Customer</span>
+                </span>
+                <span className="text-[10px] text-orange-400 font-medium mt-0.5">New Customer Portal ➔</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </aside>
 
       {/* ─────────────────────────────────────────────────────────────────────────────
           2. HERO SECTION WITH INDUSTRIAL CONTAINER BACKGROUND
@@ -290,16 +360,41 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* ─────────────────────────────────────────────────────────────────────────────
-          3. REAL-TIME TRACKING LOOKUP RADAR BAR
+          3. REAL-TIME TRACKING LOOKUP RADAR BAR & INTEGRATED LIVE HUB
       ───────────────────────────────────────────────────────────────────────────── */}
       <section id="tracking" className="px-4 sm:px-8 max-w-7xl mx-auto -mt-6 mb-16 relative z-20">
-        <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-xl border border-slate-200">
+        <div className="bg-white rounded-3xl p-4 sm:p-8 shadow-xl border border-slate-200">
+          
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+            <div>
+              <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <Radio className="w-5 h-5 text-orange-600 animate-pulse" />
+                <span>Live Inter-City Radar & Parcel Tracking</span>
+              </h3>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Instant GPS telemetry, corridor transit status, and automated driver ETA countdown.
+              </p>
+            </div>
+            
+            {previewOrder && (
+              <button
+                type="button"
+                onClick={() => handleQuickTrackSubmit(undefined, previewOrder.trackingNumber)}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition cursor-pointer self-start sm:self-auto"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${isSearching ? 'animate-spin' : ''}`} />
+                <span>Refresh Telemetry</span>
+              </button>
+            )}
+          </div>
+
           <form onSubmit={handleQuickTrackSubmit} className="flex flex-col md:flex-row items-center gap-3">
             <div className="relative flex-1 w-full">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <Search className="h-5 w-5 text-orange-500" />
               </div>
               <input
+                id="tracking-radar-input"
                 type="text"
                 value={trackingInput}
                 onChange={(e) => setTrackingInput(e.target.value)}
@@ -319,57 +414,189 @@ export const LandingPage: React.FC = () => {
           </form>
 
           {searchError && (
-            <div className="mt-3 p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 font-semibold flex items-center gap-2">
+            <div className="mt-4 p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 font-semibold flex items-center gap-2">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{searchError}</span>
             </div>
           )}
 
-          {/* Live Tracking Result Banner */}
+          {/* ─────────────────────────────────────────────────────────────────────────────
+              COMPREHENSIVE IN-PAGE LIVE RADAR EXPERIENCE
+          ───────────────────────────────────────────────────────────────────────────── */}
           {previewOrder && previewLiveTracking && (
-            <div className="mt-6 p-5 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-850 to-slate-900 border border-slate-700 text-white animate-in fade-in duration-300">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-700">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-orange-500 text-white">
-                      {previewOrder.status}
-                    </span>
-                    <span className="font-mono text-sm font-bold text-white">{previewOrder.trackingNumber}</span>
+            <div className="mt-6 space-y-6 animate-in fade-in duration-300">
+              
+              {/* Top Banner with Tracking Number & Active Status */}
+              <div className="p-6 rounded-3xl bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border border-slate-800 text-white shadow-xl">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-800">
+                  <div>
+                    <div className="flex items-center gap-2.5 flex-wrap">
+                      <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-orange-600 text-white flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                        <span>{previewOrder.status}</span>
+                      </span>
+                      <span className="font-mono text-base sm:text-lg font-bold text-white tracking-wide">
+                        {previewOrder.trackingNumber}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-400 mt-1.5">
+                      Corridor Transit: <strong className="text-slate-200 font-mono">{previewOrder.pickupPincode}</strong> ➔ <strong className="text-slate-200 font-mono">{previewOrder.dropPincode}</strong> · Total Billed: <strong className="text-emerald-400">₹{previewOrder.totalCharge}</strong>
+                    </p>
                   </div>
-                  <p className="text-xs text-slate-400 mt-1">
-                    Inter-City Corridor: <strong className="text-slate-200">{previewOrder.pickupPincode}</strong> ➔ <strong className="text-slate-200">{previewOrder.dropPincode}</strong> · ₹{previewOrder.totalCharge}
-                  </p>
+
+                  <div className="flex items-center gap-2 self-start sm:self-auto">
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-xs text-orange-400 font-bold">
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>OTP Protected Delivery</span>
+                    </div>
+                  </div>
                 </div>
 
-                <Link
-                  to={`/track/${previewOrder.trackingNumber}`}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-xs font-bold text-white transition self-start sm:self-auto"
-                >
-                  <span>Open Full Radar</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
+                {/* 6-Step Visual Milestone Progress Bar */}
+                <div className="py-6 border-b border-slate-800">
+                  <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                    {deliverySteps.map((step, idx) => {
+                      const currentIdx = getStepIndex(previewOrder.status);
+                      const isCompleted = idx < currentIdx;
+                      const isCurrent = idx === currentIdx;
+                      const StepIcon = step.icon;
+
+                      return (
+                        <div key={step.status} className="flex flex-col items-center text-center">
+                          <div
+                            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                              isCurrent
+                                ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/40 ring-4 ring-orange-500/20 scale-110'
+                                : isCompleted
+                                ? 'bg-emerald-500 text-white'
+                                : 'bg-slate-800 text-slate-500 border border-slate-700'
+                            }`}
+                          >
+                            <StepIcon className="w-4 h-4" />
+                          </div>
+                          <span className={`text-[11px] font-bold mt-2 ${
+                            isCurrent ? 'text-orange-400' : isCompleted ? 'text-slate-200' : 'text-slate-500'
+                          }`}>
+                            {step.label}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Real-time Telemetry Metrics Grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-5 text-xs">
+                  <div className="p-3 rounded-2xl bg-white/5 border border-white/10">
+                    <span className="text-slate-400 block text-[11px]">Assigned Driver</span>
+                    <span className="font-bold text-white text-sm mt-0.5 block truncate">
+                      {previewLiveTracking.deliveryPartner?.name || 'Rajesh Kumar'}
+                    </span>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-white/5 border border-white/10">
+                    <span className="text-slate-400 block text-[11px]">Distance Remaining</span>
+                    <span className="font-bold text-emerald-400 text-sm mt-0.5 block">
+                      {previewLiveTracking.distanceRemaining || 3.4} km
+                    </span>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-white/5 border border-white/10">
+                    <span className="text-slate-400 block text-[11px]">Estimated Arrival</span>
+                    <span className="font-bold text-amber-400 text-sm mt-0.5 block">
+                      ~{previewLiveTracking.etaMinutes || 12} mins
+                    </span>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-white/5 border border-white/10">
+                    <span className="text-slate-400 block text-[11px]">Fleet Vehicle</span>
+                    <span className="font-bold text-white text-sm mt-0.5 block font-mono">
+                      {previewLiveTracking.deliveryPartner?.vehicleNumber || 'DL-03-EV-9821'}
+                    </span>
+                  </div>
+                </div>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 text-xs">
-                <div>
-                  <span className="text-slate-400 block">Assigned Courier</span>
-                  <span className="font-bold text-white text-sm">{previewLiveTracking.deliveryPartner?.name || 'Rajesh Kumar'}</span>
+              {/* Corridor Route & Milestone Timeline Split Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                {/* Left: Origin & Destination Route Card */}
+                <div className="p-5 rounded-3xl bg-slate-50/80 border border-slate-200 space-y-4">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                    <MapPin className="w-4 h-4 text-orange-600" />
+                    <span>Corridor Route & Addresses</span>
+                  </h4>
+
+                  {/* Pickup Endpoint */}
+                  <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-2xs">
+                    <div className="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center shrink-0 mt-0.5">
+                      <Package className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-bold uppercase text-orange-700">Origin / Pickup</span>
+                      <h5 className="text-xs font-bold text-slate-900 mt-0.5">{previewOrder.pickupName}</h5>
+                      <p className="text-xs text-slate-500 mt-0.5">{previewOrder.pickupAddress}</p>
+                      <span className="inline-block mt-1 font-mono text-[10px] bg-slate-100 px-2 py-0.5 rounded text-slate-700">
+                        PIN: {previewOrder.pickupPincode}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Destination Endpoint */}
+                  <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white border border-slate-200/80 shadow-2xs">
+                    <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5">
+                      <CheckCircle2 className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-bold uppercase text-emerald-700">Destination / Dropoff</span>
+                      <h5 className="text-xs font-bold text-slate-900 mt-0.5">{previewOrder.dropName}</h5>
+                      <p className="text-xs text-slate-500 mt-0.5">{previewOrder.dropAddress}</p>
+                      <span className="inline-block mt-1 font-mono text-[10px] bg-slate-100 px-2 py-0.5 rounded text-slate-700">
+                        PIN: {previewOrder.dropPincode}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <span className="text-slate-400 block">Distance Remaining</span>
-                  <span className="font-bold text-emerald-400 text-sm">{previewLiveTracking.distanceRemaining || 3.2} km</span>
+
+                {/* Right: Milestone Event Timeline */}
+                <div className="p-5 rounded-3xl bg-slate-50/80 border border-slate-200 space-y-4">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                    <Clock className="w-4 h-4 text-orange-600" />
+                    <span>Real-Time Milestone Log</span>
+                  </h4>
+
+                  <div className="space-y-3">
+                    {trackingTimeline.length > 0 ? (
+                      trackingTimeline.map((ev, idx) => (
+                        <div key={idx} className="flex items-start gap-3 p-3 rounded-2xl bg-white border border-slate-200/70 text-xs">
+                          <div className="w-2 h-2 rounded-full bg-orange-500 mt-1.5 shrink-0" />
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between">
+                              <strong className="text-slate-900">{ev.newStatus}</strong>
+                              <span className="text-[10px] text-slate-400 font-mono">
+                                {ev.eventTimestamp ? new Date(ev.eventTimestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Live'}
+                              </span>
+                            </div>
+                            <p className="text-slate-500 mt-0.5 text-[11px]">{ev.remarks || `Status updated to ${ev.newStatus} by ${ev.actorName || 'System'}`}</p>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="p-4 rounded-2xl bg-white border border-slate-200 text-xs text-slate-600 space-y-2">
+                        <div className="flex items-center justify-between text-slate-900 font-semibold">
+                          <span>Corridor Transit Active</span>
+                          <span className="text-[10px] font-mono text-emerald-600 font-bold">LIVE TELEMETRY</span>
+                        </div>
+                        <p className="text-slate-500 text-[11px]">
+                          Driver {previewLiveTracking.deliveryPartner?.name || 'Partner'} is moving along the designated corridor. Updates are broadcast via sub-second WebSocket telemetry.
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <span className="text-slate-400 block">Estimated Arrival</span>
-                  <span className="font-bold text-amber-400 text-sm">~{previewLiveTracking.etaMinutes || 12} mins</span>
-                </div>
-                <div>
-                  <span className="text-slate-400 block">Fleet Vehicle</span>
-                  <span className="font-bold text-white text-sm">{previewLiveTracking.deliveryPartner?.vehicleNumber || 'EV-Fleet'}</span>
-                </div>
+
               </div>
+
             </div>
           )}
+
         </div>
       </section>
 
@@ -584,14 +811,7 @@ export const LandingPage: React.FC = () => {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
           
           <div className="col-span-2 space-y-3">
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center text-white font-black text-sm">
-                G
-              </div>
-              <span className="font-heading font-black text-lg tracking-tight text-slate-900">
-                gatiman<span className="text-orange-600">.</span>
-              </span>
-            </div>
+            <GatimanLogo to="/" />
             <p className="text-xs text-slate-500 max-w-sm leading-relaxed">
               Next-generation inter-city & urban logistics operating system with real-time GPS telemetry, volumetric rate cards, and automated EV fleet dispatch.
             </p>

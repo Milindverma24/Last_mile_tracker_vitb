@@ -43,7 +43,7 @@ export const AgentProfessionalSection: React.FC<Props> = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
         <div>
           <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <Truck className="h-5 w-5 text-indigo-600" />
+            <Truck className="h-5 w-5 text-orange-600" />
             Professional Fleet Credentials & Duty Status
           </h2>
           <p className="text-xs text-slate-500">Vehicle telemetry, assigned cluster zone, and real-time SLA metrics</p>
@@ -85,9 +85,9 @@ export const AgentProfessionalSection: React.FC<Props> = ({
 
       {/* Driver Performance Metric Cards */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <div className="rounded-xl border border-indigo-100 bg-indigo-50/40 p-4">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-700">Total Assigned</span>
-          <p className="mt-1 text-2xl font-black text-indigo-900">{agentInfo.totalDeliveries}</p>
+        <div className="rounded-xl border border-orange-100 bg-orange-50/40 p-4">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-orange-700">Total Assigned</span>
+          <p className="mt-1 text-2xl font-black text-orange-950">{agentInfo.totalDeliveries}</p>
           <span className="text-[10px] text-slate-400">All-time parcels</span>
         </div>
 
@@ -136,7 +136,7 @@ export const AgentProfessionalSection: React.FC<Props> = ({
             Active Load / Capacity Ceiling
           </span>
           <p className="mt-1 font-semibold text-slate-900">
-            <span className="font-bold text-indigo-600">{agentInfo.currentActiveOrders}</span> /{' '}
+            <span className="font-bold text-orange-600">{agentInfo.currentActiveOrders}</span> /{' '}
             {agentInfo.maxActiveOrders} concurrent parcels
           </p>
         </div>

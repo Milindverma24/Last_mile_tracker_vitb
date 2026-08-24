@@ -14,7 +14,7 @@ export const AdminInformationSection: React.FC<Props> = ({ adminInfo }) => {
     <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 space-y-6">
       <div className="border-b border-slate-100 pb-4">
         <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-          <ShieldCheck className="h-5 w-5 text-indigo-600" />
+          <ShieldCheck className="h-5 w-5 text-orange-600" />
           Administrative Privileges & Operations Authority
         </h2>
         <p className="text-xs text-slate-500">
@@ -30,7 +30,7 @@ export const AdminInformationSection: React.FC<Props> = ({ adminInfo }) => {
 
         <div className="rounded-xl border border-slate-200/80 bg-slate-50/50 p-4">
           <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Authority Level</span>
-          <p className="mt-1 font-bold text-indigo-600">● SuperAdmin Master Role</p>
+          <p className="mt-1 font-bold text-orange-600">● SuperAdmin Master Role</p>
         </div>
 
         <div className="rounded-xl border border-slate-200/80 bg-slate-50/50 p-4">
@@ -38,7 +38,7 @@ export const AdminInformationSection: React.FC<Props> = ({ adminInfo }) => {
           <p className="mt-1 text-xl font-black text-slate-900">{adminInfo.totalSystemAudits} Records</p>
           <Link
             to="/admin/audit-logs"
-            className="mt-1 inline-flex items-center gap-1 text-xs font-bold text-indigo-600 hover:text-indigo-800"
+            className="mt-1 inline-flex items-center gap-1 text-xs font-bold text-orange-600 hover:text-indigo-800"
           >
             Open Audit Trail <ExternalLink className="h-3 w-3" />
           </Link>
@@ -49,7 +49,7 @@ export const AdminInformationSection: React.FC<Props> = ({ adminInfo }) => {
           <p className="mt-1 font-bold text-emerald-600">● Healthy (PostgreSQL 15)</p>
           <Link
             to="/admin/system-health"
-            className="mt-1 inline-flex items-center gap-1 text-xs font-bold text-indigo-600 hover:text-indigo-800"
+            className="mt-1 inline-flex items-center gap-1 text-xs font-bold text-orange-600 hover:text-indigo-800"
           >
             View Observability Cockpit <ExternalLink className="h-3 w-3" />
           </Link>
@@ -64,9 +64,9 @@ export const AdminInformationSection: React.FC<Props> = ({ adminInfo }) => {
           {adminInfo.permissions?.map((perm) => (
             <span
               key={perm}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-50 border border-indigo-200 px-3 py-1.5 text-xs font-bold text-indigo-700"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-orange-50 border border-orange-200 px-3 py-1.5 text-xs font-bold text-orange-700"
             >
-              <CheckCircle2 className="h-3.5 w-3.5 text-indigo-600" />
+              <CheckCircle2 className="h-3.5 w-3.5 text-orange-600" />
               {perm}
             </span>
           ))}

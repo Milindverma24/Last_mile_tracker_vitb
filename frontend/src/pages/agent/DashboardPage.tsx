@@ -9,7 +9,7 @@ import {
 import { Order, OrderStatus, FailureReason } from '../../types';
 
 const STATUS_ACTIONS: Partial<Record<OrderStatus, { next: OrderStatus; label: string; color: string }>> = {
-  ASSIGNED: { next: 'PICKED_UP', label: '✓ Mark Picked Up', color: 'bg-indigo-600 hover:bg-indigo-700 text-white' },
+  ASSIGNED: { next: 'PICKED_UP', label: '✓ Mark Picked Up', color: 'bg-orange-600 hover:bg-orange-700 text-white' },
   PICKED_UP: { next: 'IN_TRANSIT', label: '🚚 Start Transit', color: 'bg-blue-600 hover:bg-blue-700 text-white' },
   IN_TRANSIT: { next: 'OUT_FOR_DELIVERY', label: '📍 Out for Delivery', color: 'bg-amber-500 hover:bg-amber-600 text-white' },
 };
@@ -136,7 +136,7 @@ export const AgentDashboardPage: React.FC = () => {
         <div className="flex items-center justify-between">
           <h2 className="text-base font-bold text-slate-900">Current Assigned Shipments</h2>
           {activeDeliveries.length > 0 && (
-            <span className="rounded-full bg-indigo-50 border border-indigo-100 px-2.5 py-0.5 text-xs font-bold text-indigo-700">
+            <span className="rounded-full bg-orange-50 border border-orange-100 px-2.5 py-0.5 text-xs font-bold text-orange-700">
               {activeDeliveries.length} Pending Actions
             </span>
           )}
@@ -165,7 +165,7 @@ export const AgentDashboardPage: React.FC = () => {
                   <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 bg-slate-50/80">
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="font-mono text-sm font-black text-indigo-600">{order.trackingNumber}</span>
+                        <span className="font-mono text-sm font-black text-orange-600">{order.trackingNumber}</span>
                         <span className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${getStatusBadge(order.status)}`}>
                           {order.status.replace('_', ' ')}
                         </span>
@@ -186,22 +186,22 @@ export const AgentDashboardPage: React.FC = () => {
                       <p className="text-sm font-bold text-slate-900">{order.pickupName}</p>
                       <p className="text-xs text-slate-600 leading-relaxed">{order.pickupAddress}</p>
                       <div className="flex items-center gap-3 pt-0.5">
-                        <a href={`tel:${order.pickupPhone}`} className="flex items-center gap-1 text-xs text-indigo-600 font-semibold hover:text-indigo-700">
+                        <a href={`tel:${order.pickupPhone}`} className="flex items-center gap-1 text-xs text-orange-600 font-semibold hover:text-orange-700">
                           <Phone className="h-3 w-3" />{order.pickupPhone}
                         </a>
                         <span className="font-mono text-[11px] text-slate-500">{order.pickupPincode}</span>
                       </div>
                     </div>
 
-                    <div className="rounded-xl bg-indigo-50 border border-indigo-200 p-3 space-y-1">
+                    <div className="rounded-xl bg-orange-50 border border-orange-200 p-3 space-y-1">
                       <div className="flex items-center gap-1.5">
-                        <Navigation className="h-3 w-3 text-indigo-500" />
-                        <span className="text-[10px] font-bold text-indigo-600 uppercase tracking-wider">Drop / Recipient</span>
+                        <Navigation className="h-3 w-3 text-orange-500" />
+                        <span className="text-[10px] font-bold text-orange-600 uppercase tracking-wider">Drop / Recipient</span>
                       </div>
                       <p className="text-sm font-bold text-slate-900">{order.dropName}</p>
                       <p className="text-xs text-slate-600 leading-relaxed">{order.dropAddress}</p>
                       <div className="flex items-center gap-3 pt-0.5">
-                        <a href={`tel:${order.dropPhone}`} className="flex items-center gap-1 text-xs text-indigo-600 font-semibold hover:text-indigo-700">
+                        <a href={`tel:${order.dropPhone}`} className="flex items-center gap-1 text-xs text-orange-600 font-semibold hover:text-orange-700">
                           <Phone className="h-3 w-3" />{order.dropPhone}
                         </a>
                         <span className="font-mono text-[11px] text-slate-500">{order.dropPincode}</span>
@@ -268,7 +268,7 @@ export const AgentDashboardPage: React.FC = () => {
                 <select
                   value={failureReason}
                   onChange={(e) => setFailureReason(e.target.value as FailureReason)}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-500/15 transition"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 focus:border-orange-400 focus:bg-white focus:ring-2 focus:ring-orange-500/15 transition"
                 >
                   <option value="CUSTOMER_UNAVAILABLE">Customer Unavailable / Phone Unreachable</option>
                   <option value="WRONG_ADDRESS">Incorrect / Incomplete Address</option>
@@ -285,7 +285,7 @@ export const AgentDashboardPage: React.FC = () => {
                   value={failureNotes}
                   onChange={(e) => setFailureNotes(e.target.value)}
                   placeholder="e.g. Called customer 3 times, door locked..."
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-900 focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-500/15 transition resize-none"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-900 focus:border-orange-400 focus:bg-white focus:ring-2 focus:ring-orange-500/15 transition resize-none"
                 />
               </div>
             </div>

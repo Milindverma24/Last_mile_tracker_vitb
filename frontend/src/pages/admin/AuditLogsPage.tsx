@@ -40,7 +40,7 @@ export const AdminAuditLogsPage: React.FC = () => {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
-            <ShieldCheck className="h-7 w-7 text-indigo-600" />
+            <ShieldCheck className="h-7 w-7 text-orange-600" />
             System Audit Trail
           </h1>
           <p className="text-sm text-slate-500">
@@ -64,7 +64,7 @@ export const AdminAuditLogsPage: React.FC = () => {
           placeholder="Filter audit logs by actor, action, entity or description..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-900 shadow-sm focus:border-indigo-600 focus:outline-none"
+          className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-900 shadow-sm focus:border-orange-600 focus:outline-none"
         />
       </div>
 
@@ -104,7 +104,7 @@ export const AdminAuditLogsPage: React.FC = () => {
                       </div>
                     </td>
                     <td className="py-3 px-4">
-                      <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                      <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-orange-50 text-orange-700 border border-orange-200">
                         {log.action}
                       </span>
                     </td>

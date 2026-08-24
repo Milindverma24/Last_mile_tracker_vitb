@@ -105,7 +105,7 @@ export const CustomerReschedulePage: React.FC = () => {
             <select
               value={selectedOrderId}
               onChange={(e) => setSelectedOrderId(e.target.value)}
-              className="mt-1.5 w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 shadow-sm focus:border-indigo-600 focus:outline-none"
+              className="mt-1.5 w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 shadow-sm focus:border-orange-600 focus:outline-none"
             >
               <option value="">-- Select shipment to reschedule --</option>
               {eligibleOrders.map((o) => (
@@ -127,7 +127,7 @@ export const CustomerReschedulePage: React.FC = () => {
                 type="date"
                 min={new Date().toISOString().split('T')[0]}
                 {...register('requestedDate')}
-                className="w-full rounded-lg border border-slate-300 py-2.5 pl-10 pr-3.5 text-sm text-slate-900 shadow-sm focus:border-indigo-600 focus:outline-none"
+                className="w-full rounded-lg border border-slate-300 py-2.5 pl-10 pr-3.5 text-sm text-slate-900 shadow-sm focus:border-orange-600 focus:outline-none"
               />
             </div>
             {errors.requestedDate && <p className="mt-1 text-xs text-rose-600">{errors.requestedDate.message}</p>}
@@ -142,7 +142,7 @@ export const CustomerReschedulePage: React.FC = () => {
               <Clock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <select
                 {...register('preferredTimeSlot')}
-                className="w-full rounded-lg border border-slate-300 py-2.5 pl-10 pr-3.5 text-sm text-slate-900 shadow-sm focus:border-indigo-600 focus:outline-none"
+                className="w-full rounded-lg border border-slate-300 py-2.5 pl-10 pr-3.5 text-sm text-slate-900 shadow-sm focus:border-orange-600 focus:outline-none"
               >
                 <option value="09:00 AM - 12:00 PM (Morning Slot)">09:00 AM - 12:00 PM (Morning Slot)</option>
                 <option value="12:00 PM - 03:00 PM (Afternoon Slot)">12:00 PM - 03:00 PM (Afternoon Slot)</option>
@@ -164,7 +164,7 @@ export const CustomerReschedulePage: React.FC = () => {
               rows={3}
               {...register('rescheduleNotes')}
               placeholder="e.g. Please deliver after 5 PM or leave with reception..."
-              className="mt-1.5 w-full rounded-lg border border-slate-300 px-3.5 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-600 focus:outline-none"
+              className="mt-1.5 w-full rounded-lg border border-slate-300 px-3.5 py-2 text-sm text-slate-900 shadow-sm focus:border-orange-600 focus:outline-none"
             />
           </div>
 
@@ -178,7 +178,7 @@ export const CustomerReschedulePage: React.FC = () => {
             <button
               type="submit"
               disabled={isSubmitting || reschedule.isPending}
-              className="flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-2.5 text-sm font-bold text-white shadow hover:bg-indigo-500 disabled:opacity-50"
+              className="flex items-center gap-2 rounded-xl bg-orange-600 px-6 py-2.5 text-sm font-bold text-white shadow hover:bg-orange-500 disabled:opacity-50"
             >
               {isSubmitting || reschedule.isPending ? 'Rescheduling...' : 'Confirm New Delivery Slot'}
               <ArrowRight className="h-4 w-4" />

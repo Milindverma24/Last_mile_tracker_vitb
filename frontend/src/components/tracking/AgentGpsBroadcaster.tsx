@@ -143,7 +143,7 @@ export const AgentGpsBroadcaster: React.FC<Props> = ({ order, onLocationSent }) 
   }, [order.status]);
 
   return (
-    <div className="rounded-xl border border-indigo-200 bg-indigo-50/50 p-4 space-y-3">
+    <div className="rounded-xl border border-orange-200 bg-orange-50/50 p-4 space-y-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Radio className={`h-4 w-4 ${isGpsActive || isSimulating ? 'text-emerald-600 animate-pulse' : 'text-slate-400'}`} />
@@ -172,7 +172,7 @@ export const AgentGpsBroadcaster: React.FC<Props> = ({ order, onLocationSent }) 
       {lastSentCoords && (
         <div className="rounded-lg bg-white p-2.5 text-[11px] text-slate-600 border border-slate-200 flex justify-between items-center">
           <div className="flex items-center gap-1.5">
-            <MapPin className="h-3.5 w-3.5 text-indigo-600" />
+            <MapPin className="h-3.5 w-3.5 text-orange-600" />
             <span className="font-mono">{lastSentCoords.lat.toFixed(4)}, {lastSentCoords.lng.toFixed(4)}</span>
           </div>
           <span className="text-slate-400">Sent at {lastSentTime}</span>
@@ -191,7 +191,7 @@ export const AgentGpsBroadcaster: React.FC<Props> = ({ order, onLocationSent }) 
           className={`inline-flex items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-bold transition shadow-xs ${
             isGpsActive
               ? 'bg-rose-600 text-white hover:bg-rose-500'
-              : 'bg-indigo-600 text-white hover:bg-indigo-500'
+              : 'bg-orange-600 text-white hover:bg-orange-500'
           }`}
         >
           {isGpsActive ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}

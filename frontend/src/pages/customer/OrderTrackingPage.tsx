@@ -88,7 +88,7 @@ export const CustomerOrderTrackingPage: React.FC = () => {
   if (orderLoading) {
     return (
       <div className="flex h-96 flex-col items-center justify-center gap-3">
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent" />
+        <div className="h-10 w-10 animate-spin rounded-full border-4 border-orange-600 border-t-transparent" />
         <p className="text-sm font-semibold text-slate-600">Retrieving live tracking telemetry...</p>
       </div>
     );
@@ -105,7 +105,7 @@ export const CustomerOrderTrackingPage: React.FC = () => {
         <button
           type="button"
           onClick={handleBack}
-          className="mt-4 inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-xs font-bold text-white shadow-xs hover:bg-indigo-700 transition cursor-pointer"
+          className="mt-4 inline-flex items-center gap-2 rounded-xl bg-orange-600 px-4 py-2 text-xs font-bold text-white shadow-xs hover:bg-orange-700 transition cursor-pointer"
         >
           <ArrowLeft className="h-4 w-4" /> Back to Orders
         </button>
@@ -127,10 +127,10 @@ export const CustomerOrderTrackingPage: React.FC = () => {
             >
               <ArrowLeft className="h-5 w-5" />
             </button>
-            <span className="font-mono text-xl font-black tracking-tight text-indigo-600">
+            <span className="font-mono text-xl font-black tracking-tight text-orange-600">
               {order.trackingNumber}
             </span>
-            <span className="rounded bg-indigo-50 px-2 py-0.5 text-xs font-bold text-indigo-700">
+            <span className="rounded bg-orange-50 px-2 py-0.5 text-xs font-bold text-orange-700">
               {order.routeType}
             </span>
           </div>
@@ -203,7 +203,7 @@ export const CustomerOrderTrackingPage: React.FC = () => {
           {/* Background Bar */}
           <div className="absolute left-0 top-1/2 -translate-y-1/2 h-1 w-full bg-slate-100" />
           <div
-            className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-indigo-600 transition-all duration-500"
+            className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-orange-600 transition-all duration-500"
             style={{
               width: `${(currentStepIdx / (steps.length - 1)) * 100}%`,
             }}
@@ -218,9 +218,9 @@ export const CustomerOrderTrackingPage: React.FC = () => {
                 <div
                   className={`flex h-10 w-10 items-center justify-center rounded-full border-2 transition ${
                     isCompleted
-                      ? 'border-indigo-600 bg-indigo-600 text-white shadow-md'
+                      ? 'border-orange-600 bg-orange-600 text-white shadow-md'
                       : 'border-slate-300 bg-white text-slate-400'
-                  } ${isCurrent ? 'ring-4 ring-indigo-100' : ''}`}
+                  } ${isCurrent ? 'ring-4 ring-orange-100' : ''}`}
                 >
                   {isCompleted ? <CheckCircle2 className="h-5 w-5" /> : idx + 1}
                 </div>
@@ -247,7 +247,7 @@ export const CustomerOrderTrackingPage: React.FC = () => {
 
           <div className="space-y-4">
             <div className="flex items-start gap-3">
-              <div className="rounded-lg bg-indigo-50 p-2 text-indigo-600">
+              <div className="rounded-lg bg-orange-50 p-2 text-orange-600">
                 <MapPin className="h-4 w-4" />
               </div>
               <div>
@@ -307,7 +307,7 @@ export const CustomerOrderTrackingPage: React.FC = () => {
             </div>
             <div className="flex justify-between">
               <span>Billable Weight:</span>
-              <span className="font-bold text-indigo-600">{order.billableWeightKg} kg</span>
+              <span className="font-bold text-orange-600">{order.billableWeightKg} kg</span>
             </div>
             <div className="border-t border-slate-100 pt-2 flex justify-between">
               <span>Base Delivery Charge:</span>
@@ -321,7 +321,7 @@ export const CustomerOrderTrackingPage: React.FC = () => {
             )}
             <div className="border-t border-slate-200 pt-2 flex justify-between text-sm font-black text-slate-900">
               <span>Total Charge:</span>
-              <span className="text-indigo-600">₹{Number(order.totalCharge).toFixed(2)}</span>
+              <span className="text-orange-600">₹{Number(order.totalCharge).toFixed(2)}</span>
             </div>
 
             {order.razorpayPaymentId && (
@@ -335,7 +335,7 @@ export const CustomerOrderTrackingPage: React.FC = () => {
               <div className="pt-3">
                 <button
                   onClick={() => setShowPaymentModal(true)}
-                  className="w-full inline-flex items-center justify-center gap-1.5 rounded-xl bg-indigo-600 py-2.5 text-xs font-bold text-white shadow hover:bg-indigo-500 transition"
+                  className="w-full inline-flex items-center justify-center gap-1.5 rounded-xl bg-orange-600 py-2.5 text-xs font-bold text-white shadow hover:bg-orange-500 transition"
                 >
                   <CreditCard className="h-4 w-4" />
                   Pay ₹{Number(order.totalCharge).toFixed(2)} with Razorpay
@@ -360,10 +360,10 @@ export const CustomerOrderTrackingPage: React.FC = () => {
           <div className="relative pl-6 space-y-6 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200">
             {trackingEvents.map((event) => (
               <div key={event.id} className="relative">
-                <div className="absolute -left-[27px] top-1.5 h-3 w-3 rounded-full border-2 border-white bg-indigo-600 shadow" />
+                <div className="absolute -left-[27px] top-1.5 h-3 w-3 rounded-full border-2 border-white bg-orange-600 shadow" />
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <span className="text-xs font-bold uppercase tracking-wider text-indigo-600">
+                    <span className="text-xs font-bold uppercase tracking-wider text-orange-600">
                       {event.newStatus}
                     </span>
                     <h4 className="text-sm font-bold text-slate-900">{event.remarks || 'Shipment update'}</h4>

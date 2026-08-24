@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../context/AuthContext';
+import { GatimanLogo } from '../components/common/GatimanLogo';
 import {
   LayoutDashboard, PackagePlus, Package, CalendarClock, User, LogOut, Menu, X, Truck, RefreshCw,
 } from 'lucide-react';
@@ -48,20 +49,15 @@ export const CustomerLayout: React.FC = () => {
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           {/* Brand */}
           <div className="flex items-center gap-6">
-            <Link to="/customer/dashboard" className="flex items-center gap-2.5 shrink-0">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white">
-                <Truck className="h-4 w-4" />
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-lg font-black tracking-tight text-slate-900">GATIMAN</span>
-                <span className="hidden rounded-md bg-indigo-50 px-2 py-0.5 text-[11px] font-bold text-indigo-700 sm:inline-block border border-indigo-100">
-                  Customer
-                </span>
-              </div>
-            </Link>
+            <div className="flex items-center gap-2">
+              <GatimanLogo to="/customer/dashboard" />
+              <span className="hidden rounded-full bg-orange-50 border border-orange-200 px-2 py-0.5 text-[10px] font-bold text-orange-700 sm:inline-block">
+                Customer Portal
+              </span>
+            </div>
 
             {/* Desktop nav */}
-            <div className="hidden lg:flex lg:items-center lg:gap-0.5">
+            <div className="hidden lg:flex lg:items-center lg:gap-1">
               {navigation.map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.href);
@@ -71,11 +67,11 @@ export const CustomerLayout: React.FC = () => {
                     to={item.href}
                     className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-xl px-3 py-1.5 text-xs font-semibold transition ${
                       active
-                        ? 'bg-indigo-50 text-indigo-700 font-bold border border-indigo-100'
+                        ? 'bg-orange-50 text-orange-700 font-bold border border-orange-200/80 shadow-2xs'
                         : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
                     }`}
                   >
-                    <Icon className={`h-4 w-4 shrink-0 ${active ? 'text-indigo-600' : 'text-slate-400'}`} />
+                    <Icon className={`h-4 w-4 shrink-0 ${active ? 'text-orange-600' : 'text-slate-400'}`} />
                     <span>{item.name}</span>
                   </Link>
                 );
@@ -89,22 +85,22 @@ export const CustomerLayout: React.FC = () => {
             <button
               type="button"
               onClick={handleRefresh}
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-indigo-600 hover:border-slate-300 transition shadow-2xs cursor-pointer shrink-0"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200 transition shadow-2xs cursor-pointer shrink-0"
               title="Refresh page data"
               aria-label="Refresh"
             >
-              <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin text-indigo-600' : ''}`} />
+              <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin text-orange-600' : ''}`} />
             </button>
 
             <NotificationBell />
 
             <div className="hidden sm:flex items-center gap-2.5 border-l border-slate-200 pl-3">
               <Link to="/customer/profile" className="flex items-center gap-2.5 group">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 text-xs font-black text-white shadow-sm group-hover:ring-2 ring-indigo-400 transition shrink-0">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-tr from-orange-600 to-amber-500 text-xs font-black text-white shadow-xs group-hover:ring-2 ring-orange-400/30 transition shrink-0">
                   {user?.firstName ? user.firstName.charAt(0).toUpperCase() : 'C'}
                 </div>
                 <div className="text-left hidden md:block max-w-[130px]">
-                  <p className="truncate text-xs font-bold text-slate-800 group-hover:text-indigo-600 transition leading-tight">
+                  <p className="truncate text-xs font-bold text-slate-800 group-hover:text-orange-600 transition leading-tight">
                     {user?.firstName} {user?.lastName}
                   </p>
                   <p className="truncate text-[10px] text-slate-400 font-medium leading-tight">{user?.email}</p>
@@ -119,19 +115,20 @@ export const CustomerLayout: React.FC = () => {
               </button>
             </div>
 
+            {/* Mobile menu toggle */}
             <button
+              type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="rounded-xl p-2 text-slate-600 hover:bg-slate-100 lg:hidden cursor-pointer"
-              aria-label="Toggle Menu"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 lg:hidden hover:bg-slate-100"
             >
-              {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5 text-slate-700" />}
+              {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
         </div>
 
-        {/* Mobile dropdown */}
+        {/* Mobile dropdown nav */}
         {isMobileMenuOpen && (
-          <div className="border-b border-slate-200 bg-white px-4 py-3 lg:hidden space-y-1">
+          <div className="border-t border-slate-200 bg-white px-4 py-3 space-y-1 lg:hidden">
             {navigation.map((item) => {
               const Icon = item.icon;
               const active = isActive(item.href);
@@ -140,11 +137,13 @@ export const CustomerLayout: React.FC = () => {
                   key={item.name}
                   to={item.href}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
-                    active ? 'bg-indigo-50 text-indigo-700 font-semibold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                  className={`flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold transition ${
+                    active
+                      ? 'bg-orange-50 text-orange-700 font-bold border border-orange-200/80'
+                      : 'text-slate-600 hover:bg-slate-50'
                   }`}
                 >
-                  <Icon className={`h-4 w-4 ${active ? 'text-indigo-600' : 'text-slate-400'}`} />
+                  <Icon className={`h-4 w-4 ${active ? 'text-orange-600' : 'text-slate-400'}`} />
                   <span>{item.name}</span>
                 </Link>
               );
@@ -156,7 +155,7 @@ export const CustomerLayout: React.FC = () => {
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="flex items-center gap-2.5"
               >
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-tr from-orange-600 to-amber-500 text-xs font-bold text-white">
                   {user?.firstName ? user.firstName.charAt(0).toUpperCase() : 'C'}
                 </div>
                 <div>
@@ -191,11 +190,11 @@ export const CustomerLayout: React.FC = () => {
                 key={item.name}
                 to={item.href}
                 className={`flex flex-col items-center gap-0.5 px-3 py-2 rounded-xl transition ${
-                  active ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600'
+                  active ? 'text-orange-600 font-bold' : 'text-slate-400 hover:text-slate-600'
                 }`}
               >
                 <Icon className="h-5 w-5" />
-                <span className="text-[10px] font-semibold">{item.name}</span>
+                <span className="text-[10px]">{item.name}</span>
               </Link>
             );
           })}

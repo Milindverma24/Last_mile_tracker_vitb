@@ -46,7 +46,7 @@ export const AdminRateCardsPage: React.FC = () => {
         return { label: 'Inter-State National', bg: 'bg-purple-50 text-purple-700 border-purple-200' };
       case 'INTER_ZONE':
       case 'INTER_CITY':
-        return { label: 'Inter-City Regional', bg: 'bg-indigo-50 text-indigo-700 border-indigo-200' };
+        return { label: 'Inter-City Regional', bg: 'bg-orange-50 text-orange-700 border-orange-200' };
       case 'INTRA_ZONE':
       case 'INTRA_CITY':
       default:
@@ -106,7 +106,7 @@ export const AdminRateCardsPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200/80 pb-5">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2.5">
-            <CreditCard className="h-6 w-6 text-indigo-600" />
+            <CreditCard className="h-6 w-6 text-orange-600" />
             Dynamic Rate Cards & Weight Slabs
           </h1>
           <p className="text-xs text-slate-500 mt-1">
@@ -118,16 +118,16 @@ export const AdminRateCardsPage: React.FC = () => {
           onClick={() => refetch()}
           className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 shadow-2xs hover:bg-slate-50 transition cursor-pointer"
         >
-          <RefreshCw className="h-3.5 w-3.5 text-indigo-600" /> Refresh Rates
+          <RefreshCw className="h-3.5 w-3.5 text-orange-600" /> Refresh Rates
         </button>
       </div>
 
       {/* 2. Live Pricing Simulator Sandbox */}
-      <div className="rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-50/70 via-white to-slate-50 p-4 sm:p-5 shadow-2xs">
+      <div className="rounded-2xl border border-orange-100 bg-gradient-to-br from-orange-50/70 via-white to-slate-50 p-4 sm:p-5 shadow-2xs">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 text-xs font-bold text-indigo-700 uppercase tracking-wider">
-              <Calculator className="h-4 w-4 text-indigo-600" />
+            <div className="flex items-center gap-2 text-xs font-bold text-orange-700 uppercase tracking-wider">
+              <Calculator className="h-4 w-4 text-orange-600" />
               <span>Live Rate Calculation Simulator</span>
             </div>
             <p className="text-xs text-slate-600 mt-0.5">
@@ -156,7 +156,7 @@ export const AdminRateCardsPage: React.FC = () => {
             <select
               value={calcRoute}
               onChange={(e) => setCalcRoute(e.target.value as any)}
-              className="bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-700 shadow-2xs focus:border-indigo-600 focus:outline-none cursor-pointer"
+              className="bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-700 shadow-2xs focus:border-orange-600 focus:outline-none cursor-pointer"
             >
               <option value="INTRA_ZONE">Intra-City (Local)</option>
               <option value="INTER_ZONE">Inter-City (Same State)</option>
@@ -167,15 +167,15 @@ export const AdminRateCardsPage: React.FC = () => {
             <select
               value={calcCustomer}
               onChange={(e) => setCalcCustomer(e.target.value as any)}
-              className="bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-700 shadow-2xs focus:border-indigo-600 focus:outline-none cursor-pointer"
+              className="bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-700 shadow-2xs focus:border-orange-600 focus:outline-none cursor-pointer"
             >
               <option value="B2C">B2C Retail</option>
               <option value="B2B">B2B Enterprise</option>
             </select>
 
             {/* Calculated Pill */}
-            <div className="rounded-xl bg-indigo-600 px-4 py-1.5 text-white shadow-xs">
-              <span className="text-[10px] uppercase font-bold text-indigo-200 block">Est. Billable</span>
+            <div className="rounded-xl bg-orange-600 px-4 py-1.5 text-white shadow-xs">
+              <span className="text-[10px] uppercase font-bold text-orange-200 block">Est. Billable</span>
               <span className="text-sm font-black tracking-tight">₹{calculateSimulatedCost()}</span>
             </div>
           </div>
@@ -197,7 +197,7 @@ export const AdminRateCardsPage: React.FC = () => {
               onClick={() => setRouteFilter(tab.id)}
               className={`rounded-xl px-3 py-1.5 text-xs font-bold transition cursor-pointer ${
                 routeFilter === tab.id
-                  ? 'bg-indigo-600 text-white shadow-xs'
+                  ? 'bg-orange-600 text-white shadow-xs'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
@@ -211,7 +211,7 @@ export const AdminRateCardsPage: React.FC = () => {
           <select
             value={customerTypeFilter}
             onChange={(e) => setCustomerTypeFilter(e.target.value)}
-            className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-700 focus:border-indigo-600 focus:bg-white focus:outline-none cursor-pointer"
+            className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-700 focus:border-orange-600 focus:bg-white focus:outline-none cursor-pointer"
           >
             <option value="ALL">All Segments (B2C & B2B)</option>
             <option value="B2C">Retail B2C</option>
@@ -223,7 +223,7 @@ export const AdminRateCardsPage: React.FC = () => {
       {/* 4. Rate Cards Grid */}
       {isLoading ? (
         <div className="p-16 text-center text-xs font-semibold text-slate-400">
-          <RefreshCw className="h-6 w-6 animate-spin mx-auto text-indigo-600 mb-2" />
+          <RefreshCw className="h-6 w-6 animate-spin mx-auto text-orange-600 mb-2" />
           Loading dynamic rate matrices...
         </div>
       ) : filteredCards.length === 0 ? (
@@ -246,7 +246,7 @@ export const AdminRateCardsPage: React.FC = () => {
                 <div className="flex items-start justify-between border-b border-slate-100 pb-3">
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="rounded-md bg-indigo-50 border border-indigo-200 px-2 py-0.5 text-[10px] font-bold text-indigo-700">
+                      <span className="rounded-md bg-orange-50 border border-orange-200 px-2 py-0.5 text-[10px] font-bold text-orange-700">
                         {card.customerType}
                       </span>
                       <span className={`rounded-md border px-2 py-0.5 text-[10px] font-bold ${routeBadge.bg}`}>
@@ -276,7 +276,7 @@ export const AdminRateCardsPage: React.FC = () => {
                     <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
                       Pricing Model
                     </span>
-                    <span className="font-bold text-indigo-700 text-xs">
+                    <span className="font-bold text-orange-700 text-xs">
                       Volumetric Slab (L×W×H / 5000)
                     </span>
                   </div>
@@ -314,7 +314,7 @@ export const AdminRateCardsPage: React.FC = () => {
                                   <span>{tier.label}</span>
                                 </span>
                               </td>
-                              <td className="px-3.5 py-2.5 font-bold text-indigo-700">
+                              <td className="px-3.5 py-2.5 font-bold text-orange-700">
                                 ₹{r.basePrice}
                               </td>
                               <td className="px-3.5 py-2.5 text-right font-medium text-slate-600">

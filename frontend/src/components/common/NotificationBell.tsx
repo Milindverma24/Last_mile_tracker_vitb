@@ -40,7 +40,7 @@ export const NotificationBell: React.FC<Props> = ({ isDarkNav = false }) => {
       case 'PICKED_UP':
       case 'IN_TRANSIT':
       case 'OUT_FOR_DELIVERY':
-        return <Truck className="w-4 h-4 text-indigo-500" />;
+        return <Truck className="w-4 h-4 text-orange-500" />;
       case 'DELIVERY_FAILED':
         return <AlertCircle className="w-4 h-4 text-rose-500" />;
       case 'RESCHEDULE_REQUESTED':
@@ -78,7 +78,7 @@ export const NotificationBell: React.FC<Props> = ({ isDarkNav = false }) => {
             <div className="flex items-center gap-2">
               <span className="font-bold text-sm text-slate-900">Notifications</span>
               {unreadCount > 0 && (
-                <span className="px-2 py-0.5 text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 rounded-full">
+                <span className="px-2 py-0.5 text-[10px] font-bold bg-orange-50 text-orange-700 border border-orange-200 rounded-full">
                   {unreadCount} new
                 </span>
               )}
@@ -86,7 +86,7 @@ export const NotificationBell: React.FC<Props> = ({ isDarkNav = false }) => {
             {unreadCount > 0 && (
               <button
                 onClick={() => markAllAsRead()}
-                className="flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-indigo-600 transition-colors"
+                className="flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-orange-600 transition-colors"
                 title="Mark all as read"
               >
                 <CheckCheck className="w-3.5 h-3.5" />
@@ -106,7 +106,7 @@ export const NotificationBell: React.FC<Props> = ({ isDarkNav = false }) => {
                 <div
                   key={item.id}
                   className={`p-3.5 transition-colors flex items-start gap-3 ${
-                    !item.isRead ? 'bg-indigo-50/40 hover:bg-indigo-50/60' : 'hover:bg-slate-50'
+                    !item.isRead ? 'bg-orange-50/40 hover:bg-orange-50/60' : 'hover:bg-slate-50'
                   }`}
                 >
                   <div className="mt-0.5 p-2 bg-white rounded-lg shrink-0 border border-slate-200 shadow-sm">
@@ -142,7 +142,7 @@ export const NotificationBell: React.FC<Props> = ({ isDarkNav = false }) => {
             <Link
               to={getFullNotificationsPath()}
               onClick={() => setIsOpen(false)}
-              className="inline-flex items-center gap-1.5 text-xs text-indigo-600 hover:text-indigo-800 font-bold py-1 px-3 rounded-lg hover:bg-indigo-50 transition-colors"
+              className="inline-flex items-center gap-1.5 text-xs text-orange-600 hover:text-indigo-800 font-bold py-1 px-3 rounded-lg hover:bg-orange-50 transition-colors"
             >
               <span>View full notification center</span>
               <ExternalLink className="w-3 h-3" />

@@ -191,14 +191,14 @@ export const CustomerCreateOrderPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-slate-200/80 pb-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
-            <Package className="h-5 w-5 text-indigo-600 shrink-0" />
+            <Package className="h-5 w-5 text-orange-600 shrink-0" />
             Book Express Shipment
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
             Follow the 6-step guided wizard with volumetric rate card pricing
           </p>
         </div>
-        <div className="inline-flex items-center gap-1.5 self-start rounded-full bg-indigo-50 px-3 py-1 text-xs font-bold text-indigo-700 border border-indigo-200/60">
+        <div className="inline-flex items-center gap-1.5 self-start rounded-full bg-orange-50 px-3 py-1 text-xs font-bold text-orange-700 border border-orange-200/60">
           <Sparkles className="h-3.5 w-3.5" />
           <span>Step {currentStep} of 6</span>
         </div>
@@ -209,7 +209,7 @@ export const CustomerCreateOrderPage: React.FC = () => {
         {/* Mobile Mini Stepper Indicator */}
         <div className="flex sm:hidden items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white shadow-xs">
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-orange-600 text-xs font-bold text-white shadow-xs">
               {currentStep}
             </div>
             <span className="text-xs font-bold text-slate-900">
@@ -222,7 +222,7 @@ export const CustomerCreateOrderPage: React.FC = () => {
                 key={s.num}
                 className={`h-1.5 rounded-full transition-all duration-300 ${
                   currentStep === s.num
-                    ? 'w-6 bg-indigo-600'
+                    ? 'w-6 bg-orange-600'
                     : currentStep > s.num
                     ? 'w-2.5 bg-emerald-500'
                     : 'w-2 bg-slate-200'
@@ -240,7 +240,7 @@ export const CustomerCreateOrderPage: React.FC = () => {
                 <div
                   className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition duration-200 shrink-0 ${
                     currentStep === s.num
-                      ? 'bg-indigo-600 text-white ring-4 ring-indigo-100 shadow-xs'
+                      ? 'bg-orange-600 text-white ring-4 ring-orange-100 shadow-xs'
                       : currentStep > s.num
                       ? 'bg-emerald-500 text-white'
                       : 'bg-slate-100 text-slate-500 border border-slate-200'
@@ -250,7 +250,7 @@ export const CustomerCreateOrderPage: React.FC = () => {
                 </div>
                 <span
                   className={`text-xs font-semibold whitespace-nowrap ${
-                    currentStep === s.num ? 'text-indigo-600 font-bold' : 'text-slate-500'
+                    currentStep === s.num ? 'text-orange-600 font-bold' : 'text-slate-500'
                   }`}
                 >
                   {s.title}
@@ -293,7 +293,7 @@ export const CustomerCreateOrderPage: React.FC = () => {
                       type="text"
                       {...register('pickupName')}
                       placeholder="e.g. Priya Sharma"
-                      className="w-full rounded-xl border border-slate-300 py-2 pl-9 pr-3 text-xs sm:text-sm text-slate-900 shadow-2xs focus:border-indigo-600 focus:outline-hidden"
+                      className="w-full rounded-xl border border-slate-300 py-2 pl-9 pr-3 text-xs sm:text-sm text-slate-900 shadow-2xs focus:border-orange-600 focus:outline-hidden"
                     />
                   </div>
                   {errors.pickupName && <p className="mt-1 text-xs text-rose-600 font-semibold">{errors.pickupName.message}</p>}
@@ -307,7 +307,7 @@ export const CustomerCreateOrderPage: React.FC = () => {
                       type="text"
                       {...register('pickupPhone')}
                       placeholder="+91 98111 22233"
-                      className="w-full rounded-xl border border-slate-300 py-2 pl-9 pr-3 text-xs sm:text-sm text-slate-900 shadow-2xs focus:border-indigo-600 focus:outline-hidden"
+                      className="w-full rounded-xl border border-slate-300 py-2 pl-9 pr-3 text-xs sm:text-sm text-slate-900 shadow-2xs focus:border-orange-600 focus:outline-hidden"
                     />
                   </div>
                   {errors.pickupPhone && <p className="mt-1 text-xs text-rose-600 font-semibold">{errors.pickupPhone.message}</p>}
@@ -320,7 +320,7 @@ export const CustomerCreateOrderPage: React.FC = () => {
                   rows={2}
                   {...register('pickupAddress')}
                   placeholder="Apartment, Floor, Street, Landmark"
-                  className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm text-slate-900 shadow-2xs focus:border-indigo-600 focus:outline-hidden"
+                  className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm text-slate-900 shadow-2xs focus:border-orange-600 focus:outline-hidden"
                 />
                 {errors.pickupAddress && <p className="mt-1 text-xs text-rose-600 font-semibold">{errors.pickupAddress.message}</p>}
               </div>
@@ -332,7 +332,7 @@ export const CustomerCreateOrderPage: React.FC = () => {
                   maxLength={6}
                   {...register('pickupPincode')}
                   placeholder="e.g. 110016"
-                  className="mt-1 w-full sm:max-w-xs rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm font-mono font-bold text-slate-900 shadow-2xs focus:border-indigo-600 focus:outline-hidden"
+                  className="mt-1 w-full sm:max-w-xs rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm font-mono font-bold text-slate-900 shadow-2xs focus:border-orange-600 focus:outline-hidden"
                 />
                 {errors.pickupPincode && <p className="mt-1 text-xs text-rose-600 font-semibold">{errors.pickupPincode.message}</p>}
               </div>
@@ -361,7 +361,7 @@ export const CustomerCreateOrderPage: React.FC = () => {
                       type="text"
                       {...register('dropName')}
                       placeholder="e.g. Vikram Seth"
-                      className="w-full rounded-xl border border-slate-300 py-2 pl-9 pr-3 text-xs sm:text-sm text-slate-900 shadow-2xs focus:border-indigo-600 focus:outline-hidden"
+                      className="w-full rounded-xl border border-slate-300 py-2 pl-9 pr-3 text-xs sm:text-sm text-slate-900 shadow-2xs focus:border-orange-600 focus:outline-hidden"
                     />
                   </div>
                   {errors.dropName && <p className="mt-1 text-xs text-rose-600 font-semibold">{errors.dropName.message}</p>}
@@ -375,7 +375,7 @@ export const CustomerCreateOrderPage: React.FC = () => {
                       type="text"
                       {...register('dropPhone')}
                       placeholder="+91 98222 33344"
-                      className="w-full rounded-xl border border-slate-300 py-2 pl-9 pr-3 text-xs sm:text-sm text-slate-900 shadow-2xs focus:border-indigo-600 focus:outline-hidden"
+                      className="w-full rounded-xl border border-slate-300 py-2 pl-9 pr-3 text-xs sm:text-sm text-slate-900 shadow-2xs focus:border-orange-600 focus:outline-hidden"
                     />
                   </div>
                   {errors.dropPhone && <p className="mt-1 text-xs text-rose-600 font-semibold">{errors.dropPhone.message}</p>}
@@ -388,7 +388,7 @@ export const CustomerCreateOrderPage: React.FC = () => {
                   rows={2}
                   {...register('dropAddress')}
                   placeholder="Building, Tower, Flat, Floor, Sector"
-                  className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm text-slate-900 shadow-2xs focus:border-indigo-600 focus:outline-hidden"
+                  className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm text-slate-900 shadow-2xs focus:border-orange-600 focus:outline-hidden"
                 />
                 {errors.dropAddress && <p className="mt-1 text-xs text-rose-600 font-semibold">{errors.dropAddress.message}</p>}
               </div>
@@ -400,7 +400,7 @@ export const CustomerCreateOrderPage: React.FC = () => {
                   maxLength={6}
                   {...register('dropPincode')}
                   placeholder="e.g. 122002"
-                  className="mt-1 w-full sm:max-w-xs rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm font-mono font-bold text-slate-900 shadow-2xs focus:border-indigo-600 focus:outline-hidden"
+                  className="mt-1 w-full sm:max-w-xs rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm font-mono font-bold text-slate-900 shadow-2xs focus:border-orange-600 focus:outline-hidden"
                 />
                 {errors.dropPincode && <p className="mt-1 text-xs text-rose-600 font-semibold">{errors.dropPincode.message}</p>}
               </div>
@@ -411,7 +411,7 @@ export const CustomerCreateOrderPage: React.FC = () => {
           {currentStep === 3 && (
             <div className="space-y-4 animate-in fade-in duration-200">
               <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-50 text-orange-600">
                   <Package className="h-4 w-4" />
                 </div>
                 <div>
@@ -420,12 +420,12 @@ export const CustomerCreateOrderPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="rounded-xl border border-indigo-100 bg-indigo-50/60 p-3 text-xs text-indigo-900 space-y-1">
+              <div className="rounded-xl border border-orange-100 bg-orange-50/60 p-3 text-xs text-orange-950 space-y-1">
                 <p className="font-bold flex items-center gap-1.5">
-                  <Info className="h-3.5 w-3.5 text-indigo-600" />
+                  <Info className="h-3.5 w-3.5 text-orange-600" />
                   Industry Standard Volumetric Formula: (L × B × H) ÷ 5000
                 </p>
-                <p className="text-[11px] text-indigo-700">
+                <p className="text-[11px] text-orange-700">
                   Shipment is billed on the greater of <strong>Actual Weight</strong> vs <strong>Volumetric Weight</strong>.
                 </p>
               </div>
@@ -437,7 +437,7 @@ export const CustomerCreateOrderPage: React.FC = () => {
                     type="number"
                     step="0.1"
                     {...register('lengthCm', { valueAsNumber: true })}
-                    className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm font-mono font-bold text-slate-900 shadow-2xs focus:border-indigo-600 focus:outline-hidden"
+                    className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm font-mono font-bold text-slate-900 shadow-2xs focus:border-orange-600 focus:outline-hidden"
                   />
                   {errors.lengthCm && <p className="mt-1 text-xs text-rose-600 font-semibold">{errors.lengthCm.message}</p>}
                 </div>
@@ -448,7 +448,7 @@ export const CustomerCreateOrderPage: React.FC = () => {
                     type="number"
                     step="0.1"
                     {...register('breadthCm', { valueAsNumber: true })}
-                    className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm font-mono font-bold text-slate-900 shadow-2xs focus:border-indigo-600 focus:outline-hidden"
+                    className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm font-mono font-bold text-slate-900 shadow-2xs focus:border-orange-600 focus:outline-hidden"
                   />
                   {errors.breadthCm && <p className="mt-1 text-xs text-rose-600 font-semibold">{errors.breadthCm.message}</p>}
                 </div>
@@ -459,7 +459,7 @@ export const CustomerCreateOrderPage: React.FC = () => {
                     type="number"
                     step="0.1"
                     {...register('heightCm', { valueAsNumber: true })}
-                    className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm font-mono font-bold text-slate-900 shadow-2xs focus:border-indigo-600 focus:outline-hidden"
+                    className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm font-mono font-bold text-slate-900 shadow-2xs focus:border-orange-600 focus:outline-hidden"
                   />
                   {errors.heightCm && <p className="mt-1 text-xs text-rose-600 font-semibold">{errors.heightCm.message}</p>}
                 </div>
@@ -470,7 +470,7 @@ export const CustomerCreateOrderPage: React.FC = () => {
                     type="number"
                     step="0.01"
                     {...register('actualWeightKg', { valueAsNumber: true })}
-                    className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm font-mono font-bold text-slate-900 shadow-2xs focus:border-indigo-600 focus:outline-hidden"
+                    className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm font-mono font-bold text-slate-900 shadow-2xs focus:border-orange-600 focus:outline-hidden"
                   />
                   {errors.actualWeightKg && <p className="mt-1 text-xs text-rose-600 font-semibold">{errors.actualWeightKg.message}</p>}
                 </div>
@@ -483,7 +483,7 @@ export const CustomerCreateOrderPage: React.FC = () => {
                     type="text"
                     {...register('packageDescription')}
                     placeholder="e.g. Electronics, Clothing, Documents"
-                    className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm text-slate-900 shadow-2xs focus:border-indigo-600 focus:outline-hidden"
+                    className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm text-slate-900 shadow-2xs focus:border-orange-600 focus:outline-hidden"
                   />
                 </div>
                 <div>
@@ -492,7 +492,7 @@ export const CustomerCreateOrderPage: React.FC = () => {
                     type="number"
                     {...register('declaredValue', { valueAsNumber: true })}
                     placeholder="e.g. 2500"
-                    className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm font-mono text-slate-900 shadow-2xs focus:border-indigo-600 focus:outline-hidden"
+                    className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm font-mono text-slate-900 shadow-2xs focus:border-orange-600 focus:outline-hidden"
                   />
                 </div>
               </div>
@@ -503,7 +503,7 @@ export const CustomerCreateOrderPage: React.FC = () => {
           {currentStep === 4 && (
             <div className="space-y-5 animate-in fade-in duration-200">
               <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-50 text-orange-600">
                   <CreditCard className="h-4 w-4" />
                 </div>
                 <div>
@@ -521,11 +521,11 @@ export const CustomerCreateOrderPage: React.FC = () => {
                   <label
                     className={`flex cursor-pointer items-start gap-3 rounded-2xl border p-4 transition ${
                       formData.customerType === 'B2C'
-                        ? 'border-indigo-600 bg-indigo-50/70 text-indigo-950 shadow-xs'
+                        ? 'border-orange-600 bg-orange-50/70 text-indigo-950 shadow-xs'
                         : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
                     }`}
                   >
-                    <User className={`h-5 w-5 shrink-0 mt-0.5 ${formData.customerType === 'B2C' ? 'text-indigo-600' : 'text-slate-400'}`} />
+                    <User className={`h-5 w-5 shrink-0 mt-0.5 ${formData.customerType === 'B2C' ? 'text-orange-600' : 'text-slate-400'}`} />
                     <div>
                       <p className="font-bold text-xs sm:text-sm">Personal Delivery (B2C)</p>
                       <p className="text-[11px] text-slate-500 mt-0.5">Direct retail consumer delivery with standard rate cards</p>
@@ -536,11 +536,11 @@ export const CustomerCreateOrderPage: React.FC = () => {
                   <label
                     className={`flex cursor-pointer items-start gap-3 rounded-2xl border p-4 transition ${
                       formData.customerType === 'B2B'
-                        ? 'border-indigo-600 bg-indigo-50/70 text-indigo-950 shadow-xs'
+                        ? 'border-orange-600 bg-orange-50/70 text-indigo-950 shadow-xs'
                         : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
                     }`}
                   >
-                    <Building className={`h-5 w-5 shrink-0 mt-0.5 ${formData.customerType === 'B2B' ? 'text-indigo-600' : 'text-slate-400'}`} />
+                    <Building className={`h-5 w-5 shrink-0 mt-0.5 ${formData.customerType === 'B2B' ? 'text-orange-600' : 'text-slate-400'}`} />
                     <div>
                       <p className="font-bold text-xs sm:text-sm">Enterprise Logistics (B2B)</p>
                       <p className="text-[11px] text-slate-500 mt-0.5">Bulk commercial rates with high-volume slab discounts</p>
@@ -594,7 +594,7 @@ export const CustomerCreateOrderPage: React.FC = () => {
           {currentStep === 5 && (
             <div className="space-y-4 animate-in fade-in duration-200">
               <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-50 text-orange-600">
                   <Calculator className="h-4 w-4" />
                 </div>
                 <div>
@@ -605,7 +605,7 @@ export const CustomerCreateOrderPage: React.FC = () => {
 
               {isCalculating ? (
                 <div className="flex flex-col items-center justify-center p-8 gap-3">
-                  <div className="h-8 w-8 animate-spin rounded-full border-3 border-indigo-600 border-t-transparent" />
+                  <div className="h-8 w-8 animate-spin rounded-full border-3 border-orange-600 border-t-transparent" />
                   <p className="text-xs font-bold text-slate-600">Calculating route slabs & volumetric matrices...</p>
                 </div>
               ) : chargePreview ? (
@@ -624,10 +624,10 @@ export const CustomerCreateOrderPage: React.FC = () => {
                       <p className="text-[11px] text-slate-500">{chargePreview.dropAreaName} ({formData.dropPincode})</p>
                     </div>
 
-                    <div className="rounded-xl border border-indigo-200 bg-indigo-50/70 p-3 space-y-0.5">
-                      <p className="text-[10px] font-bold uppercase text-indigo-700">Route Classification</p>
-                      <p className="text-xs font-black text-indigo-900">{chargePreview.routeType}</p>
-                      <p className="text-[11px] text-indigo-600 truncate">{chargePreview.rateCardName}</p>
+                    <div className="rounded-xl border border-orange-200 bg-orange-50/70 p-3 space-y-0.5">
+                      <p className="text-[10px] font-bold uppercase text-orange-700">Route Classification</p>
+                      <p className="text-xs font-black text-orange-950">{chargePreview.routeType}</p>
+                      <p className="text-[11px] text-orange-600 truncate">{chargePreview.rateCardName}</p>
                     </div>
                   </div>
 
@@ -643,11 +643,11 @@ export const CustomerCreateOrderPage: React.FC = () => {
                       </div>
                       <div className="rounded-xl bg-slate-50 p-2.5 border border-slate-100">
                         <p className="text-[10px] font-semibold text-slate-500">Volumetric</p>
-                        <p className="text-sm sm:text-base font-bold text-indigo-600 mt-0.5">{chargePreview.volumetricWeightKg} kg</p>
+                        <p className="text-sm sm:text-base font-bold text-orange-600 mt-0.5">{chargePreview.volumetricWeightKg} kg</p>
                       </div>
-                      <div className="rounded-xl bg-indigo-50 p-2.5 border border-indigo-200">
-                        <p className="text-[10px] font-bold text-indigo-700">Billable Weight</p>
-                        <p className="text-sm sm:text-base font-black text-indigo-900 mt-0.5">{chargePreview.billableWeightKg} kg</p>
+                      <div className="rounded-xl bg-orange-50 p-2.5 border border-orange-200">
+                        <p className="text-[10px] font-bold text-orange-700">Billable Weight</p>
+                        <p className="text-sm sm:text-base font-black text-orange-950 mt-0.5">{chargePreview.billableWeightKg} kg</p>
                       </div>
                     </div>
                     <p className="mt-2 text-center text-[10px] text-slate-400 font-mono">
@@ -669,7 +669,7 @@ export const CustomerCreateOrderPage: React.FC = () => {
                         </div>
                       )}
                       <div className="border-t border-slate-800 pt-2.5 flex justify-between items-center text-sm sm:text-base font-black">
-                        <span className="text-indigo-400">Total Authoritative Charge</span>
+                        <span className="text-orange-400">Total Authoritative Charge</span>
                         <span className="text-xl sm:text-2xl text-white font-black">₹{Number(chargePreview.totalCharge).toFixed(2)}</span>
                       </div>
                     </div>
@@ -706,7 +706,7 @@ export const CustomerCreateOrderPage: React.FC = () => {
                     <span className="text-slate-500">Payment Mode:</span>
                     <span className="font-bold text-slate-800">{formData.paymentType}</span>
                   </div>
-                  <div className="border-t border-slate-200 pt-2 flex justify-between text-sm font-bold text-indigo-600">
+                  <div className="border-t border-slate-200 pt-2 flex justify-between text-sm font-bold text-orange-600">
                     <span>Total Amount:</span>
                     <span className="text-base font-black">₹{Number(chargePreview.totalCharge).toFixed(2)}</span>
                   </div>
@@ -740,7 +740,7 @@ export const CustomerCreateOrderPage: React.FC = () => {
               <button
                 type="button"
                 onClick={handleNextStep}
-                className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-indigo-600 px-6 py-2.5 text-xs sm:text-sm font-bold text-white shadow-xs hover:bg-indigo-700 transition cursor-pointer"
+                className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-orange-600 px-6 py-2.5 text-xs sm:text-sm font-bold text-white shadow-xs hover:bg-orange-700 transition cursor-pointer"
               >
                 Next Step <ArrowRight className="h-4 w-4" />
               </button>
@@ -750,7 +750,7 @@ export const CustomerCreateOrderPage: React.FC = () => {
                 disabled={createOrder.isPending}
                 className={`inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-xs sm:text-sm font-bold text-white shadow-xs transition disabled:opacity-50 cursor-pointer ${
                   formData.paymentType === 'PREPAID'
-                    ? 'bg-indigo-600 hover:bg-indigo-700'
+                    ? 'bg-orange-600 hover:bg-orange-700'
                     : 'bg-emerald-600 hover:bg-emerald-700'
                 }`}
               >

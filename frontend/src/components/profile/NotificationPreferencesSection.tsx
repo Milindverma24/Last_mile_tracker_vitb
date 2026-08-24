@@ -44,7 +44,7 @@ export const NotificationPreferencesSection: React.FC<Props> = ({ preferences, o
     <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 space-y-6">
       <div className="border-b border-slate-100 pb-4">
         <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-          <Bell className="h-5 w-5 text-indigo-600" />
+          <Bell className="h-5 w-5 text-orange-600" />
           Notification Channels & Alert Rules
         </h2>
         <p className="text-xs text-slate-500">Configure email and in-app alerts for shipments and critical events</p>
@@ -75,7 +75,7 @@ export const NotificationPreferencesSection: React.FC<Props> = ({ preferences, o
             type="button"
             onClick={() => handleToggle('orderUpdates')}
             className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-              formData.orderUpdates ? 'bg-indigo-600' : 'bg-slate-200'
+              formData.orderUpdates ? 'bg-orange-600' : 'bg-slate-200'
             }`}
           >
             <span
@@ -96,7 +96,7 @@ export const NotificationPreferencesSection: React.FC<Props> = ({ preferences, o
             type="button"
             onClick={() => handleToggle('deliveryUpdates')}
             className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-              formData.deliveryUpdates ? 'bg-indigo-600' : 'bg-slate-200'
+              formData.deliveryUpdates ? 'bg-orange-600' : 'bg-slate-200'
             }`}
           >
             <span
@@ -117,7 +117,7 @@ export const NotificationPreferencesSection: React.FC<Props> = ({ preferences, o
             type="button"
             onClick={() => handleToggle('rescheduleUpdates')}
             className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-              formData.rescheduleUpdates ? 'bg-indigo-600' : 'bg-slate-200'
+              formData.rescheduleUpdates ? 'bg-orange-600' : 'bg-slate-200'
             }`}
           >
             <span
@@ -139,7 +139,7 @@ export const NotificationPreferencesSection: React.FC<Props> = ({ preferences, o
             </div>
             <p className="text-xs text-slate-500">Password changes, new logins, and critical system policy updates</p>
           </div>
-          <div className="relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent bg-indigo-600 opacity-60 cursor-not-allowed">
+          <div className="relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent bg-orange-600 opacity-60 cursor-not-allowed">
             <span className="inline-block h-5 w-5 transform translate-x-5 rounded-full bg-white shadow" />
           </div>
         </div>
@@ -154,7 +154,7 @@ export const NotificationPreferencesSection: React.FC<Props> = ({ preferences, o
             type="button"
             onClick={() => handleToggle('marketing')}
             className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-              formData.marketing ? 'bg-indigo-600' : 'bg-slate-200'
+              formData.marketing ? 'bg-orange-600' : 'bg-slate-200'
             }`}
           >
             <span
@@ -171,7 +171,7 @@ export const NotificationPreferencesSection: React.FC<Props> = ({ preferences, o
           type="button"
           onClick={handleSave}
           disabled={isLoading}
-          className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold shadow hover:bg-indigo-500 disabled:opacity-50 transition"
+          className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl bg-orange-600 text-white text-xs font-bold shadow hover:bg-orange-500 disabled:opacity-50 transition"
         >
           {isLoading ? 'Saving Preferences...' : 'Save Notification Preferences'}
         </button>

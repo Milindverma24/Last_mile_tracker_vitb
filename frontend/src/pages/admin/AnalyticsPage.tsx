@@ -60,7 +60,7 @@ export const AdminAnalyticsPage: React.FC = () => {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
-            <BarChart3 className="h-7 w-7 text-indigo-600" />
+            <BarChart3 className="h-7 w-7 text-orange-600" />
             Operations Intelligence & SLA Analytics
           </h1>
           <p className="text-sm text-slate-500">
@@ -81,7 +81,7 @@ export const AdminAnalyticsPage: React.FC = () => {
                 onClick={() => setRange(tab.value)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
                   range === tab.value
-                    ? 'bg-indigo-600 text-white shadow'
+                    ? 'bg-orange-600 text-white shadow'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -105,7 +105,7 @@ export const AdminAnalyticsPage: React.FC = () => {
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Bookings</span>
-            <Package className="h-4 w-4 text-indigo-500" />
+            <Package className="h-4 w-4 text-orange-500" />
           </div>
           <p className="text-2xl font-black text-slate-900 mt-2">
             {orderAnalytics?.totalOrders ?? dashboard?.totalOrders ?? 0}
@@ -155,7 +155,7 @@ export const AdminAnalyticsPage: React.FC = () => {
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Fleet Active</span>
-            <Truck className="h-4 w-4 text-indigo-500" />
+            <Truck className="h-4 w-4 text-orange-500" />
           </div>
           <p className="text-2xl font-black text-slate-900 mt-2">
             {dashboard?.availableAgents ?? 0}/{dashboard?.totalAgents ?? 0}
@@ -163,15 +163,15 @@ export const AdminAnalyticsPage: React.FC = () => {
           <span className="text-[11px] text-slate-400 font-medium">Available Drivers</span>
         </div>
 
-        <div className="rounded-2xl border border-indigo-200 bg-indigo-50/50 p-4 shadow-sm">
+        <div className="rounded-2xl border border-orange-200 bg-orange-50/50 p-4 shadow-sm">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-indigo-800 uppercase tracking-wider">Charges</span>
-            <DollarSign className="h-4 w-4 text-indigo-600" />
+            <DollarSign className="h-4 w-4 text-orange-600" />
           </div>
-          <p className="text-2xl font-black text-indigo-700 mt-2">
+          <p className="text-2xl font-black text-orange-700 mt-2">
             ₹{revenueAnalytics?.totalDeliveryCharges ?? dashboard?.totalRevenue ?? 0}
           </p>
-          <span className="text-[11px] text-indigo-600 font-semibold">Realized Logistics</span>
+          <span className="text-[11px] text-orange-600 font-semibold">Realized Logistics</span>
         </div>
       </div>
 
@@ -295,7 +295,7 @@ export const AdminAnalyticsPage: React.FC = () => {
               <h3 className="text-base font-bold text-slate-900">Delivery Charges Composition</h3>
               <p className="text-xs text-slate-500">Base weight charge vs COD surcharges & Route categories</p>
             </div>
-            <span className="text-xs font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">
+            <span className="text-xs font-bold text-orange-700 bg-orange-50 px-2 py-0.5 rounded border border-orange-200">
               ₹{revenueAnalytics?.totalDeliveryCharges || 0} Realized
             </span>
           </div>
@@ -309,9 +309,9 @@ export const AdminAnalyticsPage: React.FC = () => {
               <span className="text-xs text-slate-500 font-semibold uppercase">COD Cash Handling</span>
               <p className="text-lg font-bold text-slate-900 mt-1">₹{revenueAnalytics?.codSurcharges || 0}</p>
             </div>
-            <div className="rounded-xl bg-indigo-50/50 p-3.5 border border-indigo-100">
-              <span className="text-xs text-indigo-700 font-semibold uppercase">B2B Volume Charges</span>
-              <p className="text-lg font-bold text-indigo-900 mt-1">₹{revenueAnalytics?.b2bCharges || 0}</p>
+            <div className="rounded-xl bg-orange-50/50 p-3.5 border border-orange-100">
+              <span className="text-xs text-orange-700 font-semibold uppercase">B2B Volume Charges</span>
+              <p className="text-lg font-bold text-orange-950 mt-1">₹{revenueAnalytics?.b2bCharges || 0}</p>
             </div>
             <div className="rounded-xl bg-emerald-50/50 p-3.5 border border-emerald-100">
               <span className="text-xs text-emerald-700 font-semibold uppercase">B2C Retail Charges</span>

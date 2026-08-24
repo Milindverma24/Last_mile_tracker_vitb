@@ -58,7 +58,7 @@ export const SecuritySection: React.FC<Props> = ({ onChangePassword, isLoading }
     <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 space-y-6">
       <div className="border-b border-slate-100 pb-4">
         <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-          <KeyRound className="h-5 w-5 text-indigo-600" />
+          <KeyRound className="h-5 w-5 text-orange-600" />
           Security Credentials & Password Management
         </h2>
         <p className="text-xs text-slate-500">Update account password and review authentication policies</p>
@@ -89,7 +89,7 @@ export const SecuritySection: React.FC<Props> = ({ onChangePassword, isLoading }
               placeholder="••••••••"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              className="w-full rounded-xl border border-slate-300 px-3.5 py-2 pr-10 text-sm text-slate-900 focus:border-indigo-600 focus:outline-none"
+              className="w-full rounded-xl border border-slate-300 px-3.5 py-2 pr-10 text-sm text-slate-900 focus:border-orange-600 focus:outline-none"
               required
             />
             <button
@@ -111,7 +111,7 @@ export const SecuritySection: React.FC<Props> = ({ onChangePassword, isLoading }
             placeholder="At least 6 characters"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
-            className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm text-slate-900 focus:border-indigo-600 focus:outline-none"
+            className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm text-slate-900 focus:border-orange-600 focus:outline-none"
             required
           />
         </div>
@@ -125,7 +125,7 @@ export const SecuritySection: React.FC<Props> = ({ onChangePassword, isLoading }
             placeholder="Re-enter new password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm text-slate-900 focus:border-indigo-600 focus:outline-none"
+            className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-sm text-slate-900 focus:border-orange-600 focus:outline-none"
             required
           />
         </div>
@@ -143,7 +143,7 @@ export const SecuritySection: React.FC<Props> = ({ onChangePassword, isLoading }
           <button
             type="submit"
             disabled={isLoading || !currentPassword || !newPassword}
-            className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold shadow hover:bg-indigo-500 disabled:opacity-50 transition"
+            className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl bg-orange-600 text-white text-xs font-bold shadow hover:bg-orange-500 disabled:opacity-50 transition"
           >
             <Lock className="h-3.5 w-3.5" />
             {isLoading ? 'Updating Password...' : 'Change Password'}

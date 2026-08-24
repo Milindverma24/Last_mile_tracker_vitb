@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { GatimanLogo } from '../components/common/GatimanLogo';
 import {
   Truck,
   Search,
@@ -98,14 +99,7 @@ export const PublicLayout: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-2 group shrink-0">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center text-white font-black text-base shadow-sm">
-                G
-              </div>
-              <span className="font-heading font-black text-xl tracking-tight text-slate-900 group-hover:text-orange-600 transition">
-                gatiman<span className="text-orange-600">.</span>
-              </span>
-            </Link>
+            <GatimanLogo to="/" />
 
             {/* Desktop Nav */}
             <nav className="hidden lg:flex items-center gap-1 text-xs font-semibold text-slate-600">

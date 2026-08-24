@@ -123,20 +123,20 @@ export const LiveTrackingStatusCard: React.FC<Props> = ({ trackingData, connecti
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
             <div className="flex items-center gap-1.5 text-slate-500 text-xs font-bold uppercase tracking-wider">
-              <Navigation className="h-3.5 w-3.5 text-indigo-600" />
+              <Navigation className="h-3.5 w-3.5 text-orange-600" />
               <span>Distance</span>
             </div>
             <p className="mt-1 text-2xl font-black text-slate-900">{distanceRemaining} km</p>
             <p className="text-[11px] text-slate-500">Remaining to destination</p>
           </div>
 
-          <div className="rounded-xl border border-indigo-200 bg-indigo-50/60 p-4">
-            <div className="flex items-center gap-1.5 text-indigo-700 text-xs font-bold uppercase tracking-wider">
-              <Clock className="h-3.5 w-3.5 text-indigo-600" />
+          <div className="rounded-xl border border-orange-200 bg-orange-50/60 p-4">
+            <div className="flex items-center gap-1.5 text-orange-700 text-xs font-bold uppercase tracking-wider">
+              <Clock className="h-3.5 w-3.5 text-orange-600" />
               <span>Estimated Time</span>
             </div>
-            <p className="mt-1 text-2xl font-black text-indigo-900">{etaMinutes} mins</p>
-            <p className="text-[11px] text-indigo-600 font-medium">Expected ~{expectedArrival}</p>
+            <p className="mt-1 text-2xl font-black text-orange-950">{etaMinutes} mins</p>
+            <p className="text-[11px] text-orange-600 font-medium">Expected ~{expectedArrival}</p>
           </div>
 
           <div className="hidden sm:block rounded-xl border border-slate-200 bg-slate-50 p-4">
@@ -183,7 +183,7 @@ export const LiveTrackingStatusCard: React.FC<Props> = ({ trackingData, connecti
       {deliveryPartner && (
         <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 text-white font-black text-sm shadow-sm">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-600 text-white font-black text-sm shadow-sm">
               {deliveryPartner.name.charAt(0)}
             </div>
             <div>
@@ -198,7 +198,7 @@ export const LiveTrackingStatusCard: React.FC<Props> = ({ trackingData, connecti
           {deliveryPartner.phoneNumber && (
             <a
               href={`tel:${deliveryPartner.phoneNumber}`}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-white px-3.5 py-2 text-xs font-bold text-slate-800 shadow-sm border border-slate-200 hover:bg-indigo-50 hover:text-indigo-600 transition"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-white px-3.5 py-2 text-xs font-bold text-slate-800 shadow-sm border border-slate-200 hover:bg-orange-50 hover:text-orange-600 transition"
             >
               <Phone className="h-3.5 w-3.5" />
               <span>Call Partner</span>

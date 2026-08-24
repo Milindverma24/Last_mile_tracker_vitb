@@ -30,7 +30,7 @@ export const CustomerNotificationsPage: React.FC = () => {
       case 'PICKED_UP':
       case 'IN_TRANSIT':
       case 'OUT_FOR_DELIVERY':
-        return <Truck className="h-5 w-5 text-indigo-600" />;
+        return <Truck className="h-5 w-5 text-orange-600" />;
       case 'DELIVERY_FAILED':
         return <AlertTriangle className="h-5 w-5 text-rose-600" />;
       case 'RESCHEDULE_REQUESTED':
@@ -48,7 +48,7 @@ export const CustomerNotificationsPage: React.FC = () => {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
-            <Bell className="h-7 w-7 text-indigo-600" />
+            <Bell className="h-7 w-7 text-orange-600" />
             Shipment Notifications & Alerts
           </h1>
           <p className="text-sm text-slate-500">Real-time milestones, dispatch alerts, and rescheduling updates</p>
@@ -60,7 +60,7 @@ export const CustomerNotificationsPage: React.FC = () => {
               onClick={() => markAllAsRead()}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-sm"
             >
-              <CheckCheck className="h-4 w-4 text-indigo-600" /> Mark all read
+              <CheckCheck className="h-4 w-4 text-orange-600" /> Mark all read
             </button>
           )}
           <button
@@ -79,7 +79,7 @@ export const CustomerNotificationsPage: React.FC = () => {
           onClick={() => setFilter('ALL')}
           className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
             filter === 'ALL'
-              ? 'bg-indigo-600 text-white shadow'
+              ? 'bg-orange-600 text-white shadow'
               : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
           }`}
         >
@@ -89,7 +89,7 @@ export const CustomerNotificationsPage: React.FC = () => {
           onClick={() => setFilter('UNREAD')}
           className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
             filter === 'UNREAD'
-              ? 'bg-indigo-600 text-white shadow'
+              ? 'bg-orange-600 text-white shadow'
               : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
           }`}
         >
@@ -113,7 +113,7 @@ export const CustomerNotificationsPage: React.FC = () => {
               key={n.id}
               className={`flex items-start gap-4 rounded-xl p-4 transition border ${
                 !n.isRead
-                  ? 'bg-indigo-50/50 border-indigo-200/80 shadow-sm'
+                  ? 'bg-orange-50/50 border-orange-200/80 shadow-sm'
                   : 'bg-white border-slate-100 hover:bg-slate-50/60'
               }`}
             >
@@ -136,7 +136,7 @@ export const CustomerNotificationsPage: React.FC = () => {
               {!n.isRead && (
                 <button
                   onClick={() => markAsRead(n.id)}
-                  className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-lg transition"
+                  className="p-1.5 text-slate-400 hover:text-orange-600 hover:bg-white rounded-lg transition"
                   title="Mark as read"
                 >
                   <Check className="h-4 w-4" />

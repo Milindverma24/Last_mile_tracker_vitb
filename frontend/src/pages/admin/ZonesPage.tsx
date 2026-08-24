@@ -70,7 +70,7 @@ export const AdminZonesPage: React.FC = () => {
         </div>
         <button
           onClick={() => setIsAddZoneOpen(true)}
-          className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-indigo-500 transition cursor-pointer"
+          className="inline-flex items-center gap-2 rounded-xl bg-orange-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-orange-500 transition cursor-pointer"
         >
           <PlusCircle className="h-4 w-4" /> Create New Zone
         </button>
@@ -85,7 +85,7 @@ export const AdminZonesPage: React.FC = () => {
         <select
           value={selectedStateFilter}
           onChange={(e) => setSelectedStateFilter(e.target.value)}
-          className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700 focus:border-indigo-600 focus:outline-none"
+          className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700 focus:border-orange-600 focus:outline-none"
         >
           <option value="ALL">All States (Cross Boundary)</option>
           {uniqueStates.map((st) => (
@@ -106,7 +106,7 @@ export const AdminZonesPage: React.FC = () => {
             <div className="flex items-start justify-between border-b border-slate-100 pb-3">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-xs font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 px-2 py-0.5 rounded">
+                  <span className="font-mono text-xs font-bold text-orange-600 bg-orange-50 border border-orange-100 px-2 py-0.5 rounded">
                     {zone.code}
                   </span>
                   <span className="rounded bg-slate-100 border border-slate-200 px-2 py-0.5 text-[11px] font-semibold text-slate-700">
@@ -129,7 +129,7 @@ export const AdminZonesPage: React.FC = () => {
                 </span>
                 <button
                   onClick={() => setSelectedZoneForArea(zone)}
-                  className="text-xs font-bold text-indigo-600 hover:text-indigo-500 cursor-pointer"
+                  className="text-xs font-bold text-orange-600 hover:text-orange-500 cursor-pointer"
                 >
                   + Add PIN Code
                 </button>
@@ -173,7 +173,7 @@ export const AdminZonesPage: React.FC = () => {
                   value={newZoneCode}
                   onChange={(e) => setNewZoneCode(e.target.value)}
                   placeholder="e.g. DL-WEST"
-                  className="mt-1 w-full rounded-lg border border-slate-300 p-2 text-sm focus:border-indigo-600 focus:outline-none"
+                  className="mt-1 w-full rounded-lg border border-slate-300 p-2 text-sm focus:border-orange-600 focus:outline-none"
                   required
                 />
               </div>
@@ -184,7 +184,7 @@ export const AdminZonesPage: React.FC = () => {
                   value={newZoneName}
                   onChange={(e) => setNewZoneName(e.target.value)}
                   placeholder="e.g. West Delhi Logistics Hub"
-                  className="mt-1 w-full rounded-lg border border-slate-300 p-2 text-sm focus:border-indigo-600 focus:outline-none"
+                  className="mt-1 w-full rounded-lg border border-slate-300 p-2 text-sm focus:border-orange-600 focus:outline-none"
                   required
                 />
               </div>
@@ -196,7 +196,7 @@ export const AdminZonesPage: React.FC = () => {
                     value={newZoneCity}
                     onChange={(e) => setNewZoneCity(e.target.value)}
                     placeholder="e.g. Gurugram"
-                    className="mt-1 w-full rounded-lg border border-slate-300 p-2 text-sm focus:border-indigo-600 focus:outline-none"
+                    className="mt-1 w-full rounded-lg border border-slate-300 p-2 text-sm focus:border-orange-600 focus:outline-none"
                     required
                   />
                 </div>
@@ -207,7 +207,7 @@ export const AdminZonesPage: React.FC = () => {
                     value={newZoneState}
                     onChange={(e) => setNewZoneState(e.target.value)}
                     placeholder="e.g. Haryana"
-                    className="mt-1 w-full rounded-lg border border-slate-300 p-2 text-sm focus:border-indigo-600 focus:outline-none"
+                    className="mt-1 w-full rounded-lg border border-slate-300 p-2 text-sm focus:border-orange-600 focus:outline-none"
                     required
                   />
                 </div>
@@ -222,7 +222,7 @@ export const AdminZonesPage: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="rounded-lg bg-indigo-600 px-4 py-2 text-xs font-bold text-white shadow hover:bg-indigo-500"
+                  className="rounded-lg bg-orange-600 px-4 py-2 text-xs font-bold text-white shadow hover:bg-orange-500"
                 >
                   Create Zone
                 </button>
@@ -252,7 +252,7 @@ export const AdminZonesPage: React.FC = () => {
                   value={newAreaName}
                   onChange={(e) => setNewAreaName(e.target.value)}
                   placeholder="e.g. Punjabi Bagh"
-                  className="mt-1 w-full rounded-lg border border-slate-300 p-2 text-sm focus:border-indigo-600 focus:outline-none"
+                  className="mt-1 w-full rounded-lg border border-slate-300 p-2 text-sm focus:border-orange-600 focus:outline-none"
                   required
                 />
               </div>
@@ -264,7 +264,7 @@ export const AdminZonesPage: React.FC = () => {
                   value={newAreaPincode}
                   onChange={(e) => setNewAreaPincode(e.target.value)}
                   placeholder="e.g. 110026"
-                  className="mt-1 w-full rounded-lg border border-slate-300 p-2 text-sm focus:border-indigo-600 focus:outline-none"
+                  className="mt-1 w-full rounded-lg border border-slate-300 p-2 text-sm focus:border-orange-600 focus:outline-none"
                   required
                 />
               </div>
@@ -278,7 +278,7 @@ export const AdminZonesPage: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="rounded-lg bg-indigo-600 px-4 py-2 text-xs font-bold text-white shadow hover:bg-indigo-500"
+                  className="rounded-lg bg-orange-600 px-4 py-2 text-xs font-bold text-white shadow hover:bg-orange-500"
                 >
                   Map PIN Code
                 </button>

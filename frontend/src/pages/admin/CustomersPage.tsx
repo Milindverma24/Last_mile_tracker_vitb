@@ -52,7 +52,7 @@ export const AdminCustomersPage: React.FC = () => {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2.5">
-            <Users className="h-6 w-6 text-indigo-600" />
+            <Users className="h-6 w-6 text-orange-600" />
             Customer & Enterprise Accounts
           </h1>
           <p className="text-sm text-slate-500 mt-0.5">
@@ -61,11 +61,11 @@ export const AdminCustomersPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 rounded-xl bg-indigo-50/80 border border-indigo-100 px-3 py-1.5 text-xs font-bold text-indigo-700">
+          <div className="flex items-center gap-2 rounded-xl bg-orange-50/80 border border-orange-100 px-3 py-1.5 text-xs font-bold text-orange-700">
             <span>{customers.length} Total Users</span>
-            <span className="text-indigo-300">•</span>
+            <span className="text-orange-300">•</span>
             <span>{b2cCount} B2C</span>
-            <span className="text-indigo-300">•</span>
+            <span className="text-orange-300">•</span>
             <span>{b2bCount} B2B</span>
           </div>
 
@@ -74,7 +74,7 @@ export const AdminCustomersPage: React.FC = () => {
             disabled={isRefetching || isLoading}
             className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 shadow-xs hover:bg-slate-50 transition cursor-pointer disabled:opacity-50"
           >
-            <RefreshCw className={`h-3.5 w-3.5 ${isRefetching ? 'animate-spin text-indigo-600' : ''}`} />
+            <RefreshCw className={`h-3.5 w-3.5 ${isRefetching ? 'animate-spin text-orange-600' : ''}`} />
             Refresh
           </button>
         </div>
@@ -89,7 +89,7 @@ export const AdminCustomersPage: React.FC = () => {
             placeholder="Search by name, email, phone, city or PIN..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2 pl-9 pr-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-indigo-600 focus:bg-white focus:outline-none"
+            className="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2 pl-9 pr-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-orange-600 focus:bg-white focus:outline-none"
           />
         </div>
 
@@ -100,7 +100,7 @@ export const AdminCustomersPage: React.FC = () => {
               onClick={() => setFilterType(type)}
               className={`rounded-xl px-3.5 py-1.5 text-xs font-bold transition cursor-pointer ${
                 filterType === type
-                  ? 'bg-indigo-600 text-white shadow-xs'
+                  ? 'bg-orange-600 text-white shadow-xs'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
@@ -114,7 +114,7 @@ export const AdminCustomersPage: React.FC = () => {
       <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
         {isLoading ? (
           <div className="p-12 text-center text-slate-500">
-            <RefreshCw className="h-6 w-6 animate-spin mx-auto text-indigo-600 mb-2" />
+            <RefreshCw className="h-6 w-6 animate-spin mx-auto text-orange-600 mb-2" />
             <span className="text-xs font-medium">Loading live customer records...</span>
           </div>
         ) : filteredCustomers.length === 0 ? (
@@ -142,7 +142,7 @@ export const AdminCustomersPage: React.FC = () => {
                   <tr key={c.id || c.userId} className="hover:bg-slate-50/70 transition">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-50 border border-indigo-100 text-xs font-bold text-indigo-700 uppercase">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-orange-50 border border-orange-100 text-xs font-bold text-orange-700 uppercase">
                           {c.name ? c.name.slice(0, 2) : 'CU'}
                         </div>
                         <div>
@@ -193,7 +193,7 @@ export const AdminCustomersPage: React.FC = () => {
 
                     <td className="px-6 py-4 text-xs text-slate-700">
                       <div className="flex items-start gap-1.5 max-w-xs">
-                        <MapPin className="h-3.5 w-3.5 text-indigo-500 shrink-0 mt-0.5" />
+                        <MapPin className="h-3.5 w-3.5 text-orange-500 shrink-0 mt-0.5" />
                         <div>
                           <div className="font-semibold text-slate-800">
                             {c.address ? c.address : <span className="italic text-slate-400 font-normal">Address pending onboarding</span>}
