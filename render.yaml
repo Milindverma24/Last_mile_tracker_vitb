@@ -27,7 +27,7 @@ services:
       - key: EMAIL_HOST
         value: smtp.gmail.com
       - key: EMAIL_PORT
-        value: "587"
+        value: "465"
       - key: EMAIL_USERNAME
         value: mili241105@gmail.com
       - key: EMAIL_PASSWORD

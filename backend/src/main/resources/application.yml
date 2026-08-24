@@ -42,20 +42,17 @@ spring:
       path: /h2-console
 
   mail:
-    host: ${EMAIL_HOST:smtp.resend.com}
-    port: ${EMAIL_PORT:587}
-    username: ${EMAIL_USERNAME:resend}
-    password: ${EMAIL_PASSWORD:${RESEND_API_KEY:}}
+    host: ${EMAIL_HOST:smtp.gmail.com}
+    port: ${EMAIL_PORT:465}
+    username: ${EMAIL_USERNAME:}
+    password: ${EMAIL_PASSWORD:}
     properties:
       mail:
         smtp:
           auth: true
-          starttls:
-            enable: true
-            required: true
-          connectiontimeout: 5000
-          timeout: 5000
-          writetimeout: 5000
+          connectiontimeout: 10000
+          timeout: 10000
+          writetimeout: 10000
 
 app:
   jwt:
