@@ -11,11 +11,35 @@ services:
       - key: PORT
         value: 8088
       - key: SPRING_PROFILES_ACTIVE
-        value: dev
+        value: postgres
+      - key: DATABASE_URL
+        value: jdbc:postgresql://dpg-da6025u417fc738t0mtg-a:5432/gatiman_db
+      - key: DATABASE_USERNAME
+        value: gatiman_user
+      - key: DATABASE_PASSWORD
+        value: wHezuvYJQZ5jfU4AmRmd0Avq5WOk6CGu
+      - key: DATABASE_DRIVER
+        value: org.postgresql.Driver
       - key: JWT_SECRET
-        generateValue: true
+        value: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
       - key: EMAIL_ENABLED
         value: "true"
+      - key: EMAIL_HOST
+        value: smtp.gmail.com
+      - key: EMAIL_PORT
+        value: "587"
+      - key: EMAIL_USERNAME
+        value: mili241105@gmail.com
+      - key: EMAIL_PASSWORD
+        value: hcossvokjfxvjuhi
+      - key: EMAIL_FROM
+        value: mili241105@gmail.com
+      - key: EMAIL_FROM_NAME
+        value: GATIMAN Logistics
+      - key: RAZORPAY_KEY_ID
+        value: rzp_test_TTNaA35CVbi6kG
+      - key: RAZORPAY_KEY_SECRET
+        value: JYOxId2dBdxzrurDVrwsy1Ws
 
   # 2. GATIMAN Frontend Web App (React Vite)
   - type: web
@@ -35,3 +59,7 @@ services:
         value: https://gatiman-backend.onrender.com/api
       - key: VITE_WS_URL
         value: https://gatiman-backend.onrender.com/ws
+      - key: VITE_GOOGLE_CLIENT_ID
+        value: 376704457217-hp4a0a55ot728nh2kk33pj6vp9projpl.apps.googleusercontent.com
+      - key: VITE_RAZORPAY_KEY_ID
+        value: rzp_test_TTNaA35CVbi6kG
