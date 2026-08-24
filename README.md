@@ -122,6 +122,16 @@ last_mile_delivery/
 │       ├── App.tsx
 │       └── main.tsx
 │
+├── docs/
+│   └── screenshots/                     # Application UI screenshots (embedded above)
+│       ├── landing_page.png             # Landing page & public telemetry
+│       ├── customer_dashboard.png       # Customer portal — dashboard & live shipments
+│       ├── customer_create_order.png    # Customer portal — booking & volumetric estimator
+│       ├── agent_dashboard.png          # Delivery driver partner — active run sheet
+│       ├── tracking_page.png            # Live public tracking & real-time telemetry
+│       ├── admin_dashboard.png          # Admin cockpit — fleet analytics & health
+│       └── admin_orders.png             # Admin cockpit — orders dispatch matrix
+│
 ├── docker-compose.yml                   # Multi-container orchestration (postgres, backend, frontend)
 ├── LICENSE                              # MIT License
 └── README.md
