@@ -50,6 +50,7 @@ export const useLiveTracking = (orderId?: number | string) => {
         onConnect: () => {
           setConnectionState('CONNECTED');
 
+          // Real-time Driver GPS Telemetry stream
           client?.subscribe(`/topic/orders/${numericId}/tracking`, (message: IMessage) => {
             try {
               const update: LiveTrackingData = JSON.parse(message.body);
@@ -57,6 +58,21 @@ export const useLiveTracking = (orderId?: number | string) => {
               queryClient.setQueryData(['liveTracking', numericId], update);
             } catch (e) {
               console.error('Failed to parse WebSocket tracking update:', e);
+            }
+          });
+
+          // Real-time Order Status Milestone stream
+          client?.subscribe(`/topic/orders/${numericId}/status`, (message: IMessage) => {
+            try {
+              const statusUpdate = JSON.parse(message.body);
+              queryClient.invalidateQueries({ queryKey: ['order', numericId] });
+              queryClient.invalidateQueries({ queryKey: ['orders'] });
+              queryClient.invalidateQueries({ queryKey: ['tracking', numericId] });
+              if (statusUpdate && statusUpdate.status) {
+                setLiveData((prev) => prev ? { ...prev, status: statusUpdate.status } : null);
+              }
+            } catch (e) {
+              console.error('Failed to parse WebSocket status update:', e);
             }
           });
         },

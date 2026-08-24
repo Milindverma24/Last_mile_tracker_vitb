@@ -23,7 +23,6 @@ public class EmailNotificationChannel implements NotificationChannel {
     }
 
     @Override
-    @Async
     public void send(User recipient, Order order, NotificationType type, String title, String message) {
         if (recipient == null || recipient.getEmail() == null) return;
         try {

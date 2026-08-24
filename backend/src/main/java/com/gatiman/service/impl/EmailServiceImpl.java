@@ -77,9 +77,15 @@ public class EmailServiceImpl implements EmailService {
             return;
         }
 
+        // Reload fresh order inside this transaction boundary to prevent cross-thread Hibernate proxy issues
+        Order currentOrder = order;
+        if (order != null && order.getId() != null) {
+            currentOrder = orderRepository.findById(order.getId()).orElse(order);
+        }
+
         // 1. Resolve customer & check preferences if applicable
-        if (order != null && order.getCustomer() != null && order.getCustomer().getUser() != null) {
-            User user = order.getCustomer().getUser();
+        if (currentOrder != null && currentOrder.getCustomer() != null && currentOrder.getCustomer().getUser() != null) {
+            User user = currentOrder.getCustomer().getUser();
             if (!isEmailAllowedByPreferences(user, eventType)) {
                 log.info("Email event {} suppressed by user preferences for user: {}", eventType, user.getEmail());
                 return;
@@ -87,7 +93,7 @@ public class EmailServiceImpl implements EmailService {
         }
 
         // 2. Deduplication & Idempotency Key
-        String idempotencyKey = buildIdempotencyKey(eventType, order);
+        String idempotencyKey = buildIdempotencyKey(eventType, currentOrder);
 
         // Check if this event has already been successfully sent or is currently pending
         if (eventType != EmailEventType.DELIVERY_DELAYED) {
@@ -98,18 +104,18 @@ public class EmailServiceImpl implements EmailService {
         } else {
             // For delays: enforce cooldown to prevent sending every few seconds
             Instant cooldownWindow = Instant.now().minus(delayCooldownMinutes, ChronoUnit.MINUTES);
-            List<EmailLog> recentDelayLogs = emailLogRepository.findRecentByOrderAndType(order.getId(), EmailEventType.DELIVERY_DELAYED, cooldownWindow);
+            List<EmailLog> recentDelayLogs = emailLogRepository.findRecentByOrderAndType(currentOrder != null ? currentOrder.getId() : 0L, EmailEventType.DELIVERY_DELAYED, cooldownWindow);
             if (!recentDelayLogs.isEmpty()) {
-                log.info("Delay email cooldown active for order {}. Last sent within {} minutes.", order.getTrackingNumber(), delayCooldownMinutes);
+                log.info("Delay email cooldown active for order {}. Last sent within {} minutes.", currentOrder != null ? currentOrder.getTrackingNumber() : "N/A", delayCooldownMinutes);
                 return;
             }
         }
 
         // 3. Render HTML template and Subject
-        String subject = emailTemplateService.generateEmailSubject(eventType, order);
+        String subject = emailTemplateService.generateEmailSubject(eventType, currentOrder);
         String htmlContent = emailTemplateService.buildHtmlEmail(
                 eventType,
-                order,
+                currentOrder,
                 recipientName,
                 distanceRemaining,
                 etaMinutes,
@@ -120,9 +126,9 @@ public class EmailServiceImpl implements EmailService {
         // 4. Persist EmailLog with status PENDING
         EmailLog emailLog = EmailLog.builder()
                 .notificationId(notificationId)
-                .orderId(order != null ? order.getId() : 0L)
-                .trackingNumber(order != null ? order.getTrackingNumber() : "GTM-UNKNOWN")
-                .customerId(order != null && order.getCustomer() != null ? order.getCustomer().getId() : null)
+                .orderId(currentOrder != null ? currentOrder.getId() : 0L)
+                .trackingNumber(currentOrder != null ? currentOrder.getTrackingNumber() : "GTM-UNKNOWN")
+                .customerId(currentOrder != null && currentOrder.getCustomer() != null ? currentOrder.getCustomer().getId() : null)
                 .recipientEmail(recipientEmail)
                 .recipientName(recipientName)
                 .eventType(eventType)

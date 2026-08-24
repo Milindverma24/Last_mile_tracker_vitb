@@ -41,6 +41,9 @@ public class OrderServiceImpl implements OrderService {
     private final OrderAssignmentRepository orderAssignmentRepository;
     private final DeliveryAttemptRepository deliveryAttemptRepository;
 
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    private org.springframework.messaging.simp.SimpMessagingTemplate messagingTemplate;
+
     @Override
     @Transactional
     public OrderResponse createOrder(CreateOrderRequest request, User currentUser) {
@@ -342,17 +345,33 @@ public class OrderServiceImpl implements OrderService {
         );
 
         // Dispatch Notification on Milestone
-        if (order.getCustomer() != null && order.getCustomer().getUser() != null) {
-            notificationService.createNotification(
-                    order.getCustomer().getUser(),
-                    updatedOrder,
-                    nextStatus.name(),
-                    "Delivery Update: " + nextStatus.name() + " — " + order.getTrackingNumber(),
-                    note
-            );
+        try {
+            if (order.getCustomer() != null && order.getCustomer().getUser() != null) {
+                notificationService.createNotification(
+                        order.getCustomer().getUser(),
+                        updatedOrder,
+                        nextStatus.name(),
+                        "Delivery Update: " + nextStatus.name() + " — " + order.getTrackingNumber(),
+                        note
+                );
+            }
+        } catch (Exception e) {
+            log.warn("Non-fatal notification dispatch issue during status transition to {}: {}", nextStatus, e.getMessage());
         }
 
-        return mapToOrderResponse(updatedOrder);
+        OrderResponse response = mapToOrderResponse(updatedOrder);
+
+        // Real-time WebSocket synchronization across driver, admin, and customer apps
+        if (messagingTemplate != null) {
+            try {
+                messagingTemplate.convertAndSend("/topic/orders/" + orderId + "/status", response);
+                messagingTemplate.convertAndSend("/topic/orders", response);
+            } catch (Exception e) {
+                log.debug("WebSocket broadcast skipped: {}", e.getMessage());
+            }
+        }
+
+        return response;
     }
 
     @Override
