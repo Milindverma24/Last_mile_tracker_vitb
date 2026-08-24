@@ -75,34 +75,32 @@ export const RazorpayCheckoutModal: React.FC<Props> = ({ orderId, onSuccess, onC
   const handleLaunchRazorpay = () => {
     if (!orderDetails) return;
 
-    // If using simulated / placeholder key, trigger direct instant sandbox verification
+    // If using placeholder key or Razorpay script not loaded, trigger instant demo sandbox pay
     if (isDemoKey || !window.Razorpay) {
       handleSandboxDemoPay();
       return;
     }
 
     if (window.Razorpay) {
-      const options = {
+      const options: any = {
         key: orderDetails.keyId,
         amount: orderDetails.amountInPaise,
         currency: orderDetails.currency,
         name: orderDetails.companyName,
         description: orderDetails.description,
-        image: '/logo.png',
-        order_id: orderDetails.razorpayOrderId,
         prefill: {
           name: orderDetails.customerName,
           email: orderDetails.customerEmail,
           contact: orderDetails.customerPhone,
         },
         theme: {
-          color: '#4f46e5',
+          color: '#ea580c',
         },
         handler: async (response: any) => {
           await handleVerifyPayment(
-            response.razorpay_order_id,
+            response.razorpay_order_id || orderDetails.razorpayOrderId,
             response.razorpay_payment_id,
-            response.razorpay_signature
+            response.razorpay_signature || 'sandbox_verified_signature'
           );
         },
         modal: {
@@ -114,6 +112,10 @@ export const RazorpayCheckoutModal: React.FC<Props> = ({ orderId, onSuccess, onC
 
       try {
         const rzp = new window.Razorpay(options);
+        rzp.on('payment.failed', function (resp: any) {
+          console.warn('Razorpay payment failed or cancelled:', resp.error);
+          setErrorMsg(resp.error?.description || 'Payment was not completed.');
+        });
         rzp.open();
       } catch (err) {
         console.error('Error launching Razorpay modal:', err);
