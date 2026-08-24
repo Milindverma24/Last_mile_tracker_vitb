@@ -14,8 +14,8 @@ export type OrderStatus =
 export type CustomerType = 'B2C' | 'B2B';
 export type PaymentType = 'PREPAID' | 'COD';
 export type PaymentStatus = 'PENDING' | 'PAID' | 'FAILED' | 'REFUNDED';
-export type RouteType = 'INTRA_ZONE' | 'INTER_ZONE';
-export type VehicleType = 'BIKE' | 'EV_SCOOTER' | 'VAN' | 'TRUCK';
+export type RouteType = 'INTRA_ZONE' | 'INTER_ZONE' | 'INTRA_CITY' | 'INTER_CITY' | 'INTER_STATE';
+export type VehicleType = 'BIKE' | 'EV_SCOOTER' | 'CAR' | 'VAN' | 'TEMPO' | 'TRUCK';
 export type FailureReason =
   | 'CUSTOMER_UNAVAILABLE'
   | 'ADDRESS_NOT_FOUND'
@@ -35,6 +35,11 @@ export interface User {
   firstName: string;
   lastName: string;
   phoneNumber?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  pinCode?: string;
+  profileImageUrl?: string;
   role: Role;
   status: string;
   active: boolean;

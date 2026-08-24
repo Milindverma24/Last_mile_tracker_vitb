@@ -2,6 +2,8 @@ package com.gatiman.service.impl;
 
 import com.gatiman.entity.DeliveryAgent;
 import com.gatiman.entity.Order;
+import com.gatiman.entity.OrderPackage;
+import com.gatiman.enums.VehicleType;
 import com.gatiman.exception.BusinessRuleException;
 import com.gatiman.service.AgentEligibilityService;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +28,25 @@ public class AgentEligibilityServiceImpl implements AgentEligibilityService {
 
     @Override
     public boolean isAgentEligibleForOrder(DeliveryAgent agent, Order order) {
-        return isAgentEligible(agent);
+        if (!isAgentEligible(agent)) return false;
+        if (order == null) return true;
+
+        // Calculate billable weight & package max dimension
+        double actualWeight = order.getActualWeightKg() != null ? order.getActualWeightKg().doubleValue() : 0.0;
+        double volumetricWeight = order.getVolumetricWeightKg() != null ? order.getVolumetricWeightKg().doubleValue() : 0.0;
+        double weight = Math.max(actualWeight, volumetricWeight);
+
+        double maxDimension = 0.0;
+        if (order.getPackages() != null) {
+            for (OrderPackage pkg : order.getPackages()) {
+                if (pkg.getLengthCm() != null) maxDimension = Math.max(maxDimension, pkg.getLengthCm().doubleValue());
+                if (pkg.getBreadthCm() != null) maxDimension = Math.max(maxDimension, pkg.getBreadthCm().doubleValue());
+                if (pkg.getHeightCm() != null) maxDimension = Math.max(maxDimension, pkg.getHeightCm().doubleValue());
+            }
+        }
+
+        VehicleType agentVehicle = agent.getVehicleType() != null ? agent.getVehicleType() : VehicleType.BIKE;
+        return agentVehicle.canCarry(weight, maxDimension);
     }
 
     @Override

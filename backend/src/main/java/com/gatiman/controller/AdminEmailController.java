@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.EnumMap;
@@ -98,6 +99,7 @@ public class AdminEmailController {
     }
 
     @GetMapping("/preview")
+    @Transactional(readOnly = true)
     @Operation(summary = "Preview rendered HTML email template for any event type")
     public ResponseEntity<ApiResponse<String>> previewEmailTemplate(
             @RequestParam(defaultValue = "ON_THE_WAY") EmailEventType eventType,
@@ -111,8 +113,13 @@ public class AdminEmailController {
             order = orderRepository.findAll().stream().findFirst().orElse(null);
         }
 
-        String recipientName = (order != null && order.getCustomer() != null && order.getCustomer().getUser() != null)
-                ? order.getCustomer().getUser().getFullName() : "Priya Sharma";
+        String recipientName = "Priya Sharma";
+        try {
+            if (order != null && order.getCustomer() != null && order.getCustomer().getUser() != null) {
+                recipientName = order.getCustomer().getUser().getFullName();
+            }
+        } catch (Exception ignored) {
+        }
 
         String html = emailTemplateService.buildHtmlEmail(
                 eventType,

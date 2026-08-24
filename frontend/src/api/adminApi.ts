@@ -103,4 +103,27 @@ export const adminApi = {
     const res = await apiClient.get<ApiResponse<SystemHealthData>>('/admin/system/health');
     return res.data.data;
   },
+
+  getCustomers: async (): Promise<CustomerAccount[]> => {
+    const res = await apiClient.get<ApiResponse<CustomerAccount[]>>('/admin/customers');
+    return res.data.data;
+  },
 };
+
+export interface CustomerAccount {
+  id: number;
+  userId: number;
+  name: string;
+  email: string;
+  phone: string;
+  type: string;
+  companyName?: string;
+  gstNumber?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  pinCode?: string;
+  zone: string;
+  totalBookings: number;
+  createdAt: string;
+}

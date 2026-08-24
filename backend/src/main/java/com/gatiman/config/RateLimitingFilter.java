@@ -54,8 +54,9 @@ public class RateLimitingFilter extends OncePerRequestFilter {
         }
 
         String clientIp = getClientIP(request);
+        boolean isLocalhost = "127.0.0.1".equals(clientIp) || "0:0:0:0:0:0:0:1".equals(clientIp) || "::1".equals(clientIp);
         boolean isAuthEndpoint = uri.startsWith("/api/auth/login") || uri.startsWith("/api/auth/register");
-        int maxAllowed = isAuthEndpoint ? AUTH_LIMIT_PER_MINUTE : GENERAL_LIMIT_PER_MINUTE;
+        int maxAllowed = isLocalhost ? 5000 : (isAuthEndpoint ? AUTH_LIMIT_PER_MINUTE : GENERAL_LIMIT_PER_MINUTE);
 
         String bucketKey = clientIp + ":" + (isAuthEndpoint ? "AUTH" : "GEN");
         long currentMinute = System.currentTimeMillis() / 60000;

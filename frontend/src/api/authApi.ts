@@ -12,6 +12,10 @@ export interface RegisterPayload {
   firstName: string;
   lastName?: string;
   phoneNumber?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  pinCode?: string;
   role?: string;
   customerType?: string;
   companyName?: string;
@@ -30,6 +34,11 @@ export interface GoogleAuthPayload {
   firstName?: string;
   lastName?: string;
   pictureUrl?: string;
+  phoneNumber?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  pinCode?: string;
 }
 
 export const authApi = {

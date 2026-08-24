@@ -28,6 +28,14 @@ public class RateCardRuleServiceImpl implements RateCardRuleService {
     @Transactional(readOnly = true)
     public RateCard findActiveRateCard(CustomerType customerType, RouteType routeType) {
         return rateCardRepository.findByCustomerTypeAndRouteTypeAndIsActiveTrue(customerType, routeType)
+                .or(() -> {
+                    if (routeType == RouteType.INTER_STATE || routeType == RouteType.INTER_CITY) {
+                        return rateCardRepository.findByCustomerTypeAndRouteTypeAndIsActiveTrue(customerType, RouteType.INTER_ZONE);
+                    } else if (routeType == RouteType.INTRA_CITY) {
+                        return rateCardRepository.findByCustomerTypeAndRouteTypeAndIsActiveTrue(customerType, RouteType.INTRA_ZONE);
+                    }
+                    return java.util.Optional.empty();
+                })
                 .orElseThrow(() -> new BusinessRuleException(
                         String.format("NO_ACTIVE_RATE_CARD: No active rate card configured for %s %s shipments.",
                                 customerType, routeType)));

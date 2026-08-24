@@ -73,6 +73,10 @@ public class AuthServiceImpl implements AuthService {
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName() != null ? request.getLastName() : "")
                 .phoneNumber(request.getPhoneNumber() != null ? request.getPhoneNumber() : "")
+                .address(request.getAddress() != null ? request.getAddress() : "")
+                .city(request.getCity() != null ? request.getCity() : "")
+                .state(request.getState() != null ? request.getState() : "")
+                .pinCode(request.getPinCode() != null ? request.getPinCode() : "")
                 .role(request.getRole() != null ? request.getRole() : Role.CUSTOMER)
                 .status("ACTIVE")
                 .active(true)
@@ -86,6 +90,8 @@ public class AuthServiceImpl implements AuthService {
                     .customerType(request.getCustomerType() != null ? request.getCustomerType() : CustomerType.B2C)
                     .companyName(request.getCompanyName())
                     .gstNumber(request.getGstNumber())
+                    .defaultPickupAddress(request.getAddress() != null ? request.getAddress() : "")
+                    .defaultPickupPincode(request.getPinCode() != null ? request.getPinCode() : "")
                     .build();
             customerRepository.save(customer);
         } else if (savedUser.getRole() == Role.DELIVERY_AGENT) {
@@ -185,7 +191,12 @@ public class AuthServiceImpl implements AuthService {
                             .passwordHash(passwordEncoder.encode(UUID.randomUUID().toString()))
                             .firstName(finalFirstName)
                             .lastName(finalLastName)
-                            .phoneNumber("")
+                            .phoneNumber(request.getPhoneNumber() != null ? request.getPhoneNumber() : "")
+                            .address(request.getAddress() != null ? request.getAddress() : "")
+                            .city(request.getCity() != null ? request.getCity() : "")
+                            .state(request.getState() != null ? request.getState() : "")
+                            .pinCode(request.getPinCode() != null ? request.getPinCode() : "")
+                            .profileImageUrl(request.getPictureUrl())
                             .role(Role.CUSTOMER)
                             .status("ACTIVE")
                             .active(true)
@@ -197,8 +208,8 @@ public class AuthServiceImpl implements AuthService {
                             .customerType(targetCustomerType)
                             .companyName(request.getCompanyName())
                             .gstNumber(request.getGstNumber())
-                            .defaultPickupAddress("")
-                            .defaultPickupPincode("")
+                            .defaultPickupAddress(request.getAddress() != null ? request.getAddress() : "")
+                            .defaultPickupPincode(request.getPinCode() != null ? request.getPinCode() : "")
                             .build();
                     customerRepository.save(customer);
                     return saved;
@@ -229,6 +240,11 @@ public class AuthServiceImpl implements AuthService {
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .phoneNumber(user.getPhoneNumber())
+                .address(user.getAddress())
+                .city(user.getCity())
+                .state(user.getState())
+                .pinCode(user.getPinCode())
+                .profileImageUrl(user.getProfileImageUrl())
                 .role(user.getRole())
                 .status(user.getStatus())
                 .active(user.getActive())

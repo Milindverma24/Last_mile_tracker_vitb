@@ -18,6 +18,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
@@ -40,13 +41,13 @@ public class EmailServiceImpl implements EmailService {
     @Value("${app.email.enabled:true}")
     private boolean emailEnabled;
 
-    @Value("${app.email.from:notifications@gatiman.in}")
+    @Value("${app.email.from-address:no-reply@gatiman.in}")
     private String fromEmail;
 
     @Value("${app.email.from-name:GATIMAN Logistics}")
     private String fromName;
 
-    @Value("${app.email.base-url:http://localhost:5173}")
+    @Value("${app.base-url:http://localhost:5173}")
     private String baseUrl;
 
     @Value("${app.email.delay-cooldown-minutes:30}")
@@ -54,7 +55,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     @Async
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void sendEmail(
             EmailEventType eventType,
             Order order,
@@ -142,7 +143,10 @@ public class EmailServiceImpl implements EmailService {
 
     private void dispatchMimeMessage(EmailLog emailLog) {
         try {
-            if (mailSender != null) {
+            boolean isTestRecipient = emailLog.getRecipientEmail() != null &&
+                    (emailLog.getRecipientEmail().endsWith(".test") || emailLog.getRecipientEmail().endsWith("@example.com") || emailLog.getRecipientEmail().startsWith("loadtest_"));
+
+            if (mailSender != null && !isTestRecipient) {
                 MimeMessage mimeMessage = mailSender.createMimeMessage();
                 MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 
@@ -159,7 +163,7 @@ public class EmailServiceImpl implements EmailService {
                 log.info("[EMAIL SENT - {}] Successfully dispatched to <{}> for order #{}",
                         emailLog.getEventType(), emailLog.getRecipientEmail(), emailLog.getTrackingNumber());
             } else {
-                // Emulated mode for local testing without configured external SMTP provider
+                // Emulated mode for local testing without configured external SMTP provider or load tests
                 emailLog.setStatus(EmailStatus.SENT);
                 emailLog.setSentAt(Instant.now());
                 log.info("[EMAIL EMULATED DISPATCH - {}] Sent to <{}> | Subject: [{}] | Order: #{}",
@@ -191,6 +195,16 @@ public class EmailServiceImpl implements EmailService {
     @Override
     @Transactional
     public void sendTestEmail(String toEmail, EmailEventType eventType, Long orderId) {
+        if (!emailEnabled) {
+            log.info("[EMAIL DISABLED] Skipping test email dispatch to {}", toEmail);
+            return;
+        }
+
+        if (toEmail == null || toEmail.isBlank()) {
+            log.warn("Cannot send test email: Recipient email is null/empty");
+            return;
+        }
+
         Order order = null;
         if (orderId != null) {
             order = orderRepository.findById(orderId).orElse(null);
@@ -202,7 +216,39 @@ public class EmailServiceImpl implements EmailService {
         String recipientName = (order != null && order.getCustomer() != null && order.getCustomer().getUser() != null)
                 ? order.getCustomer().getUser().getFullName() : "Operations Admin";
 
-        sendEmail(eventType, order, toEmail, recipientName, 2.4, 12, "This is a test notification generated from the Admin Email Management Hub.", null);
+        EmailEventType targetType = eventType != null ? eventType : EmailEventType.ON_THE_WAY;
+        String subject = "[TEST] " + emailTemplateService.generateEmailSubject(targetType, order);
+        String htmlContent = emailTemplateService.buildHtmlEmail(
+                targetType,
+                order,
+                recipientName,
+                2.4,
+                12,
+                "This is a test notification generated from the GATIMAN Email Management Hub.",
+                baseUrl
+        );
+
+        String testIdempotencyKey = "TEST_" + toEmail + "_" + targetType.name() + "_" + Instant.now().toEpochMilli();
+
+        EmailLog emailLog = EmailLog.builder()
+                .notificationId(null)
+                .orderId(order != null ? order.getId() : 0L)
+                .trackingNumber(order != null ? order.getTrackingNumber() : "GTM-TEST")
+                .customerId(order != null && order.getCustomer() != null ? order.getCustomer().getId() : null)
+                .recipientEmail(toEmail)
+                .recipientName(recipientName)
+                .eventType(targetType)
+                .subject(subject)
+                .htmlContent(htmlContent)
+                .status(EmailStatus.PENDING)
+                .retryCount(0)
+                .idempotencyKey(testIdempotencyKey)
+                .distanceRemaining(2.4)
+                .etaMinutes(12)
+                .build();
+
+        emailLog = emailLogRepository.save(emailLog);
+        dispatchMimeMessage(emailLog);
     }
 
     // Specific Milestones

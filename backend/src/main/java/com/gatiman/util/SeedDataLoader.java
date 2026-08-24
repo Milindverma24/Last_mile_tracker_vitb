@@ -50,7 +50,11 @@ public class SeedDataLoader implements CommandLineRunner {
                 .passwordHash(defaultEncodedPassword)
                 .firstName("Operations")
                 .lastName("Admin")
-                .phoneNumber("+91 98765 43210")
+                .phoneNumber("+91 99999 88888")
+                .address("HQ Hub, Connaught Place")
+                .city("New Delhi")
+                .state("Delhi")
+                .pinCode("110001")
                 .role(Role.ADMIN)
                 .status("ACTIVE")
                 .active(true)
@@ -64,6 +68,10 @@ public class SeedDataLoader implements CommandLineRunner {
                 .firstName("Priya")
                 .lastName("Sharma")
                 .phoneNumber("+91 98111 22233")
+                .address("Flat 402, Green Park Main")
+                .city("New Delhi")
+                .state("Delhi")
+                .pinCode("110016")
                 .role(Role.CUSTOMER)
                 .status("ACTIVE")
                 .active(true)
@@ -85,6 +93,10 @@ public class SeedDataLoader implements CommandLineRunner {
                 .firstName("Rajesh")
                 .lastName("Kumar")
                 .phoneNumber("+91 98999 11223")
+                .address("B-12, Lajpat Nagar Phase 2")
+                .city("New Delhi")
+                .state("Delhi")
+                .pinCode("110024")
                 .role(Role.DELIVERY_AGENT)
                 .status("ACTIVE")
                 .active(true)
@@ -152,7 +164,7 @@ public class SeedDataLoader implements CommandLineRunner {
 
         areaRepository.saveAll(List.of(hauzKhas, saket, gk, connaughtPlace, civilLines, dlfPhase2, golfCourse, noidaSec18, noidaSec62));
 
-        // 5. Exactly 1 Delivery Agent Record
+        // 5. Seed Delivery Fleet with Multi-Tier Vehicle Types
         DeliveryAgent agent1 = DeliveryAgent.builder()
                 .user(agentUser)
                 .vehicleType(VehicleType.EV_SCOOTER)
@@ -168,7 +180,62 @@ public class SeedDataLoader implements CommandLineRunner {
                 .build();
         deliveryAgentRepository.save(agent1);
 
-        // 5. Create Rate Cards
+        // Additional Fleet Drivers
+        User agentUser2 = User.builder()
+                .email("agent.car@gatiman.com")
+                .passwordHash(defaultEncodedPassword)
+                .firstName("Sunil")
+                .lastName("Yadav")
+                .phoneNumber("+91 98111 88990")
+                .role(Role.DELIVERY_AGENT)
+                .status("ACTIVE")
+                .active(true)
+                .build();
+        userRepository.save(agentUser2);
+
+        DeliveryAgent agent2 = DeliveryAgent.builder()
+                .user(agentUser2)
+                .vehicleType(VehicleType.CAR)
+                .vehicleNumber("HR-26-CR-1122")
+                .isAvailable(true)
+                .active(true)
+                .maxActiveOrders(8)
+                .currentActiveOrders(0)
+                .assignedZone(gurugram)
+                .currentLatitude(28.4900)
+                .currentLongitude(77.0888)
+                .status("ACTIVE")
+                .build();
+        deliveryAgentRepository.save(agent2);
+
+        User agentUser3 = User.builder()
+                .email("agent.tempo@gatiman.com")
+                .passwordHash(defaultEncodedPassword)
+                .firstName("Harpreet")
+                .lastName("Singh")
+                .phoneNumber("+91 98777 55443")
+                .role(Role.DELIVERY_AGENT)
+                .status("ACTIVE")
+                .active(true)
+                .build();
+        userRepository.save(agentUser3);
+
+        DeliveryAgent agent3 = DeliveryAgent.builder()
+                .user(agentUser3)
+                .vehicleType(VehicleType.TEMPO)
+                .vehicleNumber("DL-01-TP-4004")
+                .isAvailable(true)
+                .active(true)
+                .maxActiveOrders(10)
+                .currentActiveOrders(0)
+                .assignedZone(northDelhi)
+                .currentLatitude(28.6315)
+                .currentLongitude(77.2167)
+                .status("ACTIVE")
+                .build();
+        deliveryAgentRepository.save(agent3);
+
+        // 6. Create Rate Cards
         // Rate Card 1: B2C Intra-Zone
         RateCard b2cIntra = RateCard.builder()
                 .name("Standard B2C Intra-Zone Rate Card")
@@ -229,7 +296,37 @@ public class SeedDataLoader implements CommandLineRunner {
                 .build();
         rateCardRuleRepository.saveAll(List.of(r3, r4));
 
-        // Rate Card 3: B2B Intra-Zone
+        // Rate Card 3: B2C Inter-State Cross Boundary
+        RateCard b2cInterState = RateCard.builder()
+                .name("Standard B2C Inter-State Express")
+                .customerType(CustomerType.B2C)
+                .routeType(RouteType.INTER_STATE)
+                .codSurchargeFlat(new BigDecimal("50.00"))
+                .codSurchargePercentage(new BigDecimal("2.50"))
+                .active(true)
+                .isActive(true)
+                .effectiveFrom(LocalDate.of(2025, 1, 1))
+                .effectiveTo(LocalDate.of(2030, 12, 31))
+                .build();
+        rateCardRepository.save(b2cInterState);
+
+        RateCardRule r3s = RateCardRule.builder()
+                .rateCard(b2cInterState)
+                .minWeightKg(BigDecimal.ZERO)
+                .maxWeightKg(new BigDecimal("2.000"))
+                .basePrice(new BigDecimal("150.00"))
+                .perKgRateAboveMin(BigDecimal.ZERO)
+                .build();
+        RateCardRule r4s = RateCardRule.builder()
+                .rateCard(b2cInterState)
+                .minWeightKg(new BigDecimal("2.000"))
+                .maxWeightKg(new BigDecimal("50.000"))
+                .basePrice(new BigDecimal("150.00"))
+                .perKgRateAboveMin(new BigDecimal("35.00"))
+                .build();
+        rateCardRuleRepository.saveAll(List.of(r3s, r4s));
+
+        // Rate Card 4: B2B Intra-Zone
         RateCard b2bIntra = RateCard.builder()
                 .name("Enterprise B2B Intra-Zone Slabs")
                 .customerType(CustomerType.B2B)
@@ -259,7 +356,7 @@ public class SeedDataLoader implements CommandLineRunner {
                 .build();
         rateCardRuleRepository.saveAll(List.of(r5, r6));
 
-        // Rate Card 4: B2B Inter-Zone
+        // Rate Card 5: B2B Inter-Zone
         RateCard b2bInter = RateCard.builder()
                 .name("Enterprise B2B Inter-Zone Slabs")
                 .customerType(CustomerType.B2B)
@@ -292,8 +389,8 @@ public class SeedDataLoader implements CommandLineRunner {
         // 6. Seed Sample Orders
         // Order 1: Out for delivery
         Order order1 = Order.builder()
-                .trackingNumber("GTM-20260820-001")
-                .orderNumber("GTM-20260820-001")
+                .trackingNumber("GTM-20260820-875171")
+                .orderNumber("GTM-20260820-875171")
                 .customer(customer)
                 .customerType(CustomerType.B2C)
                 .paymentType(PaymentType.COD)

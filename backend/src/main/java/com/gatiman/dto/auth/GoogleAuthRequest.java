@@ -32,4 +32,9 @@ public class GoogleAuthRequest {
     private String firstName;
     private String lastName;
     private String pictureUrl;
+    private String phoneNumber;
+    private String address;
+    private String city;
+    private String state;
+    private String pinCode;
 }

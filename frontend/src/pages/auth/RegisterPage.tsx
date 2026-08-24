@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { registerSchema, RegisterFormData } from '../../schemas/authSchema';
 import { useAuth } from '../../context/AuthContext';
 import { GoogleSignInButton } from '../../components/auth/GoogleSignInButton';
-import { Mail, Lock, User, Phone, ArrowRight, AlertCircle, Building2, Truck } from 'lucide-react';
+import { Mail, Lock, User, Phone, ArrowRight, AlertCircle, Building2, Truck, MapPin } from 'lucide-react';
 
 export const RegisterPage: React.FC = () => {
   const { register: registerAuth } = useAuth();
@@ -148,6 +148,56 @@ export const RegisterPage: React.FC = () => {
             />
           </div>
           {errors.phoneNumber && <p className="mt-1 text-xs text-rose-600">{errors.phoneNumber.message}</p>}
+        </div>
+
+        {/* Personal Address Information */}
+        <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 space-y-3">
+          <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-700">
+            <MapPin className="h-4 w-4 text-indigo-600" />
+            Delivery Address & Location
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-700">Primary Street Address</label>
+            <input
+              type="text"
+              {...register('address')}
+              placeholder="Flat 402, Royal Residency, Outer Ring Road"
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-xs focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-semibold text-slate-700">City</label>
+              <input
+                type="text"
+                {...register('city')}
+                placeholder="New Delhi"
+                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-xs focus:border-indigo-600 focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-700">State</label>
+              <input
+                type="text"
+                {...register('state')}
+                placeholder="Delhi"
+                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-xs focus:border-indigo-600 focus:outline-none"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-700">Logistics Postal PIN Code</label>
+            <input
+              type="text"
+              maxLength={6}
+              {...register('pinCode')}
+              placeholder="110016"
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-xs focus:border-indigo-600 focus:outline-none font-mono"
+            />
+          </div>
         </div>
 
         {/* Customer Persona Fields */}

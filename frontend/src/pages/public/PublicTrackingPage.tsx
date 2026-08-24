@@ -3,7 +3,6 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { orderApi } from '../../api/orderApi';
 import { trackingApi } from '../../api/trackingApi';
 import { useLiveTracking } from '../../hooks/useLiveTracking';
-import { LiveDeliveryMap } from '../../components/tracking/LiveDeliveryMap';
 import { LiveTrackingStatusCard } from '../../components/tracking/LiveTrackingStatusCard';
 import { RazorpayCheckoutModal } from '../../components/payment/RazorpayCheckoutModal';
 import { Order, TrackingEvent, OrderStatus } from '../../types';
@@ -210,27 +209,10 @@ export const PublicTrackingPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Live map + status — desktop side by side */}
+            {/* Real-Time Live Telemetry Status (Map Removed) */}
             {liveTracking && (
-              <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 items-start">
-                <div className="lg:col-span-7">
-                  <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                    <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
-                      <span className="text-sm font-semibold text-slate-700">Live GPS Map</span>
-                      <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
-                        <span className="relative flex h-1.5 w-1.5">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                          <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
-                        </span>
-                        Live
-                      </div>
-                    </div>
-                    <LiveDeliveryMap trackingData={liveTracking} />
-                  </div>
-                </div>
-                <div className="lg:col-span-5">
-                  <LiveTrackingStatusCard trackingData={liveTracking} connectionState={connectionState} />
-                </div>
+              <div className="w-full">
+                <LiveTrackingStatusCard trackingData={liveTracking} connectionState={connectionState} />
               </div>
             )}
 

@@ -50,6 +50,9 @@ public class AuthController {
     @Operation(summary = "Retrieve authenticated user details")
     public ResponseEntity<ApiResponse<UserResponse>> getCurrentUser(
             @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null || userDetails.getUser() == null) {
+            throw new com.gatiman.exception.UnauthorizedException("User is not authenticated");
+        }
         UserResponse response = authService.getCurrentUser(userDetails.getUser());
         return ResponseEntity.ok(ApiResponse.ok("Profile details retrieved", response));
     }

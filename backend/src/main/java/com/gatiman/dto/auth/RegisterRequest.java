@@ -35,6 +35,12 @@ public class RegisterRequest {
     @Builder.Default
     private Role role = Role.CUSTOMER;
 
+    // Personal Contact & Address Information
+    private String address;
+    private String city;
+    private String state;
+    private String pinCode;
+
     // Optional customer specific fields
     private CustomerType customerType;
     private String companyName;

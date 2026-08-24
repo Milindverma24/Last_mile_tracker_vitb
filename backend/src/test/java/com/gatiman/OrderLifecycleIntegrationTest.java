@@ -39,6 +39,8 @@ class OrderLifecycleIntegrationTest {
     @Mock private NotificationService notificationService;
     @Mock private PricingService pricingService;
     @Mock private AgentAssignmentService agentAssignmentService;
+    @Mock private OrderAssignmentRepository orderAssignmentRepository;
+    @Mock private DeliveryAttemptRepository deliveryAttemptRepository;
 
     private OrderService orderService;
     private OrderStatusTransitionService statusTransitionService;
@@ -63,7 +65,9 @@ class OrderLifecycleIntegrationTest {
                 notificationService,
                 pricingService,
                 statusTransitionService,
-                agentAssignmentService
+                agentAssignmentService,
+                orderAssignmentRepository,
+                deliveryAttemptRepository
         );
 
         customerUser = User.builder()

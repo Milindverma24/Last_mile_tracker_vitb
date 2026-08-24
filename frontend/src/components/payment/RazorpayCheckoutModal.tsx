@@ -66,8 +66,20 @@ export const RazorpayCheckoutModal: React.FC<Props> = ({ orderId, onSuccess, onC
     initOrder();
   }, [orderId]);
 
+  const isDemoKey =
+    !orderDetails?.keyId ||
+    orderDetails?.keyId === 'YOUR_RAZORPAY_KEY_ID' ||
+    orderDetails?.keyId === 'rzp_test_gatiman123' ||
+    orderDetails?.keyId.includes('gatiman');
+
   const handleLaunchRazorpay = () => {
     if (!orderDetails) return;
+
+    // If using simulated / placeholder key, trigger direct instant sandbox verification
+    if (isDemoKey || !window.Razorpay) {
+      handleSandboxDemoPay();
+      return;
+    }
 
     if (window.Razorpay) {
       const options = {

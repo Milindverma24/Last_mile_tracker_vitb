@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useOrder } from '../../hooks/useOrders';
 import { useTracking } from '../../hooks/useTracking';
 import { useLiveTracking } from '../../hooks/useLiveTracking';
-import { LiveDeliveryMap } from '../../components/tracking/LiveDeliveryMap';
+import { useAuth } from '../../context/AuthContext';
 import { LiveTrackingStatusCard } from '../../components/tracking/LiveTrackingStatusCard';
 import { RazorpayCheckoutModal } from '../../components/payment/RazorpayCheckoutModal';
 import {
@@ -25,10 +25,32 @@ import { OrderStatus } from '../../types';
 
 export const CustomerOrderTrackingPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
   const { data: order, isLoading: orderLoading, refetch: refetchOrder } = useOrder(id);
   const { data: trackingEvents = [], isLoading: trackingLoading, refetch: refetchTracking } = useTracking(order?.id || id);
   const { data: liveTracking, connectionState, refetch: refetchLive } = useLiveTracking(order?.id || id);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+
+  const getBackPath = () => {
+    if (location.pathname.startsWith('/admin') || user?.role === 'ADMIN') {
+      return '/admin/orders';
+    }
+    if (location.pathname.startsWith('/agent') || user?.role === 'DELIVERY_AGENT') {
+      return '/agent/deliveries';
+    }
+    return '/customer/orders';
+  };
+
+  const handleBack = () => {
+    if (window.history.length > 2) {
+      navigate(-1);
+    } else {
+      navigate(getBackPath());
+    }
+  };
 
   const steps: { status: OrderStatus; label: string }[] = [
     { status: 'CREATED', label: 'Order Created' },
@@ -80,12 +102,13 @@ export const CustomerOrderTrackingPage: React.FC = () => {
         <p className="mt-1 text-xs text-slate-500">
           The requested tracking number does not exist or you do not have permission to view it.
         </p>
-        <Link
-          to="/customer/orders"
-          className="mt-4 inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-xs font-bold text-white shadow"
+        <button
+          type="button"
+          onClick={handleBack}
+          className="mt-4 inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-xs font-bold text-white shadow-xs hover:bg-indigo-700 transition cursor-pointer"
         >
-          <ArrowLeft className="h-4 w-4" /> Back to My Orders
-        </Link>
+          <ArrowLeft className="h-4 w-4" /> Back to Orders
+        </button>
       </div>
     );
   }
@@ -96,9 +119,14 @@ export const CustomerOrderTrackingPage: React.FC = () => {
       <div className="flex flex-col justify-between gap-4 rounded-2xl bg-white p-6 shadow-sm border border-slate-200 sm:flex-row sm:items-center">
         <div>
           <div className="flex items-center gap-2">
-            <Link to="/customer/orders" className="text-slate-400 hover:text-slate-600">
+            <button
+              type="button"
+              onClick={handleBack}
+              className="rounded-xl p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition cursor-pointer"
+              title="Go back to orders"
+            >
               <ArrowLeft className="h-5 w-5" />
-            </Link>
+            </button>
             <span className="font-mono text-xl font-black tracking-tight text-indigo-600">
               {order.trackingNumber}
             </span>
@@ -158,15 +186,10 @@ export const CustomerOrderTrackingPage: React.FC = () => {
         </div>
       )}
 
-      {/* Real-Time Live Map & Telemetry Dashboard */}
+      {/* Real-Time Live Status & Telemetry Dashboard (Map Removed) */}
       {liveTracking && (
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 items-start">
-          <div className="lg:col-span-7">
-            <LiveDeliveryMap trackingData={liveTracking} />
-          </div>
-          <div className="lg:col-span-5">
-            <LiveTrackingStatusCard trackingData={liveTracking} connectionState={connectionState} />
-          </div>
+        <div className="w-full">
+          <LiveTrackingStatusCard trackingData={liveTracking} connectionState={connectionState} />
         </div>
       )}
 

@@ -20,6 +20,10 @@ import {
   Building,
   Info,
   Lock,
+  Phone,
+  User,
+  Layers,
+  Sparkles,
 } from 'lucide-react';
 
 export const CustomerCreateOrderPage: React.FC = () => {
@@ -62,8 +66,9 @@ export const CustomerCreateOrderPage: React.FC = () => {
 
   const formData = watch();
 
-  // Trigger charge calculation preview when step 5 is reached
+  // Smoothly scroll to top on every step transition so user never gets stuck
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     if (currentStep === 5) {
       calculatePreview();
     }
@@ -85,7 +90,7 @@ export const CustomerCreateOrderPage: React.FC = () => {
       });
       setChargePreview(res);
     } catch (err: any) {
-      // Fallback calculation for UX demo preview
+      // Fallback calculation for UX preview
       const vol = Number(((formData.lengthCm * formData.breadthCm * formData.heightCm) / 5000).toFixed(2));
       const billable = Math.max(formData.actualWeightKg, vol);
       const base = billable <= 2 ? 90 : 90 + Math.ceil(billable - 2) * 25;
@@ -172,46 +177,80 @@ export const CustomerCreateOrderPage: React.FC = () => {
   };
 
   const steps = [
-    { num: 1, title: 'Pickup' },
-    { num: 2, title: 'Drop' },
-    { num: 3, title: 'Package' },
-    { num: 4, title: 'Billing' },
-    { num: 5, title: 'Preview' },
-    { num: 6, title: 'Confirm' },
+    { num: 1, title: 'Pickup', icon: MapPin },
+    { num: 2, title: 'Drop', icon: MapPin },
+    { num: 3, title: 'Package', icon: Package },
+    { num: 4, title: 'Billing', icon: CreditCard },
+    { num: 5, title: 'Preview', icon: Calculator },
+    { num: 6, title: 'Confirm', icon: CheckCircle2 },
   ];
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6">
+    <div className="mx-auto max-w-4xl space-y-4 sm:space-y-6 pb-20 sm:pb-8">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-          Book Express Shipment
-        </h1>
-        <p className="text-sm text-slate-500">
-          Follow the 6-step guided booking wizard with deterministic volumetric pricing
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-slate-200/80 pb-4">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
+            <Package className="h-5 w-5 text-indigo-600 shrink-0" />
+            Book Express Shipment
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+            Follow the 6-step guided wizard with volumetric rate card pricing
+          </p>
+        </div>
+        <div className="inline-flex items-center gap-1.5 self-start rounded-full bg-indigo-50 px-3 py-1 text-xs font-bold text-indigo-700 border border-indigo-200/60">
+          <Sparkles className="h-3.5 w-3.5" />
+          <span>Step {currentStep} of 6</span>
+        </div>
       </div>
 
-      {/* Stepper Progress Bar */}
-      <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-        <div className="flex items-center justify-between">
+      {/* Stepper Progress Bar (Responsive & Touch Scrollable) */}
+      <div className="rounded-2xl border border-slate-200/90 bg-white p-3.5 sm:p-4 shadow-2xs overflow-hidden">
+        {/* Mobile Mini Stepper Indicator */}
+        <div className="flex sm:hidden items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white shadow-xs">
+              {currentStep}
+            </div>
+            <span className="text-xs font-bold text-slate-900">
+              {steps[currentStep - 1].title}
+            </span>
+          </div>
+          <div className="flex items-center gap-1">
+            {steps.map((s) => (
+              <div
+                key={s.num}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  currentStep === s.num
+                    ? 'w-6 bg-indigo-600'
+                    : currentStep > s.num
+                    ? 'w-2.5 bg-emerald-500'
+                    : 'w-2 bg-slate-200'
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Tablet & Desktop Stepper */}
+        <div className="hidden sm:flex items-center justify-between gap-1 overflow-x-auto py-1">
           {steps.map((s, idx) => (
             <React.Fragment key={s.num}>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 shrink-0">
                 <div
-                  className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition ${
+                  className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition duration-200 shrink-0 ${
                     currentStep === s.num
-                      ? 'bg-indigo-600 text-white shadow-md'
+                      ? 'bg-indigo-600 text-white ring-4 ring-indigo-100 shadow-xs'
                       : currentStep > s.num
                       ? 'bg-emerald-500 text-white'
-                      : 'bg-slate-100 text-slate-500'
+                      : 'bg-slate-100 text-slate-500 border border-slate-200'
                   }`}
                 >
                   {currentStep > s.num ? <CheckCircle2 className="h-4 w-4" /> : s.num}
                 </div>
                 <span
-                  className={`hidden text-xs font-semibold sm:inline-block ${
-                    currentStep === s.num ? 'text-indigo-600' : 'text-slate-500'
+                  className={`text-xs font-semibold whitespace-nowrap ${
+                    currentStep === s.num ? 'text-indigo-600 font-bold' : 'text-slate-500'
                   }`}
                 >
                   {s.title}
@@ -219,7 +258,7 @@ export const CustomerCreateOrderPage: React.FC = () => {
               </div>
               {idx < steps.length - 1 && (
                 <div
-                  className={`h-0.5 flex-1 mx-2 ${
+                  className={`h-0.5 flex-1 mx-2 min-w-[16px] transition-colors ${
                     currentStep > s.num ? 'bg-emerald-500' : 'bg-slate-200'
                   }`}
                 />
@@ -229,184 +268,222 @@ export const CustomerCreateOrderPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Wizard Form Container */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-        <form onSubmit={handleSubmit(onFinalSubmit)}>
+      {/* Wizard Form Container (Overflow Safe & Responsive) */}
+      <div className="rounded-2xl border border-slate-200/90 bg-white p-4 sm:p-7 shadow-2xs overflow-visible">
+        <form onSubmit={handleSubmit(onFinalSubmit)} className="space-y-5">
           {/* STEP 1: Pickup Information */}
           {currentStep === 1 && (
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-                <MapPin className="h-5 w-5 text-indigo-600" />
-                <h2 className="text-lg font-bold text-slate-900">Step 1: Pickup Details</h2>
+            <div className="space-y-4 animate-in fade-in duration-200">
+              <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+                  <MapPin className="h-4 w-4" />
+                </div>
+                <div>
+                  <h2 className="text-base sm:text-lg font-bold text-slate-900">Step 1: Origin & Pickup Details</h2>
+                  <p className="text-xs text-slate-500">Enter where our driver partner will collect the parcel</p>
+                </div>
               </div>
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700">Contact Person Name</label>
-                  <input
-                    type="text"
-                    {...register('pickupName')}
-                    className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-600 focus:outline-none"
-                  />
-                  {errors.pickupName && <p className="mt-1 text-xs text-rose-600">{errors.pickupName.message}</p>}
+                  <label className="block text-xs font-bold text-slate-700">Contact Person Name *</label>
+                  <div className="relative mt-1">
+                    <User className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                    <input
+                      type="text"
+                      {...register('pickupName')}
+                      placeholder="e.g. Priya Sharma"
+                      className="w-full rounded-xl border border-slate-300 py-2 pl-9 pr-3 text-xs sm:text-sm text-slate-900 shadow-2xs focus:border-indigo-600 focus:outline-hidden"
+                    />
+                  </div>
+                  {errors.pickupName && <p className="mt-1 text-xs text-rose-600 font-semibold">{errors.pickupName.message}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700">Phone Number</label>
-                  <input
-                    type="text"
-                    {...register('pickupPhone')}
-                    className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-600 focus:outline-none"
-                  />
-                  {errors.pickupPhone && <p className="mt-1 text-xs text-rose-600">{errors.pickupPhone.message}</p>}
+                  <label className="block text-xs font-bold text-slate-700">Contact Phone Number *</label>
+                  <div className="relative mt-1">
+                    <Phone className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                    <input
+                      type="text"
+                      {...register('pickupPhone')}
+                      placeholder="+91 98111 22233"
+                      className="w-full rounded-xl border border-slate-300 py-2 pl-9 pr-3 text-xs sm:text-sm text-slate-900 shadow-2xs focus:border-indigo-600 focus:outline-hidden"
+                    />
+                  </div>
+                  {errors.pickupPhone && <p className="mt-1 text-xs text-rose-600 font-semibold">{errors.pickupPhone.message}</p>}
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700">Pickup Address</label>
+                <label className="block text-xs font-bold text-slate-700">Pickup Street Address *</label>
                 <textarea
                   rows={2}
                   {...register('pickupAddress')}
-                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-600 focus:outline-none"
+                  placeholder="Apartment, Floor, Street, Landmark"
+                  className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm text-slate-900 shadow-2xs focus:border-indigo-600 focus:outline-hidden"
                 />
-                {errors.pickupAddress && <p className="mt-1 text-xs text-rose-600">{errors.pickupAddress.message}</p>}
+                {errors.pickupAddress && <p className="mt-1 text-xs text-rose-600 font-semibold">{errors.pickupAddress.message}</p>}
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700">Pickup PIN Code</label>
+                <label className="block text-xs font-bold text-slate-700">Pickup PIN Code (6-Digit) *</label>
                 <input
                   type="text"
                   maxLength={6}
                   {...register('pickupPincode')}
                   placeholder="e.g. 110016"
-                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-600 focus:outline-none"
+                  className="mt-1 w-full sm:max-w-xs rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm font-mono font-bold text-slate-900 shadow-2xs focus:border-indigo-600 focus:outline-hidden"
                 />
-                {errors.pickupPincode && <p className="mt-1 text-xs text-rose-600">{errors.pickupPincode.message}</p>}
+                {errors.pickupPincode && <p className="mt-1 text-xs text-rose-600 font-semibold">{errors.pickupPincode.message}</p>}
               </div>
             </div>
           )}
 
           {/* STEP 2: Drop Information */}
           {currentStep === 2 && (
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-                <MapPin className="h-5 w-5 text-indigo-600" />
-                <h2 className="text-lg font-bold text-slate-900">Step 2: Destination / Drop Details</h2>
+            <div className="space-y-4 animate-in fade-in duration-200">
+              <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-rose-50 text-rose-600">
+                  <MapPin className="h-4 w-4" />
+                </div>
+                <div>
+                  <h2 className="text-base sm:text-lg font-bold text-slate-900">Step 2: Destination / Recipient Details</h2>
+                  <p className="text-xs text-slate-500">Provide the recipient contact and delivery coordinates</p>
+                </div>
               </div>
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700">Recipient Name</label>
-                  <input
-                    type="text"
-                    {...register('dropName')}
-                    className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-600 focus:outline-none"
-                  />
-                  {errors.dropName && <p className="mt-1 text-xs text-rose-600">{errors.dropName.message}</p>}
+                  <label className="block text-xs font-bold text-slate-700">Recipient Name *</label>
+                  <div className="relative mt-1">
+                    <User className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                    <input
+                      type="text"
+                      {...register('dropName')}
+                      placeholder="e.g. Vikram Seth"
+                      className="w-full rounded-xl border border-slate-300 py-2 pl-9 pr-3 text-xs sm:text-sm text-slate-900 shadow-2xs focus:border-indigo-600 focus:outline-hidden"
+                    />
+                  </div>
+                  {errors.dropName && <p className="mt-1 text-xs text-rose-600 font-semibold">{errors.dropName.message}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700">Recipient Phone</label>
-                  <input
-                    type="text"
-                    {...register('dropPhone')}
-                    className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-600 focus:outline-none"
-                  />
-                  {errors.dropPhone && <p className="mt-1 text-xs text-rose-600">{errors.dropPhone.message}</p>}
+                  <label className="block text-xs font-bold text-slate-700">Recipient Phone Number *</label>
+                  <div className="relative mt-1">
+                    <Phone className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                    <input
+                      type="text"
+                      {...register('dropPhone')}
+                      placeholder="+91 98222 33344"
+                      className="w-full rounded-xl border border-slate-300 py-2 pl-9 pr-3 text-xs sm:text-sm text-slate-900 shadow-2xs focus:border-indigo-600 focus:outline-hidden"
+                    />
+                  </div>
+                  {errors.dropPhone && <p className="mt-1 text-xs text-rose-600 font-semibold">{errors.dropPhone.message}</p>}
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700">Destination Address</label>
+                <label className="block text-xs font-bold text-slate-700">Destination Street Address *</label>
                 <textarea
                   rows={2}
                   {...register('dropAddress')}
-                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-600 focus:outline-none"
+                  placeholder="Building, Tower, Flat, Floor, Sector"
+                  className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm text-slate-900 shadow-2xs focus:border-indigo-600 focus:outline-hidden"
                 />
-                {errors.dropAddress && <p className="mt-1 text-xs text-rose-600">{errors.dropAddress.message}</p>}
+                {errors.dropAddress && <p className="mt-1 text-xs text-rose-600 font-semibold">{errors.dropAddress.message}</p>}
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700">Destination PIN Code</label>
+                <label className="block text-xs font-bold text-slate-700">Destination PIN Code (6-Digit) *</label>
                 <input
                   type="text"
                   maxLength={6}
                   {...register('dropPincode')}
                   placeholder="e.g. 122002"
-                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-600 focus:outline-none"
+                  className="mt-1 w-full sm:max-w-xs rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm font-mono font-bold text-slate-900 shadow-2xs focus:border-indigo-600 focus:outline-hidden"
                 />
-                {errors.dropPincode && <p className="mt-1 text-xs text-rose-600">{errors.dropPincode.message}</p>}
+                {errors.dropPincode && <p className="mt-1 text-xs text-rose-600 font-semibold">{errors.dropPincode.message}</p>}
               </div>
             </div>
           )}
 
           {/* STEP 3: Package Dimensions & Weight */}
           {currentStep === 3 && (
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-                <Package className="h-5 w-5 text-indigo-600" />
-                <h2 className="text-lg font-bold text-slate-900">Step 3: Package Dimensions & Weight</h2>
-              </div>
-
-              <div className="rounded-lg bg-indigo-50/70 p-3.5 text-xs text-indigo-900">
-                <p className="font-semibold">💡 Industry Volumetric Formula: (Length × Breadth × Height) / 5000</p>
-                <p className="mt-0.5 text-indigo-700">Billable weight is calculated automatically as MAX(Actual Weight, Volumetric Weight).</p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+            <div className="space-y-4 animate-in fade-in duration-200">
+              <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+                  <Package className="h-4 w-4" />
+                </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700">Length (cm)</label>
+                  <h2 className="text-base sm:text-lg font-bold text-slate-900">Step 3: Dimensions & Package Weight</h2>
+                  <p className="text-xs text-slate-500">Automated volumetric weight calculation with vehicle matching</p>
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-indigo-100 bg-indigo-50/60 p-3 text-xs text-indigo-900 space-y-1">
+                <p className="font-bold flex items-center gap-1.5">
+                  <Info className="h-3.5 w-3.5 text-indigo-600" />
+                  Industry Standard Volumetric Formula: (L × B × H) ÷ 5000
+                </p>
+                <p className="text-[11px] text-indigo-700">
+                  Shipment is billed on the greater of <strong>Actual Weight</strong> vs <strong>Volumetric Weight</strong>.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700">Length (cm) *</label>
                   <input
                     type="number"
                     step="0.1"
                     {...register('lengthCm', { valueAsNumber: true })}
-                    className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-600 focus:outline-none"
+                    className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm font-mono font-bold text-slate-900 shadow-2xs focus:border-indigo-600 focus:outline-hidden"
                   />
-                  {errors.lengthCm && <p className="mt-1 text-xs text-rose-600">{errors.lengthCm.message}</p>}
+                  {errors.lengthCm && <p className="mt-1 text-xs text-rose-600 font-semibold">{errors.lengthCm.message}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700">Breadth (cm)</label>
+                  <label className="block text-xs font-semibold text-slate-700">Breadth (cm) *</label>
                   <input
                     type="number"
                     step="0.1"
                     {...register('breadthCm', { valueAsNumber: true })}
-                    className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-600 focus:outline-none"
+                    className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm font-mono font-bold text-slate-900 shadow-2xs focus:border-indigo-600 focus:outline-hidden"
                   />
-                  {errors.breadthCm && <p className="mt-1 text-xs text-rose-600">{errors.breadthCm.message}</p>}
+                  {errors.breadthCm && <p className="mt-1 text-xs text-rose-600 font-semibold">{errors.breadthCm.message}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700">Height (cm)</label>
+                  <label className="block text-xs font-semibold text-slate-700">Height (cm) *</label>
                   <input
                     type="number"
                     step="0.1"
                     {...register('heightCm', { valueAsNumber: true })}
-                    className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-600 focus:outline-none"
+                    className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm font-mono font-bold text-slate-900 shadow-2xs focus:border-indigo-600 focus:outline-hidden"
                   />
-                  {errors.heightCm && <p className="mt-1 text-xs text-rose-600">{errors.heightCm.message}</p>}
+                  {errors.heightCm && <p className="mt-1 text-xs text-rose-600 font-semibold">{errors.heightCm.message}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700">Actual Weight (kg)</label>
+                  <label className="block text-xs font-semibold text-slate-700">Actual Weight (kg) *</label>
                   <input
                     type="number"
                     step="0.01"
                     {...register('actualWeightKg', { valueAsNumber: true })}
-                    className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-600 focus:outline-none"
+                    className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm font-mono font-bold text-slate-900 shadow-2xs focus:border-indigo-600 focus:outline-hidden"
                   />
-                  {errors.actualWeightKg && <p className="mt-1 text-xs text-rose-600">{errors.actualWeightKg.message}</p>}
+                  {errors.actualWeightKg && <p className="mt-1 text-xs text-rose-600 font-semibold">{errors.actualWeightKg.message}</p>}
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700">Item Description</label>
+                  <label className="block text-xs font-semibold text-slate-700">Package Description</label>
                   <input
                     type="text"
                     {...register('packageDescription')}
-                    placeholder="e.g. Document, Electronics, Clothes"
-                    className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-600 focus:outline-none"
+                    placeholder="e.g. Electronics, Clothing, Documents"
+                    className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm text-slate-900 shadow-2xs focus:border-indigo-600 focus:outline-hidden"
                   />
                 </div>
                 <div>
@@ -414,8 +491,8 @@ export const CustomerCreateOrderPage: React.FC = () => {
                   <input
                     type="number"
                     {...register('declaredValue', { valueAsNumber: true })}
-                    placeholder="e.g. 2000"
-                    className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-600 focus:outline-none"
+                    placeholder="e.g. 2500"
+                    className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm font-mono text-slate-900 shadow-2xs focus:border-indigo-600 focus:outline-hidden"
                   />
                 </div>
               </div>
@@ -424,76 +501,87 @@ export const CustomerCreateOrderPage: React.FC = () => {
 
           {/* STEP 4: Order Category & Payment */}
           {currentStep === 4 && (
-            <div className="space-y-6">
-              <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-                <CreditCard className="h-5 w-5 text-indigo-600" />
-                <h2 className="text-lg font-bold text-slate-900">Step 4: Order Category & Payment Mode</h2>
+            <div className="space-y-5 animate-in fade-in duration-200">
+              <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+                  <CreditCard className="h-4 w-4" />
+                </div>
+                <div>
+                  <h2 className="text-base sm:text-lg font-bold text-slate-900">Step 4: Customer Tier & Payment Method</h2>
+                  <p className="text-xs text-slate-500">Configure client rate card category and collection mode</p>
+                </div>
               </div>
 
+              {/* Order Type */}
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500">
-                  Order Type
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+                  Client Account Category
                 </label>
-                <div className="mt-2 grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <label
-                    className={`flex cursor-pointer items-center justify-between rounded-xl border p-4 transition ${
+                    className={`flex cursor-pointer items-start gap-3 rounded-2xl border p-4 transition ${
                       formData.customerType === 'B2C'
-                        ? 'border-indigo-600 bg-indigo-50 text-indigo-900'
-                        : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                        ? 'border-indigo-600 bg-indigo-50/70 text-indigo-950 shadow-xs'
+                        : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
                     }`}
                   >
+                    <User className={`h-5 w-5 shrink-0 mt-0.5 ${formData.customerType === 'B2C' ? 'text-indigo-600' : 'text-slate-400'}`} />
                     <div>
-                      <p className="font-bold">B2C (Retail Delivery)</p>
-                      <p className="text-xs text-slate-500">Direct to consumer standard slabs</p>
+                      <p className="font-bold text-xs sm:text-sm">Personal Delivery (B2C)</p>
+                      <p className="text-[11px] text-slate-500 mt-0.5">Direct retail consumer delivery with standard rate cards</p>
                     </div>
                     <input type="radio" value="B2C" {...register('customerType')} className="sr-only" />
                   </label>
 
                   <label
-                    className={`flex cursor-pointer items-center justify-between rounded-xl border p-4 transition ${
+                    className={`flex cursor-pointer items-start gap-3 rounded-2xl border p-4 transition ${
                       formData.customerType === 'B2B'
-                        ? 'border-indigo-600 bg-indigo-50 text-indigo-900'
-                        : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                        ? 'border-indigo-600 bg-indigo-50/70 text-indigo-950 shadow-xs'
+                        : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
                     }`}
                   >
+                    <Building className={`h-5 w-5 shrink-0 mt-0.5 ${formData.customerType === 'B2B' ? 'text-indigo-600' : 'text-slate-400'}`} />
                     <div>
-                      <p className="font-bold">B2B (Enterprise Commercial)</p>
-                      <p className="text-xs text-slate-500">Heavy weight volume rate slabs</p>
+                      <p className="font-bold text-xs sm:text-sm">Enterprise Logistics (B2B)</p>
+                      <p className="text-[11px] text-slate-500 mt-0.5">Bulk commercial rates with high-volume slab discounts</p>
                     </div>
                     <input type="radio" value="B2B" {...register('customerType')} className="sr-only" />
                   </label>
                 </div>
               </div>
 
+              {/* Payment Mode */}
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500">
-                  Payment Mode
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+                  Payment Collection Mode
                 </label>
-                <div className="mt-2 grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <label
-                    className={`flex cursor-pointer items-center justify-between rounded-xl border p-4 transition ${
+                    className={`flex cursor-pointer items-start gap-3 rounded-2xl border p-4 transition ${
                       formData.paymentType === 'PREPAID'
-                        ? 'border-emerald-600 bg-emerald-50 text-emerald-900'
-                        : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                        ? 'border-emerald-600 bg-emerald-50/70 text-emerald-950 shadow-xs'
+                        : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
                     }`}
                   >
+                    <CreditCard className={`h-5 w-5 shrink-0 mt-0.5 ${formData.paymentType === 'PREPAID' ? 'text-emerald-600' : 'text-slate-400'}`} />
                     <div>
-                      <p className="font-bold">Prepaid (Online Paid)</p>
-                      <p className="text-xs text-slate-500">Zero surcharge</p>
+                      <p className="font-bold text-xs sm:text-sm">Prepaid Online Payment</p>
+                      <p className="text-[11px] text-slate-500 mt-0.5">UPI, Cards, NetBanking via Razorpay. Zero surcharge.</p>
                     </div>
                     <input type="radio" value="PREPAID" {...register('paymentType')} className="sr-only" />
                   </label>
 
                   <label
-                    className={`flex cursor-pointer items-center justify-between rounded-xl border p-4 transition ${
+                    className={`flex cursor-pointer items-start gap-3 rounded-2xl border p-4 transition ${
                       formData.paymentType === 'COD'
-                        ? 'border-amber-600 bg-amber-50 text-amber-900'
-                        : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                        ? 'border-amber-600 bg-amber-50/70 text-amber-950 shadow-xs'
+                        : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
                     }`}
                   >
+                    <Zap className={`h-5 w-5 shrink-0 mt-0.5 ${formData.paymentType === 'COD' ? 'text-amber-600' : 'text-slate-400'}`} />
                     <div>
-                      <p className="font-bold">COD (Cash on Delivery)</p>
-                      <p className="text-xs text-slate-500">Subject to standard COD surcharge</p>
+                      <p className="font-bold text-xs sm:text-sm">Cash on Delivery (COD)</p>
+                      <p className="text-[11px] text-slate-500 mt-0.5">Driver collects cash at drop location (+ ₹40 + 2% surcharge)</p>
                     </div>
                     <input type="radio" value="COD" {...register('paymentType')} className="sr-only" />
                   </label>
@@ -504,80 +592,85 @@ export const CustomerCreateOrderPage: React.FC = () => {
 
           {/* STEP 5: Charge Calculation Preview */}
           {currentStep === 5 && (
-            <div className="space-y-6">
-              <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-                <Calculator className="h-5 w-5 text-indigo-600" />
-                <h2 className="text-lg font-bold text-slate-900">Step 5: Authoritative Charge Preview</h2>
+            <div className="space-y-4 animate-in fade-in duration-200">
+              <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+                  <Calculator className="h-4 w-4" />
+                </div>
+                <div>
+                  <h2 className="text-base sm:text-lg font-bold text-slate-900">Step 5: Authoritative Pricing Preview</h2>
+                  <p className="text-xs text-slate-500">Live rate card determination and weight breakdown</p>
+                </div>
               </div>
 
               {isCalculating ? (
                 <div className="flex flex-col items-center justify-center p-8 gap-3">
-                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent" />
-                  <p className="text-sm font-semibold text-slate-600">Calculating volumetric rate slabs...</p>
+                  <div className="h-8 w-8 animate-spin rounded-full border-3 border-indigo-600 border-t-transparent" />
+                  <p className="text-xs font-bold text-slate-600">Calculating route slabs & volumetric matrices...</p>
                 </div>
               ) : chargePreview ? (
                 <div className="space-y-4">
-                  {/* Zone & Route Header */}
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                    <div className="rounded-xl border border-slate-200 bg-slate-50 p-3.5">
-                      <p className="text-[11px] font-bold uppercase text-slate-500">Pickup Zone</p>
-                      <p className="font-bold text-slate-900">{chargePreview.pickupZone}</p>
-                      <p className="text-xs text-slate-500">{chargePreview.pickupAreaName} ({formData.pickupPincode})</p>
+                  {/* Zone & Route Matrix */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3 space-y-0.5">
+                      <p className="text-[10px] font-bold uppercase text-slate-500">Origin Zone</p>
+                      <p className="text-xs font-bold text-slate-900">{chargePreview.pickupZone}</p>
+                      <p className="text-[11px] text-slate-500">{chargePreview.pickupAreaName} ({formData.pickupPincode})</p>
                     </div>
 
-                    <div className="rounded-xl border border-slate-200 bg-slate-50 p-3.5">
-                      <p className="text-[11px] font-bold uppercase text-slate-500">Drop Zone</p>
-                      <p className="font-bold text-slate-900">{chargePreview.dropZone}</p>
-                      <p className="text-xs text-slate-500">{chargePreview.dropAreaName} ({formData.dropPincode})</p>
+                    <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3 space-y-0.5">
+                      <p className="text-[10px] font-bold uppercase text-slate-500">Destination Zone</p>
+                      <p className="text-xs font-bold text-slate-900">{chargePreview.dropZone}</p>
+                      <p className="text-[11px] text-slate-500">{chargePreview.dropAreaName} ({formData.dropPincode})</p>
                     </div>
 
-                    <div className="rounded-xl border border-indigo-200 bg-indigo-50/70 p-3.5">
-                      <p className="text-[11px] font-bold uppercase text-indigo-700">Route Classification</p>
-                      <p className="font-bold text-indigo-900">{chargePreview.routeType}</p>
-                      <p className="text-xs text-indigo-600">{chargePreview.rateCardName}</p>
+                    <div className="rounded-xl border border-indigo-200 bg-indigo-50/70 p-3 space-y-0.5">
+                      <p className="text-[10px] font-bold uppercase text-indigo-700">Route Classification</p>
+                      <p className="text-xs font-black text-indigo-900">{chargePreview.routeType}</p>
+                      <p className="text-[11px] text-indigo-600 truncate">{chargePreview.rateCardName}</p>
                     </div>
                   </div>
 
-                  {/* Weight Matrix Breakdown */}
-                  <div className="rounded-xl border border-slate-200 bg-white p-4">
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                      Weight Assessment Formula
+                  {/* Weight Breakdown */}
+                  <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">
+                      Weight Assessment Breakdown
                     </h3>
-                    <div className="mt-3 grid grid-cols-3 gap-3 text-center">
-                      <div className="rounded-lg bg-slate-50 p-2.5">
-                        <p className="text-xs text-slate-500">Actual Weight</p>
-                        <p className="text-lg font-bold text-slate-900">{chargePreview.actualWeightKg} kg</p>
+                    <div className="grid grid-cols-3 gap-2.5 text-center">
+                      <div className="rounded-xl bg-slate-50 p-2.5 border border-slate-100">
+                        <p className="text-[10px] font-semibold text-slate-500">Actual Weight</p>
+                        <p className="text-sm sm:text-base font-bold text-slate-900 mt-0.5">{chargePreview.actualWeightKg} kg</p>
                       </div>
-                      <div className="rounded-lg bg-slate-50 p-2.5">
-                        <p className="text-xs text-slate-500">Volumetric Weight</p>
-                        <p className="text-lg font-bold text-indigo-600">{chargePreview.volumetricWeightKg} kg</p>
+                      <div className="rounded-xl bg-slate-50 p-2.5 border border-slate-100">
+                        <p className="text-[10px] font-semibold text-slate-500">Volumetric</p>
+                        <p className="text-sm sm:text-base font-bold text-indigo-600 mt-0.5">{chargePreview.volumetricWeightKg} kg</p>
                       </div>
-                      <div className="rounded-lg bg-indigo-50 p-2.5 border border-indigo-200">
-                        <p className="text-xs font-bold text-indigo-700">Billable Weight</p>
-                        <p className="text-lg font-black text-indigo-900">{chargePreview.billableWeightKg} kg</p>
+                      <div className="rounded-xl bg-indigo-50 p-2.5 border border-indigo-200">
+                        <p className="text-[10px] font-bold text-indigo-700">Billable Weight</p>
+                        <p className="text-sm sm:text-base font-black text-indigo-900 mt-0.5">{chargePreview.billableWeightKg} kg</p>
                       </div>
                     </div>
-                    <p className="mt-2 text-center text-[11px] text-slate-400 font-mono">
+                    <p className="mt-2 text-center text-[10px] text-slate-400 font-mono">
                       {chargePreview.weightFormula}
                     </p>
                   </div>
 
                   {/* Final Pricing Slabs */}
-                  <div className="rounded-xl border border-slate-200 bg-slate-900 p-5 text-white">
-                    <div className="space-y-2 text-sm">
+                  <div className="rounded-2xl border border-slate-800 bg-slate-950 p-4 sm:p-5 text-white shadow-xs">
+                    <div className="space-y-2 text-xs sm:text-sm">
                       <div className="flex justify-between text-slate-300">
                         <span>Base Delivery Fee</span>
                         <span className="font-semibold text-white">₹{Number(chargePreview.baseCharge).toFixed(2)}</span>
                       </div>
                       {chargePreview.paymentType === 'COD' && (
                         <div className="flex justify-between text-amber-300">
-                          <span>COD Handling Surcharge</span>
+                          <span>COD Handling Fee (Flat + 2%)</span>
                           <span className="font-semibold">₹{Number(chargePreview.codSurcharge).toFixed(2)}</span>
                         </div>
                       )}
-                      <div className="border-t border-slate-800 pt-3 flex justify-between items-center text-lg font-black">
+                      <div className="border-t border-slate-800 pt-2.5 flex justify-between items-center text-sm sm:text-base font-black">
                         <span className="text-indigo-400">Total Authoritative Charge</span>
-                        <span className="text-2xl text-white">₹{Number(chargePreview.totalCharge).toFixed(2)}</span>
+                        <span className="text-xl sm:text-2xl text-white font-black">₹{Number(chargePreview.totalCharge).toFixed(2)}</span>
                       </div>
                     </div>
                   </div>
@@ -588,19 +681,19 @@ export const CustomerCreateOrderPage: React.FC = () => {
 
           {/* STEP 6: Confirmation */}
           {currentStep === 6 && (
-            <div className="space-y-6 text-center">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
-                <CheckCircle2 className="h-8 w-8" />
+            <div className="space-y-4 text-center animate-in fade-in duration-200 py-2">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200">
+                <CheckCircle2 className="h-6 w-6" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-slate-900">Ready to Dispatch Order?</h2>
-                <p className="mt-1 text-sm text-slate-500">
-                  Your shipment will be registered and immediately eligible for automatic nearest-driver assignment.
+                <h2 className="text-lg font-bold text-slate-900">Confirm & Book Shipment</h2>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Shipment will be registered and immediately auto-assigned to the nearest driver partner.
                 </p>
               </div>
 
               {chargePreview && (
-                <div className="mx-auto max-w-sm rounded-xl border border-slate-200 bg-slate-50 p-4 text-left text-sm space-y-1.5">
+                <div className="mx-auto max-w-sm rounded-2xl border border-slate-200 bg-slate-50/80 p-4 text-left text-xs space-y-2">
                   <div className="flex justify-between">
                     <span className="text-slate-500">Route:</span>
                     <span className="font-bold text-slate-800">{chargePreview.pickupZone} → {chargePreview.dropZone}</span>
@@ -610,18 +703,18 @@ export const CustomerCreateOrderPage: React.FC = () => {
                     <span className="font-bold text-slate-800">{chargePreview.billableWeightKg} kg</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-500">Payment:</span>
+                    <span className="text-slate-500">Payment Mode:</span>
                     <span className="font-bold text-slate-800">{formData.paymentType}</span>
                   </div>
-                  <div className="border-t border-slate-200 pt-1.5 flex justify-between text-base font-bold text-indigo-600">
+                  <div className="border-t border-slate-200 pt-2 flex justify-between text-sm font-bold text-indigo-600">
                     <span>Total Amount:</span>
-                    <span>₹{Number(chargePreview.totalCharge).toFixed(2)}</span>
+                    <span className="text-base font-black">₹{Number(chargePreview.totalCharge).toFixed(2)}</span>
                   </div>
                 </div>
               )}
 
               {calculationError && (
-                <div className="flex items-center gap-2 rounded-lg bg-rose-50 p-3 text-xs text-rose-700">
+                <div className="flex items-center gap-2 rounded-xl bg-rose-50 p-3 text-xs font-semibold text-rose-700 border border-rose-200">
                   <AlertCircle className="h-4 w-4 shrink-0" />
                   <span>{calculationError}</span>
                 </div>
@@ -629,15 +722,15 @@ export const CustomerCreateOrderPage: React.FC = () => {
             </div>
           )}
 
-          {/* Step Navigation Buttons */}
-          <div className="mt-8 flex items-center justify-between border-t border-slate-100 pt-5">
+          {/* Step Navigation Action Buttons */}
+          <div className="mt-6 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 border-t border-slate-100 pt-4">
             {currentStep > 1 ? (
               <button
                 type="button"
                 onClick={handlePrevStep}
-                className="flex items-center gap-1.5 rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-700 hover:bg-slate-50 transition cursor-pointer"
               >
-                <ArrowLeft className="h-4 w-4" /> Previous
+                <ArrowLeft className="h-4 w-4" /> Previous Step
               </button>
             ) : (
               <div />
@@ -647,7 +740,7 @@ export const CustomerCreateOrderPage: React.FC = () => {
               <button
                 type="button"
                 onClick={handleNextStep}
-                className="flex items-center gap-1.5 rounded-lg bg-indigo-600 px-5 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-500"
+                className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-indigo-600 px-6 py-2.5 text-xs sm:text-sm font-bold text-white shadow-xs hover:bg-indigo-700 transition cursor-pointer"
               >
                 Next Step <ArrowRight className="h-4 w-4" />
               </button>
@@ -655,10 +748,10 @@ export const CustomerCreateOrderPage: React.FC = () => {
               <button
                 type="submit"
                 disabled={createOrder.isPending}
-                className={`flex items-center gap-2 rounded-lg px-6 py-2.5 text-sm font-bold text-white shadow transition disabled:opacity-50 ${
+                className={`inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-xs sm:text-sm font-bold text-white shadow-xs transition disabled:opacity-50 cursor-pointer ${
                   formData.paymentType === 'PREPAID'
-                    ? 'bg-indigo-600 hover:bg-indigo-500'
-                    : 'bg-emerald-600 hover:bg-emerald-500'
+                    ? 'bg-indigo-600 hover:bg-indigo-700'
+                    : 'bg-emerald-600 hover:bg-emerald-700'
                 }`}
               >
                 {createOrder.isPending ? (

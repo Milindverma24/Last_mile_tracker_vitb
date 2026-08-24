@@ -65,11 +65,12 @@ public class PaymentServiceImpl implements PaymentService {
         BigDecimal totalCharge = order.getTotalCharge() != null ? order.getTotalCharge() : BigDecimal.ZERO;
         long amountInPaise = totalCharge.multiply(BigDecimal.valueOf(100)).longValue();
 
-        // Generate standard Razorpay order reference format
-        String razorpayOrderId = "order_" + UUID.randomUUID().toString().replace("-", "").substring(0, 14);
-
-        order.setRazorpayOrderId(razorpayOrderId);
-        orderRepository.save(order);
+        // Generate or re-use standard Razorpay order reference format (prevents concurrent write contention)
+        String razorpayOrderId = order.getRazorpayOrderId();
+        if (razorpayOrderId == null || razorpayOrderId.isBlank()) {
+            razorpayOrderId = "order_" + UUID.randomUUID().toString().replace("-", "").substring(0, 14);
+            orderRepository.updateRazorpayOrderId(order.getId(), razorpayOrderId);
+        }
 
         log.info("Created Razorpay Order {} for shipment {} with total charge ₹{}",
                 razorpayOrderId, order.getTrackingNumber(), totalCharge);
@@ -111,16 +112,11 @@ public class PaymentServiceImpl implements PaymentService {
         if (!signatureValid) {
             log.error("Razorpay signature verification failed for order {}. Received: {}, Expected: {}",
                     order.getTrackingNumber(), request.getRazorpaySignature(), expectedSignature);
-            order.setPaymentStatus(PaymentStatus.FAILED);
-            orderRepository.save(order);
+            orderRepository.updatePaymentDetails(order.getId(), PaymentStatus.FAILED, request.getRazorpayPaymentId(), request.getRazorpaySignature(), Instant.now());
             throw new BusinessRuleException("INVALID_PAYMENT_SIGNATURE: Cryptographic verification of Razorpay payment signature failed.");
         }
 
-        order.setPaymentStatus(PaymentStatus.PAID);
-        order.setRazorpayPaymentId(request.getRazorpayPaymentId());
-        order.setRazorpaySignature(request.getRazorpaySignature());
-        order.setUpdatedAt(Instant.now());
-        orderRepository.save(order);
+        orderRepository.updatePaymentDetails(order.getId(), PaymentStatus.PAID, request.getRazorpayPaymentId(), request.getRazorpaySignature(), Instant.now());
 
         // Append tracking event
         TrackingEvent event = TrackingEvent.builder()

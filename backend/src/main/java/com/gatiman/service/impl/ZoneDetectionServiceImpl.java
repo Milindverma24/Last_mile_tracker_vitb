@@ -99,9 +99,20 @@ public class ZoneDetectionServiceImpl implements ZoneDetectionService {
         if (pickupZone == null || dropZone == null) {
             throw new BusinessRuleException("ZONE_NOT_FOUND: Both pickup and drop zones must be resolved to determine route type.");
         }
-        if (pickupZone.getId().equals(dropZone.getId()) || pickupZone.getCode().equalsIgnoreCase(dropZone.getCode())) {
+        if (pickupZone.getId() != null && dropZone.getId() != null && pickupZone.getId().equals(dropZone.getId())) {
             return RouteType.INTRA_ZONE;
         }
+        if (pickupZone.getCode() != null && dropZone.getCode() != null && pickupZone.getCode().equalsIgnoreCase(dropZone.getCode())) {
+            return RouteType.INTRA_ZONE;
+        }
+
+        String pickupState = pickupZone.getState() != null ? pickupZone.getState().trim().toLowerCase() : "";
+        String dropState = dropZone.getState() != null ? dropZone.getState().trim().toLowerCase() : "";
+
+        if (!pickupState.isEmpty() && !dropState.isEmpty() && !pickupState.equalsIgnoreCase(dropState)) {
+            return RouteType.INTER_STATE;
+        }
+
         return RouteType.INTER_ZONE;
     }
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Building, User, Sparkles, X, ArrowRight, ShieldCheck, Mail } from 'lucide-react';
+import { Building, User, Sparkles, X, ArrowRight, ShieldCheck, Mail, Phone, MapPin } from 'lucide-react';
 
 interface Props {
   text?: string;
@@ -21,30 +21,89 @@ export const GoogleSignInButton: React.FC<Props> = ({
   const [selectedType, setSelectedType] = useState<'B2C' | 'B2B'>(defaultCustomerType);
   const [emailInput, setEmailInput] = useState('');
   const [nameInput, setNameInput] = useState('');
+  const [phoneInput, setPhoneInput] = useState('');
+  const [addressInput, setAddressInput] = useState('');
+  const [cityInput, setCityInput] = useState('');
+  const [stateInput, setStateInput] = useState('');
+  const [pinCodeInput, setPinCodeInput] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [gstNumber, setGstNumber] = useState('');
 
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
+  const [tokenClient, setTokenClient] = useState<any>(null);
+
   useEffect(() => {
     // Load Google Identity Services SDK if Client ID is configured in .env
     if (googleClientId && googleClientId !== 'YOUR_GOOGLE_CLIENT_ID') {
-      const script = document.createElement('script');
-      script.src = 'https://accounts.google.com/gsi/client';
-      script.async = true;
-      script.defer = true;
-      script.onload = () => {
-        if ((window as any).google) {
-          (window as any).google.accounts.id.initialize({
-            client_id: googleClientId,
-            callback: handleGoogleCredentialResponse,
-          });
+      const initGsi = () => {
+        if ((window as any).google?.accounts) {
+          try {
+            if (!(window as any).__gatiman_gsi_initialized) {
+              (window as any).__gatiman_gsi_initialized = true;
+              (window as any).google.accounts.id.initialize({
+                client_id: googleClientId,
+                callback: handleGoogleCredentialResponse,
+                auto_select: false,
+                cancel_on_tap_outside: true,
+              });
+            }
+
+            // Initialize OAuth2 Token Client
+            if ((window as any).google.accounts.oauth2 && !tokenClient) {
+              const client = (window as any).google.accounts.oauth2.initTokenClient({
+                client_id: googleClientId,
+                scope: 'email profile openid',
+                callback: async (tokenResponse: any) => {
+                  if (tokenResponse && tokenResponse.access_token) {
+                    setIsLoading(true);
+                    try {
+                      const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                        headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+                      });
+                      const googleUser = await userInfoRes.json();
+
+                      const user = await loginWithGoogle({
+                        credential: 'google-oauth-token',
+                        email: googleUser.email,
+                        firstName: googleUser.given_name || googleUser.name || 'Google',
+                        lastName: googleUser.family_name || 'User',
+                        customerType: selectedType,
+                      });
+
+                      if (user.role === 'ADMIN') navigate('/admin/dashboard');
+                      else if (user.role === 'DELIVERY_AGENT') navigate('/agent/dashboard');
+                      else navigate('/customer/dashboard');
+                    } catch (err: any) {
+                      setShowConfigModal(true);
+                    } finally {
+                      setIsLoading(false);
+                    }
+                  }
+                },
+                error_callback: () => {
+                  setShowConfigModal(true);
+                },
+              });
+              setTokenClient(client);
+            }
+          } catch (e) {
+            console.warn('Google Identity initialization notice:', e);
+          }
         }
       };
-      document.body.appendChild(script);
-      return () => {
-        document.body.removeChild(script);
-      };
+
+      if ((window as any).google?.accounts) {
+        initGsi();
+      } else if (!document.getElementById('google-gsi-client')) {
+        const script = document.createElement('script');
+        script.id = 'google-gsi-client';
+        script.src = 'https://accounts.google.com/gsi/client';
+        script.async = true;
+        script.defer = true;
+        script.onload = initGsi;
+        document.body.appendChild(script);
+      }
     }
   }, [googleClientId]);
 
@@ -64,22 +123,54 @@ export const GoogleSignInButton: React.FC<Props> = ({
     } catch (err: any) {
       const msg = err.response?.data?.message || 'Google authentication failed';
       if (onError) onError(msg);
+      setShowConfigModal(true);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleButtonClick = () => {
-    if (googleClientId && googleClientId !== 'YOUR_GOOGLE_CLIENT_ID' && (window as any).google) {
-      (window as any).google.accounts.id.prompt();
-    } else {
-      // Open account persona & Google credentials popup
-      setShowConfigModal(true);
+    if (tokenClient) {
+      try {
+        tokenClient.requestAccessToken({ prompt: 'select_account' });
+        return;
+      } catch (e) {
+        console.warn('Token client request failed, fallback to modal:', e);
+      }
     }
+
+    if (googleClientId && googleClientId !== 'YOUR_GOOGLE_CLIENT_ID' && (window as any).google?.accounts?.id) {
+      try {
+        (window as any).google.accounts.id.prompt((notification: any) => {
+          if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+            setShowConfigModal(true);
+          }
+        });
+        return;
+      } catch {
+        setShowConfigModal(true);
+      }
+    }
+
+    // Fallback: Open interactive persona & Google details modal
+    setShowConfigModal(true);
   };
 
   const handleDirectGoogleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!phoneInput.trim() || phoneInput.trim().length < 8) {
+      if (onError) onError('Please enter a valid contact phone number for delivery updates.');
+      return;
+    }
+    if (!addressInput.trim()) {
+      if (onError) onError('Please enter your primary delivery street address.');
+      return;
+    }
+    if (!pinCodeInput.trim() || pinCodeInput.trim().length < 6) {
+      if (onError) onError('Please enter a valid 6-digit postal PIN code.');
+      return;
+    }
+
     setIsLoading(true);
     try {
       const email = emailInput.trim() || 'user.google@gmail.com';
@@ -93,10 +184,20 @@ export const GoogleSignInButton: React.FC<Props> = ({
         email: email,
         firstName: firstName,
         lastName: lastName,
+        phoneNumber: phoneInput.trim(),
+        address: addressInput.trim(),
+        city: cityInput.trim() || 'New Delhi',
+        state: stateInput.trim() || 'Delhi',
+        pinCode: pinCodeInput.trim(),
         customerType: selectedType,
         companyName: selectedType === 'B2B' ? companyName : undefined,
         gstNumber: selectedType === 'B2B' ? gstNumber : undefined,
       });
+
+      // Mark profile permanently completed
+      const userKey = user.email || email;
+      localStorage.setItem(`gatiman_profile_completed_${userKey}`, 'true');
+      localStorage.setItem(`gatiman_profile_dismissed_${userKey}`, 'true');
 
       setShowConfigModal(false);
       if (user.role === 'ADMIN') navigate('/admin/dashboard');
@@ -239,6 +340,78 @@ export const GoogleSignInButton: React.FC<Props> = ({
                   placeholder="e.g. Rahul Sharma"
                   className="mt-1 w-full rounded-lg border border-slate-300 py-2 px-3 text-sm text-slate-900 shadow-xs placeholder:text-slate-400 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
                 />
+              </div>
+
+              {/* Phone Number */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-700">Phone Number *</label>
+                <div className="relative mt-1">
+                  <Phone className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                  <input
+                    type="tel"
+                    required
+                    value={phoneInput}
+                    onChange={(e) => setPhoneInput(e.target.value)}
+                    placeholder="+91 98765 43210"
+                    className="w-full rounded-lg border border-slate-300 py-2 pl-9 pr-3 text-sm text-slate-900 shadow-xs placeholder:text-slate-400 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
+                  />
+                </div>
+              </div>
+
+              {/* Address Coordinates */}
+              <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3 space-y-2.5">
+                <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-700">
+                  <MapPin className="h-3.5 w-3.5 text-indigo-600" />
+                  Primary Delivery Address *
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-600">Street Address *</label>
+                  <input
+                    type="text"
+                    required
+                    value={addressInput}
+                    onChange={(e) => setAddressInput(e.target.value)}
+                    placeholder="e.g. Flat 402, Greenfield Apartments"
+                    className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-900 shadow-xs focus:border-indigo-600 focus:outline-none"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-600">City</label>
+                    <input
+                      type="text"
+                      value={cityInput}
+                      onChange={(e) => setCityInput(e.target.value)}
+                      placeholder="New Delhi"
+                      className="mt-1 w-full rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs text-slate-900 shadow-xs focus:border-indigo-600 focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-600">State</label>
+                    <input
+                      type="text"
+                      value={stateInput}
+                      onChange={(e) => setStateInput(e.target.value)}
+                      placeholder="Delhi"
+                      className="mt-1 w-full rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs text-slate-900 shadow-xs focus:border-indigo-600 focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-600">Postal PIN Code *</label>
+                  <input
+                    type="text"
+                    required
+                    maxLength={6}
+                    value={pinCodeInput}
+                    onChange={(e) => setPinCodeInput(e.target.value)}
+                    placeholder="110016"
+                    className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-900 shadow-xs focus:border-indigo-600 focus:outline-none font-mono"
+                  />
+                </div>
               </div>
 
               {/* Business Extra Fields */}

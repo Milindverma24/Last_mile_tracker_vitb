@@ -39,6 +39,8 @@ public class OrderServiceTest {
     @Mock private NotificationService notificationService;
     @Mock private PricingService pricingService;
     @Mock private AgentAssignmentService agentAssignmentService;
+    @Mock private OrderAssignmentRepository orderAssignmentRepository;
+    @Mock private DeliveryAttemptRepository deliveryAttemptRepository;
 
     private OrderStatusTransitionService statusTransitionService;
     private OrderServiceImpl orderService;
@@ -62,7 +64,9 @@ public class OrderServiceTest {
                 notificationService,
                 pricingService,
                 statusTransitionService,
-                agentAssignmentService
+                agentAssignmentService,
+                orderAssignmentRepository,
+                deliveryAttemptRepository
         );
 
         customerUser = User.builder().id(1L).email("customer@gatiman.local").firstName("Priya").lastName("Sharma").role(Role.CUSTOMER).build();

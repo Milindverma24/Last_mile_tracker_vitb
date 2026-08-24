@@ -24,6 +24,7 @@ spring:
       max-lifetime: 1200000
   
   jpa:
+    open-in-view: false
     hibernate:
       ddl-auto: update
     show-sql: false
@@ -37,10 +38,10 @@ spring:
       path: /h2-console
 
   mail:
-    host: ${EMAIL_HOST:smtp.gmail.com}
+    host: ${EMAIL_HOST:smtp.resend.com}
     port: ${EMAIL_PORT:587}
-    username: ${EMAIL_USERNAME:}
-    password: ${EMAIL_PASSWORD:}
+    username: ${EMAIL_USERNAME:resend}
+    password: ${EMAIL_PASSWORD:${RESEND_API_KEY:}}
     properties:
       mail:
         smtp:
@@ -60,7 +61,7 @@ app:
     allowed-origins: "http://localhost:5173,http://localhost:5174,http://localhost:3000,http://127.0.0.1:5173,http://127.0.0.1:5174"
   email:
     enabled: ${EMAIL_ENABLED:true}
-    from: ${EMAIL_FROM:notifications@gatiman.in}
+    from: ${EMAIL_FROM:${RESEND_FROM_EMAIL:onboarding@resend.dev}}
     from-name: ${EMAIL_FROM_NAME:GATIMAN Logistics}
     base-url: ${APP_BASE_URL:http://localhost:5173}
     proximity-threshold-km: ${EMAIL_PROXIMITY_THRESHOLD_KM:0.5}

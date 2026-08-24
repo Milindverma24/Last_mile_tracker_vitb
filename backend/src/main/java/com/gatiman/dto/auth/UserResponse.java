@@ -18,6 +18,11 @@ public class UserResponse {
     private String firstName;
     private String lastName;
     private String phoneNumber;
+    private String address;
+    private String city;
+    private String state;
+    private String pinCode;
+    private String profileImageUrl;
     private Role role;
     private String status;
     private Boolean active;

@@ -18,6 +18,7 @@ import {
   Truck,
   Building,
   RefreshCw,
+  AlertTriangle,
 } from 'lucide-react';
 
 export const UnifiedProfilePage: React.FC = () => {
@@ -71,6 +72,7 @@ export const UnifiedProfilePage: React.FC = () => {
     { id: 'security', name: 'Security & Password', icon: KeyRound },
     { id: 'notifications', name: 'Notifications', icon: Bell },
     { id: 'preferences', name: 'Preferences', icon: Globe },
+    { id: 'danger', name: 'Account Actions', icon: AlertTriangle },
   ];
 
   const handleUpdateImage = async (url: string) => {
@@ -160,8 +162,7 @@ export const UnifiedProfilePage: React.FC = () => {
           />
         )}
 
-        {/* Global Danger Zone at bottom */}
-        <DangerZoneSection />
+        {activeTab === 'danger' && <DangerZoneSection />}
       </div>
     </div>
   );

@@ -1,16 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../context/AuthContext';
 import { useAgentProfile, useAgentMutations } from '../hooks/useAgents';
 import {
-  Truck, CheckCircle2, History, User, LogOut, Bell,
+  Truck, CheckCircle2, History, User, LogOut, Bell, RefreshCw,
 } from 'lucide-react';
 import { NotificationBell } from '../components/common/NotificationBell';
+import { CompleteProfileModal } from '../components/profile/CompleteProfileModal';
 
 export const AgentLayout: React.FC = () => {
   const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await queryClient.invalidateQueries();
+    setTimeout(() => setIsRefreshing(false), 600);
+  };
   const { data: agentProfile } = useAgentProfile();
   const { toggleAvailability } = useAgentMutations();
 
@@ -85,20 +95,36 @@ export const AgentLayout: React.FC = () => {
               {isOnline ? 'ON DUTY' : 'OFF DUTY'}
             </button>
 
+            {/* Navbar Refresh Button */}
+            <button
+              type="button"
+              onClick={handleRefresh}
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-indigo-600 hover:border-slate-300 transition shadow-2xs cursor-pointer shrink-0"
+              title="Refresh live data"
+              aria-label="Refresh"
+            >
+              <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin text-indigo-600' : ''}`} />
+            </button>
+
+            {/* Notification Bell */}
             <NotificationBell />
 
-            <div className="hidden items-center gap-3 border-l border-slate-200 pl-3 sm:flex">
+            {/* Universal Logout Button */}
+            <button
+              onClick={handleLogout}
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition shadow-2xs cursor-pointer shrink-0"
+              title="Log out"
+              aria-label="Log out"
+            >
+              <LogOut className="h-4 w-4" />
+            </button>
+
+            {/* Desktop Driver Info */}
+            <div className="hidden items-center gap-2.5 border-l border-slate-200 pl-3 md:flex">
               <Link to="/agent/profile" className="text-right group">
-                <p className="text-sm font-semibold text-slate-900 group-hover:text-indigo-600 transition">{user?.firstName} {user?.lastName}</p>
-                <p className="text-xs text-slate-500">Driver Partner</p>
+                <p className="text-xs font-bold text-slate-900 group-hover:text-indigo-600 transition leading-tight">{user?.firstName} {user?.lastName}</p>
+                <p className="text-[10px] text-slate-500 font-medium leading-tight">Driver Partner</p>
               </Link>
-              <button
-                onClick={handleLogout}
-                className="rounded-lg p-2 text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition cursor-pointer"
-                title="Log out"
-              >
-                <LogOut className="h-4 w-4" />
-              </button>
             </div>
           </div>
         </div>
@@ -128,6 +154,8 @@ export const AgentLayout: React.FC = () => {
           );
         })}
       </div>
+
+      <CompleteProfileModal />
     </div>
   );
 };

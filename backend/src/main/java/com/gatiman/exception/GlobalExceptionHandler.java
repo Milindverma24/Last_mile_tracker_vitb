@@ -1,6 +1,7 @@
 package com.gatiman.exception;
 
 import com.gatiman.dto.common.ErrorResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -14,6 +15,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -132,6 +134,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
+        log.error("Unhandled server exception: {}", ex.getMessage(), ex);
         ErrorResponse response = ErrorResponse.builder()
                 .success(false)
                 .message(ex.getMessage() != null ? ex.getMessage() : "An unexpected server error occurred")

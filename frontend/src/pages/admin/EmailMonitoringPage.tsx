@@ -24,33 +24,57 @@ import {
   ChevronRight,
   X,
   Code,
-  Smartphone,
-  Monitor,
   Radio,
   Check,
   Copy,
+  Server,
+  FileText,
+  UserCheck,
+  PackageCheck,
+  Truck,
+  MapPin,
+  Calendar,
+  AlertTriangle,
+  Smartphone,
+  Monitor,
+  Maximize2,
 } from 'lucide-react';
 
 const EVENT_TYPE_CONFIG: Record<
   EmailEventType,
-  { label: string; badgeColor: string; icon: string }
+  { label: string; badgeColor: string; Icon: React.ElementType; iconColor: string; category: string }
 > = {
-  ORDER_CREATED: { label: 'Order Created', badgeColor: 'bg-indigo-50 text-indigo-700 border-indigo-200', icon: '📝' },
-  ORDER_CONFIRMED: { label: 'Order Confirmed', badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200', icon: '✅' },
-  AGENT_ASSIGNED: { label: 'Partner Assigned', badgeColor: 'bg-blue-50 text-blue-700 border-blue-200', icon: '👤' },
-  ORDER_PREPARING: { label: 'Preparing', badgeColor: 'bg-amber-50 text-amber-700 border-amber-200', icon: '📦' },
-  ORDER_READY: { label: 'Ready for Pickup', badgeColor: 'bg-amber-50 text-amber-700 border-amber-200', icon: '📦' },
-  PICKED_UP: { label: 'Picked Up', badgeColor: 'bg-violet-50 text-violet-700 border-violet-200', icon: '📦' },
-  ON_THE_WAY: { label: 'On The Way', badgeColor: 'bg-indigo-50 text-indigo-700 border-indigo-200', icon: '🚚' },
-  OUT_FOR_DELIVERY: { label: 'Out for Delivery', badgeColor: 'bg-indigo-50 text-indigo-700 border-indigo-200', icon: '🚚' },
-  NEAR_DESTINATION: { label: 'Near Destination', badgeColor: 'bg-purple-50 text-purple-700 border-purple-200', icon: '📍' },
-  DELIVERED: { label: 'Delivered', badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200', icon: '🎉' },
-  DELIVERY_CANCELLED: { label: 'Cancelled', badgeColor: 'bg-slate-100 text-slate-700 border-slate-200', icon: '❌' },
-  DELIVERY_DELAYED: { label: 'Delayed', badgeColor: 'bg-orange-50 text-orange-700 border-orange-200', icon: '⏱️' },
-  DELIVERY_FAILED: { label: 'Attempt Failed', badgeColor: 'bg-rose-50 text-rose-700 border-rose-200', icon: '⚠️' },
-  RESCHEDULE_APPROVED: { label: 'Rescheduled', badgeColor: 'bg-teal-50 text-teal-700 border-teal-200', icon: '📅' },
-  RESCHEDULE_REJECTED: { label: 'Reschedule Rejected', badgeColor: 'bg-rose-50 text-rose-700 border-rose-200', icon: '⚠️' },
+  ORDER_CREATED: { label: 'Order Created', badgeColor: 'bg-indigo-50 text-indigo-700 border-indigo-200', Icon: FileText, iconColor: 'text-indigo-600', category: 'Booking' },
+  ORDER_CONFIRMED: { label: 'Order Confirmed', badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200', Icon: CheckCircle2, iconColor: 'text-emerald-600', category: 'Booking' },
+  AGENT_ASSIGNED: { label: 'Partner Assigned', badgeColor: 'bg-blue-50 text-blue-700 border-blue-200', Icon: UserCheck, iconColor: 'text-blue-600', category: 'Booking' },
+  ORDER_PREPARING: { label: 'Preparing', badgeColor: 'bg-amber-50 text-amber-700 border-amber-200', Icon: PackageCheck, iconColor: 'text-amber-600', category: 'Booking' },
+  ORDER_READY: { label: 'Ready for Pickup', badgeColor: 'bg-amber-50 text-amber-700 border-amber-200', Icon: PackageCheck, iconColor: 'text-amber-600', category: 'Booking' },
+  PICKED_UP: { label: 'Picked Up', badgeColor: 'bg-violet-50 text-violet-700 border-violet-200', Icon: PackageCheck, iconColor: 'text-violet-600', category: 'In Transit' },
+  ON_THE_WAY: { label: 'Out for Delivery', badgeColor: 'bg-indigo-50 text-indigo-700 border-indigo-200', Icon: Truck, iconColor: 'text-indigo-600', category: 'In Transit' },
+  OUT_FOR_DELIVERY: { label: 'Out for Delivery', badgeColor: 'bg-indigo-50 text-indigo-700 border-indigo-200', Icon: Truck, iconColor: 'text-indigo-600', category: 'In Transit' },
+  NEAR_DESTINATION: { label: 'Near Destination', badgeColor: 'bg-purple-50 text-purple-700 border-purple-200', Icon: MapPin, iconColor: 'text-purple-600', category: 'In Transit' },
+  DELIVERED: { label: 'Delivered', badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200', Icon: CheckCircle2, iconColor: 'text-emerald-600', category: 'In Transit' },
+  DELIVERY_CANCELLED: { label: 'Cancelled', badgeColor: 'bg-slate-100 text-slate-700 border-slate-200', Icon: X, iconColor: 'text-slate-600', category: 'Exceptions' },
+  DELIVERY_DELAYED: { label: 'Delayed', badgeColor: 'bg-orange-50 text-orange-700 border-orange-200', Icon: Clock, iconColor: 'text-orange-600', category: 'Exceptions' },
+  DELIVERY_FAILED: { label: 'Attempt Failed', badgeColor: 'bg-rose-50 text-rose-700 border-rose-200', Icon: AlertTriangle, iconColor: 'text-rose-600', category: 'Exceptions' },
+  RESCHEDULE_APPROVED: { label: 'Rescheduled', badgeColor: 'bg-teal-50 text-teal-700 border-teal-200', Icon: Calendar, iconColor: 'text-teal-600', category: 'Exceptions' },
+  RESCHEDULE_REJECTED: { label: 'Reschedule Rejected', badgeColor: 'bg-rose-50 text-rose-700 border-rose-200', Icon: AlertTriangle, iconColor: 'text-rose-600', category: 'Exceptions' },
 };
+
+const TEMPLATE_CATEGORIES = [
+  {
+    title: 'Booking & Dispatch',
+    types: ['ORDER_CREATED', 'ORDER_CONFIRMED', 'AGENT_ASSIGNED', 'ORDER_PREPARING', 'ORDER_READY'] as EmailEventType[],
+  },
+  {
+    title: 'Transit & Delivery',
+    types: ['PICKED_UP', 'ON_THE_WAY', 'NEAR_DESTINATION', 'DELIVERED'] as EmailEventType[],
+  },
+  {
+    title: 'Exceptions & Reschedule',
+    types: ['DELIVERY_DELAYED', 'DELIVERY_FAILED', 'DELIVERY_CANCELLED', 'RESCHEDULE_APPROVED', 'RESCHEDULE_REJECTED'] as EmailEventType[],
+  },
+];
 
 const ALL_EVENT_TYPES: EmailEventType[] = [
   'ORDER_CREATED',
@@ -84,14 +108,15 @@ export const EmailMonitoringPage: React.FC = () => {
   const [previewLog, setPreviewLog] = useState<EmailLogItem | null>(null);
 
   // Gallery state
-  const [galleryEventType, setGalleryEventType] = useState<EmailEventType>('ON_THE_WAY');
+  const [galleryEventType, setGalleryEventType] = useState<EmailEventType>('PICKED_UP');
   const [galleryHtml, setGalleryHtml] = useState<string>('');
   const [galleryLoading, setGalleryLoading] = useState(false);
   const [copiedHtml, setCopiedHtml] = useState(false);
+  const [viewMode, setViewMode] = useState<'desktop' | 'mobile' | 'code'>('desktop');
 
   // Test send form
-  const [testEmail, setTestEmail] = useState('admin@gatiman.local');
-  const [testEventType, setTestEventType] = useState<EmailEventType>('ON_THE_WAY');
+  const [testEmail, setTestEmail] = useState('anshverma24112005@gmail.com');
+  const [testEventType, setTestEventType] = useState<EmailEventType>('PICKED_UP');
   const [testSending, setTestSending] = useState(false);
   const [testResult, setTestResult] = useState<{ success: boolean; msg: string } | null>(null);
 
@@ -124,6 +149,7 @@ export const EmailMonitoringPage: React.FC = () => {
 
   useEffect(() => {
     fetchStats();
+    loadGalleryTemplate('PICKED_UP');
   }, []);
 
   useEffect(() => {
@@ -159,12 +185,6 @@ export const EmailMonitoringPage: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    if (activeTab === 'gallery') {
-      loadGalleryTemplate(galleryEventType);
-    }
-  }, [activeTab]);
-
   const handleSendTest = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!testEmail) return;
@@ -196,20 +216,16 @@ export const EmailMonitoringPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* 1. Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-5">
         <div>
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-sm">
-              <Mail className="h-5 w-5" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-black text-slate-900">Email Notification Hub</h1>
-              <p className="text-xs text-slate-500">
-                Centralized monitoring, automated delivery milestone dispatches, and template inspector
-              </p>
-            </div>
-          </div>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2.5">
+            <Mail className="h-6 w-6 text-indigo-600" />
+            Email Notification Hub
+          </h1>
+          <p className="text-xs text-slate-500 mt-1">
+            Automated milestone email transmissions, delivery telemetry dispatches, and template inspector
+          </p>
         </div>
 
         <div className="flex items-center gap-2">
@@ -218,109 +234,107 @@ export const EmailMonitoringPage: React.FC = () => {
               fetchStats();
               fetchLogs();
             }}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 transition cursor-pointer"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 shadow-2xs hover:bg-slate-50 transition cursor-pointer"
           >
             <RefreshCw className="h-3.5 w-3.5 text-indigo-600" /> Refresh
           </button>
           <button
             onClick={() => setActiveTab('test')}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-indigo-700 transition cursor-pointer"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-3.5 py-2 text-xs font-bold text-white shadow-2xs hover:bg-indigo-500 transition cursor-pointer"
           >
-            <Send className="h-3.5 w-3.5" /> Send Test Email
+            <Send className="h-3.5 w-3.5" /> Dispatch Test Email
           </button>
         </div>
       </div>
 
-      {/* KPI Metrics */}
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Total Dispatched</span>
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
-              <Mail className="h-4 w-4" />
-            </div>
+      {/* 2. Telemetry KPI Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs">
+          <div className="flex items-center justify-between text-slate-400">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Transmissions</span>
+            <Mail className="h-4 w-4 text-slate-400" />
           </div>
-          <div className="mt-2 text-2xl font-black text-slate-900">
-            {stats ? stats.totalEmails : '...'}
+          <div className="mt-1 flex items-baseline gap-2">
+            <span className="text-2xl font-black text-slate-900">{stats ? stats.totalEmails : '...'}</span>
+            <span className="text-[11px] text-slate-500 font-medium">Logged</span>
           </div>
-          <div className="mt-1 text-xs text-slate-500">Across 14 automated milestone events</div>
+          <p className="mt-1 text-[11px] text-slate-400">Across all order milestones</p>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Successfully Sent</span>
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
-              <CheckCircle2 className="h-4 w-4" />
-            </div>
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs">
+          <div className="flex items-center justify-between text-emerald-400">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Delivery Rate</span>
+            <CheckCircle2 className="h-4 w-4 text-emerald-600" />
           </div>
-          <div className="mt-2 text-2xl font-black text-emerald-600">
-            {stats ? stats.sentCount : '...'}
+          <div className="mt-1 flex items-baseline gap-2">
+            <span className="text-2xl font-black text-emerald-600">{stats ? `${stats.successRate}%` : '...'}</span>
+            <span className="text-[11px] text-emerald-700 font-bold">({stats ? stats.sentCount : '...'} sent)</span>
           </div>
-          <div className="mt-1 text-xs text-emerald-700 font-semibold">
-            {stats ? `${stats.successRate}% Success Rate` : '...'}
-          </div>
+          <p className="mt-1 text-[11px] text-emerald-600 font-semibold">Inbox delivery healthy</p>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Failed / Retrying</span>
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-rose-50 text-rose-600">
-              <AlertCircle className="h-4 w-4" />
-            </div>
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs">
+          <div className="flex items-center justify-between text-rose-400">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Failed / Retrying</span>
+            <AlertCircle className="h-4 w-4 text-rose-500" />
           </div>
-          <div className="mt-2 text-2xl font-black text-rose-600">
-            {stats ? stats.failedCount : '...'}
+          <div className="mt-1 flex items-baseline gap-2">
+            <span className="text-2xl font-black text-slate-900">{stats ? stats.failedCount : '0'}</span>
+            <span className="text-[11px] text-slate-500">Errors</span>
           </div>
-          <div className="mt-1 text-xs text-slate-500">
-            {stats && stats.retryingCount > 0 ? `${stats.retryingCount} retrying now` : 'Zero pending errors'}
-          </div>
+          <p className="mt-1 text-[11px] text-slate-400">
+            {stats && stats.retryingCount > 0 ? `${stats.retryingCount} auto-retrying` : 'Zero pending exceptions'}
+          </p>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Deduplication</span>
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-purple-50 text-purple-600">
-              <ShieldCheck className="h-4 w-4" />
-            </div>
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs">
+          <div className="flex items-center justify-between text-indigo-400">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Active Relay</span>
+            <Server className="h-4 w-4 text-indigo-600" />
           </div>
-          <div className="mt-2 text-2xl font-black text-purple-700">100% Active</div>
-          <div className="mt-1 text-xs text-slate-500">Idempotency protection enabled</div>
+          <div className="mt-1 flex items-baseline gap-2">
+            <span className="text-xl font-black text-indigo-700">Gmail / Brevo</span>
+          </div>
+          <p className="mt-1 text-[11px] text-emerald-600 font-semibold flex items-center gap-1">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            SMTP &amp; Resend Operational
+          </p>
         </div>
       </div>
 
-      {/* Main Navigation Tabs */}
-      <div className="flex gap-2 border-b border-slate-200 pb-2">
+      {/* 3. Navigation Tabs */}
+      <div className="flex gap-2 border-b border-slate-200/80 pb-2">
         <button
           onClick={() => setActiveTab('logs')}
-          className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition cursor-pointer ${
+          className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition cursor-pointer ${
             activeTab === 'logs'
-              ? 'bg-indigo-600 text-white shadow-sm'
+              ? 'bg-indigo-600 text-white shadow-xs'
               : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
           }`}
         >
-          <Radio className="h-4 w-4" /> Live Dispatch Audit Trail
+          <Radio className="h-4 w-4" /> Live Audit Trail
         </button>
 
         <button
           onClick={() => setActiveTab('gallery')}
-          className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition cursor-pointer ${
+          className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition cursor-pointer ${
             activeTab === 'gallery'
-              ? 'bg-indigo-600 text-white shadow-sm'
+              ? 'bg-indigo-600 text-white shadow-xs'
               : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
           }`}
         >
-          <Sparkles className="h-4 w-4" /> Template Gallery &amp; Inspector
+          <Sparkles className="h-4 w-4" /> Template Gallery
         </button>
 
         <button
           onClick={() => setActiveTab('test')}
-          className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition cursor-pointer ${
+          className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition cursor-pointer ${
             activeTab === 'test'
-              ? 'bg-indigo-600 text-white shadow-sm'
+              ? 'bg-indigo-600 text-white shadow-xs'
               : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
           }`}
         >
-          <Send className="h-4 w-4" /> Dispatch Test Console
+          <Send className="h-4 w-4" /> Test Console
         </button>
       </div>
 
@@ -329,23 +343,39 @@ export const EmailMonitoringPage: React.FC = () => {
       ═════════════════════════════════════════════════════════ */}
       {activeTab === 'logs' && (
         <div className="space-y-4">
-          {/* Filter Bar */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm space-y-3">
-            <div className="flex flex-col md:flex-row gap-3 items-center justify-between">
-              {/* Search */}
-              <form onSubmit={handleSearchSubmit} className="relative w-full md:max-w-md">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search by Tracking #, Recipient Email, Subject..."
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-10 pr-4 text-xs font-medium text-slate-900 placeholder-slate-400 focus:border-indigo-400 focus:bg-white focus:outline-none"
-                />
-              </form>
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-3.5 shadow-2xs">
+            <form onSubmit={handleSearchSubmit} className="relative flex-1 max-w-md">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search tracking #, recipient email, or subject..."
+                className="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2 pl-9 pr-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-indigo-600 focus:bg-white focus:outline-none transition"
+              />
+            </form>
 
-              {/* Status filter pills */}
-              <div className="flex flex-wrap items-center gap-1.5 w-full md:w-auto">
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="flex items-center gap-1.5">
+                <Filter className="h-4 w-4 text-slate-400" />
+                <select
+                  value={eventTypeFilter}
+                  onChange={(e) => {
+                    setEventTypeFilter(e.target.value);
+                    setPage(0);
+                  }}
+                  className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-700 focus:border-indigo-600 focus:bg-white focus:outline-none cursor-pointer"
+                >
+                  <option value="ALL">All Event Milestones</option>
+                  {ALL_EVENT_TYPES.map((et) => (
+                    <option key={et} value={et}>
+                      {EVENT_TYPE_CONFIG[et]?.label || et}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex rounded-xl border border-slate-200 bg-slate-100 p-0.5">
                 {['ALL', 'SENT', 'PENDING', 'FAILED', 'RETRYING'].map((st) => (
                   <button
                     key={st}
@@ -353,10 +383,10 @@ export const EmailMonitoringPage: React.FC = () => {
                       setStatusFilter(st);
                       setPage(0);
                     }}
-                    className={`rounded-lg px-2.5 py-1 text-xs font-bold transition cursor-pointer ${
+                    className={`rounded-lg px-2.5 py-1 text-[11px] font-bold transition cursor-pointer ${
                       statusFilter === st
-                        ? 'bg-indigo-600 text-white'
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                        ? 'bg-white text-indigo-700 shadow-2xs'
+                        : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
                     {st}
@@ -364,56 +394,36 @@ export const EmailMonitoringPage: React.FC = () => {
                 ))}
               </div>
             </div>
-
-            {/* Event type dropdown filter */}
-            <div className="flex items-center gap-2 pt-2 border-t border-slate-100 text-xs">
-              <span className="font-bold text-slate-500">Event Milestone:</span>
-              <select
-                value={eventTypeFilter}
-                onChange={(e) => {
-                  setEventTypeFilter(e.target.value);
-                  setPage(0);
-                }}
-                className="rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-700"
-              >
-                <option value="ALL">All Event Milestones</option>
-                {ALL_EVENT_TYPES.map((et) => (
-                  <option key={et} value={et}>
-                    {EVENT_TYPE_CONFIG[et]?.label || et}
-                  </option>
-                ))}
-              </select>
-            </div>
           </div>
 
           {/* Table */}
-          <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+          <div className="rounded-2xl border border-slate-200 bg-white shadow-2xs overflow-hidden">
             {isLoading ? (
-              <div className="p-12 text-center text-xs text-slate-500">
-                <div className="h-8 w-8 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent mx-auto mb-3" />
-                Querying email dispatch audit logs...
+              <div className="p-16 text-center text-xs font-semibold text-slate-400">
+                <RefreshCw className="h-6 w-6 animate-spin mx-auto text-indigo-600 mb-2" />
+                Querying email transmission audit logs...
               </div>
             ) : logs.length === 0 ? (
-              <div className="p-12 text-center text-slate-500 space-y-3">
+              <div className="p-12 text-center bg-white space-y-2">
                 <Mail className="h-10 w-10 text-slate-300 mx-auto" />
-                <p className="font-bold text-slate-800 text-sm">No email logs found</p>
-                <p className="text-xs">
+                <p className="font-bold text-slate-800 text-sm">No email logs match the criteria</p>
+                <p className="text-xs text-slate-500">
                   {searchTerm || statusFilter !== 'ALL'
-                    ? 'Try broadening your search criteria.'
-                    : 'Emails will be logged automatically as orders progress through delivery milestones.'}
+                    ? 'Try adjusting your search query or status filter.'
+                    : 'Milestone emails will appear here in real-time as parcels are dispatched.'}
                 </p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="border-b border-slate-100 bg-slate-50 font-bold uppercase tracking-wider text-slate-500">
+                  <thead className="border-b border-slate-100 bg-slate-50/80 font-bold uppercase tracking-wider text-slate-500 text-[10px]">
                     <tr>
                       <th className="px-5 py-3.5">Status</th>
                       <th className="px-5 py-3.5">Event Milestone</th>
                       <th className="px-5 py-3.5">Order Tracking #</th>
                       <th className="px-5 py-3.5">Recipient</th>
                       <th className="px-5 py-3.5">Subject</th>
-                      <th className="px-5 py-3.5">Sent Timestamp</th>
+                      <th className="px-5 py-3.5">Delivered At</th>
                       <th className="px-5 py-3.5 text-right">Actions</th>
                     </tr>
                   </thead>
@@ -421,14 +431,18 @@ export const EmailMonitoringPage: React.FC = () => {
                     {logs.map((logItem) => {
                       const eventCfg = EVENT_TYPE_CONFIG[logItem.eventType] || {
                         label: logItem.eventType,
-                        badgeColor: 'bg-slate-100 text-slate-700',
-                        icon: '✉️',
+                        badgeColor: 'bg-slate-100 text-slate-700 border-slate-200',
+                        Icon: Mail,
+                        iconColor: 'text-slate-600',
+                        category: 'System',
                       };
+                      const { Icon: EventIcon } = eventCfg;
+
                       return (
                         <tr key={logItem.id} className="hover:bg-slate-50/80 transition">
-                          <td className="px-5 py-3.5 whitespace-nowrap">
+                          <td className="px-5 py-4 whitespace-nowrap">
                             <span
-                              className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold border ${
+                              className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-bold border ${
                                 logItem.status === 'SENT'
                                   ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                                   : logItem.status === 'FAILED'
@@ -438,36 +452,46 @@ export const EmailMonitoringPage: React.FC = () => {
                                   : 'bg-amber-50 text-amber-700 border-amber-200'
                               }`}
                             >
-                              {logItem.status === 'SENT' && <CheckCircle2 className="h-3 w-3" />}
-                              {logItem.status === 'FAILED' && <AlertCircle className="h-3 w-3" />}
-                              {logItem.status === 'RETRYING' && <RotateCw className="h-3 w-3 animate-spin" />}
-                              {logItem.status}
+                              <span
+                                className={`h-1.5 w-1.5 rounded-full ${
+                                  logItem.status === 'SENT'
+                                    ? 'bg-emerald-500'
+                                    : logItem.status === 'FAILED'
+                                    ? 'bg-rose-500'
+                                    : 'bg-amber-500'
+                                }`}
+                              />
+                              {logItem.status === 'SENT' ? 'Delivered' : logItem.status}
                             </span>
                             {logItem.retryCount > 0 && (
-                              <span className="block text-[9px] text-slate-400 mt-0.5 font-mono">
+                              <span className="block text-[10px] text-slate-400 mt-0.5 font-mono">
                                 Retry #{logItem.retryCount}
                               </span>
                             )}
                           </td>
-                          <td className="px-5 py-3.5 whitespace-nowrap">
+
+                          <td className="px-5 py-4 whitespace-nowrap">
                             <span
-                              className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-bold border ${eventCfg.badgeColor}`}
+                              className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-bold border ${eventCfg.badgeColor}`}
                             >
-                              <span>{eventCfg.icon}</span>
+                              <EventIcon className={`h-3.5 w-3.5 ${eventCfg.iconColor}`} />
                               <span>{eventCfg.label}</span>
                             </span>
                           </td>
-                          <td className="px-5 py-3.5 font-mono font-bold text-indigo-600">
-                            <Link to={`/track/${logItem.trackingNumber}`} target="_blank" className="hover:underline flex items-center gap-1">
+
+                          <td className="px-5 py-4 font-mono font-bold text-indigo-600">
+                            <Link to={`/track/${logItem.trackingNumber}`} target="_blank" className="hover:underline inline-flex items-center gap-1">
                               {logItem.trackingNumber}
-                              <ExternalLink className="h-2.5 w-2.5 text-slate-400" />
+                              <ExternalLink className="h-3 w-3 text-slate-400" />
                             </Link>
                           </td>
-                          <td className="px-5 py-3.5">
-                            <div className="font-semibold text-slate-900">{logItem.recipientName || 'Customer'}</div>
-                            <div className="text-slate-500 font-mono text-[10px]">{logItem.recipientEmail}</div>
+
+                          <td className="px-5 py-4">
+                            <div className="font-bold text-slate-900">{logItem.recipientName || 'Customer'}</div>
+                            <div className="text-slate-500 font-mono text-[11px] lowercase">{logItem.recipientEmail}</div>
                           </td>
-                          <td className="px-5 py-3.5 max-w-[200px] truncate text-slate-700 font-medium">
+
+                          <td className="px-5 py-4 max-w-[220px] truncate text-slate-700 font-medium">
                             {logItem.subject}
                             {logItem.failureReason && (
                               <div className="text-rose-600 text-[10px] truncate mt-0.5" title={logItem.failureReason}>
@@ -475,10 +499,12 @@ export const EmailMonitoringPage: React.FC = () => {
                               </div>
                             )}
                           </td>
-                          <td className="px-5 py-3.5 whitespace-nowrap text-slate-500 font-mono text-[11px]">
+
+                          <td className="px-5 py-4 whitespace-nowrap text-slate-500 font-mono text-[11px]">
                             {logItem.sentAt ? new Date(logItem.sentAt).toLocaleString() : 'Pending'}
                           </td>
-                          <td className="px-5 py-3.5 text-right whitespace-nowrap">
+
+                          <td className="px-5 py-4 text-right whitespace-nowrap">
                             <div className="flex items-center justify-end gap-1.5">
                               {logItem.status === 'FAILED' && (
                                 <button
@@ -490,9 +516,9 @@ export const EmailMonitoringPage: React.FC = () => {
                               )}
                               <button
                                 onClick={() => setPreviewLog(logItem)}
-                                className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-bold text-slate-700 hover:bg-slate-50 hover:text-indigo-600 transition cursor-pointer"
+                                className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-bold text-slate-700 hover:bg-slate-50 hover:text-indigo-600 transition cursor-pointer shadow-2xs"
                               >
-                                <Eye className="h-3 w-3" /> Preview
+                                <Eye className="h-3 w-3" /> Inspect HTML
                               </button>
                             </div>
                           </td>
@@ -506,22 +532,22 @@ export const EmailMonitoringPage: React.FC = () => {
 
             {/* Pagination footer */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between border-t border-slate-100 px-5 py-3 bg-slate-50 text-xs">
-                <span className="text-slate-500">
+              <div className="flex items-center justify-between border-t border-slate-100 px-5 py-3 bg-slate-50/70 text-xs">
+                <span className="text-slate-500 font-medium">
                   Page {page + 1} of {totalPages}
                 </span>
                 <div className="flex gap-2">
                   <button
                     disabled={page === 0}
                     onClick={() => setPage((p) => Math.max(0, p - 1))}
-                    className="rounded-lg border border-slate-200 bg-white px-3 py-1 text-xs font-bold text-slate-700 disabled:opacity-40"
+                    className="rounded-lg border border-slate-200 bg-white px-3 py-1 text-xs font-bold text-slate-700 disabled:opacity-40 cursor-pointer"
                   >
                     Previous
                   </button>
                   <button
                     disabled={page >= totalPages - 1}
                     onClick={() => setPage((p) => p + 1)}
-                    className="rounded-lg border border-slate-200 bg-white px-3 py-1 text-xs font-bold text-slate-700 disabled:opacity-40"
+                    className="rounded-lg border border-slate-200 bg-white px-3 py-1 text-xs font-bold text-slate-700 disabled:opacity-40 cursor-pointer"
                   >
                     Next
                   </button>
@@ -537,81 +563,146 @@ export const EmailMonitoringPage: React.FC = () => {
       ═════════════════════════════════════════════════════════ */}
       {activeTab === 'gallery' && (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 items-start">
-          {/* Left: Template Selector */}
-          <div className="lg:col-span-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm space-y-2">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
-              Select Milestone Event Template
-            </h3>
-            <div className="space-y-1 max-h-[600px] overflow-y-auto pr-1">
-              {ALL_EVENT_TYPES.map((type) => {
-                const cfg = EVENT_TYPE_CONFIG[type];
-                const active = galleryEventType === type;
-                return (
-                  <button
-                    key={type}
-                    onClick={() => loadGalleryTemplate(type)}
-                    className={`w-full flex items-center justify-between rounded-xl px-3 py-2.5 text-xs font-bold transition cursor-pointer text-left ${
-                      active
-                        ? 'bg-indigo-600 text-white shadow-sm'
-                        : 'bg-slate-50 text-slate-700 hover:bg-slate-100'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <span>{cfg.icon}</span>
-                      <span>{cfg.label}</span>
-                    </div>
-                    <ChevronRight className={`h-3.5 w-3.5 ${active ? 'text-white' : 'text-slate-400'}`} />
-                  </button>
-                );
-              })}
+          {/* Left: Categorized Template Selector */}
+          <div className="lg:col-span-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs space-y-4">
+            <div>
+              <h3 className="text-xs font-bold text-slate-900">Milestone Email Templates</h3>
+              <p className="text-[11px] text-slate-500">Select an automated event template to inspect</p>
+            </div>
+
+            <div className="space-y-4 max-h-[640px] overflow-y-auto pr-1">
+              {TEMPLATE_CATEGORIES.map((cat) => (
+                <div key={cat.title} className="space-y-1.5">
+                  <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 px-1">
+                    {cat.title}
+                  </span>
+                  <div className="space-y-1">
+                    {cat.types.map((type) => {
+                      const cfg = EVENT_TYPE_CONFIG[type];
+                      const { Icon: CfgIcon } = cfg;
+                      const active = galleryEventType === type;
+                      return (
+                        <button
+                          key={type}
+                          onClick={() => loadGalleryTemplate(type)}
+                          className={`w-full flex items-center justify-between rounded-xl px-3 py-2 text-xs font-bold transition cursor-pointer text-left ${
+                            active
+                              ? 'bg-indigo-600 text-white shadow-xs'
+                              : 'bg-slate-50/70 text-slate-700 hover:bg-slate-100 border border-slate-100'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2">
+                            <CfgIcon className={`h-3.5 w-3.5 ${active ? 'text-white' : cfg.iconColor}`} />
+                            <span>{cfg.label}</span>
+                          </div>
+                          <ChevronRight className={`h-3.5 w-3.5 ${active ? 'text-white' : 'text-slate-400'}`} />
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* Right: Live Preview Frame */}
+          {/* Right: Live Preview Device Frame */}
           <div className="lg:col-span-8 space-y-3">
-            <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-5 py-3 shadow-sm">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-black text-slate-900">
-                  {EVENT_TYPE_CONFIG[galleryEventType]?.label} Preview
+            {/* Action Bar & Device Switcher */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-3 shadow-2xs">
+              <div className="flex items-center gap-2.5">
+                <span className="text-sm font-bold text-slate-900">
+                  {EVENT_TYPE_CONFIG[galleryEventType]?.label}
                 </span>
                 <span className="rounded-full bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
-                  Production HTML
+                  Responsive Template
                 </span>
               </div>
 
               <div className="flex items-center gap-2">
+                {/* Viewport switcher */}
+                <div className="flex rounded-xl border border-slate-200 bg-slate-100 p-0.5">
+                  <button
+                    onClick={() => setViewMode('desktop')}
+                    className={`p-1.5 rounded-lg transition cursor-pointer ${
+                      viewMode === 'desktop' ? 'bg-white text-indigo-600 shadow-2xs' : 'text-slate-500 hover:text-slate-800'
+                    }`}
+                    title="Desktop Preview (640px)"
+                  >
+                    <Monitor className="h-3.5 w-3.5" />
+                  </button>
+                  <button
+                    onClick={() => setViewMode('mobile')}
+                    className={`p-1.5 rounded-lg transition cursor-pointer ${
+                      viewMode === 'mobile' ? 'bg-white text-indigo-600 shadow-2xs' : 'text-slate-500 hover:text-slate-800'
+                    }`}
+                    title="Mobile View (375px)"
+                  >
+                    <Smartphone className="h-3.5 w-3.5" />
+                  </button>
+                  <button
+                    onClick={() => setViewMode('code')}
+                    className={`p-1.5 rounded-lg transition cursor-pointer ${
+                      viewMode === 'code' ? 'bg-white text-indigo-600 shadow-2xs' : 'text-slate-500 hover:text-slate-800'
+                    }`}
+                    title="HTML Source Code"
+                  >
+                    <Code className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+
                 <button
                   onClick={() => copyToClipboard(galleryHtml)}
-                  className="inline-flex items-center gap-1 rounded-lg border border-slate-200 px-2.5 py-1 text-xs font-bold text-slate-700 hover:bg-slate-50 transition cursor-pointer"
+                  className="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition cursor-pointer shadow-2xs"
                 >
-                  {copiedHtml ? <Check className="h-3 w-3 text-emerald-600" /> : <Copy className="h-3 w-3" />}
-                  {copiedHtml ? 'Copied HTML' : 'Copy HTML'}
+                  {copiedHtml ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
+                  {copiedHtml ? 'Copied' : 'Copy HTML'}
                 </button>
                 <button
                   onClick={() => {
                     setTestEventType(galleryEventType);
                     setActiveTab('test');
                   }}
-                  className="inline-flex items-center gap-1 rounded-lg bg-indigo-600 px-3 py-1 text-xs font-bold text-white shadow-sm hover:bg-indigo-700 transition cursor-pointer"
+                  className="inline-flex items-center gap-1 rounded-xl bg-indigo-600 px-3 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-indigo-500 transition cursor-pointer"
                 >
-                  <Send className="h-3 w-3" /> Test Send
+                  <Send className="h-3.5 w-3.5" /> Test Send
                 </button>
               </div>
             </div>
 
-            {/* Iframe Viewport */}
-            <div className="rounded-2xl border border-slate-200 bg-slate-100 p-4 shadow-sm flex justify-center">
+            {/* Email Header Metadata Bar */}
+            <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs text-slate-600 space-y-1 font-mono text-[11px]">
+              <div className="flex justify-between">
+                <span>From: <strong className="text-slate-800">GATIMAN Operations &lt;notifications@gatiman.in&gt;</strong></span>
+                <span className="text-slate-400">Order #GTM-20260820-875171</span>
+              </div>
+              <div className="text-slate-700 font-sans font-semibold text-xs truncate">
+                Subject: <span className="text-indigo-700 font-bold">{EVENT_TYPE_CONFIG[galleryEventType]?.label} — GATIMAN Delivery Update</span>
+              </div>
+            </div>
+
+            {/* Preview Frame Canvas */}
+            <div className="rounded-2xl border border-slate-200 bg-slate-100/90 p-5 shadow-2xs flex justify-center min-h-[500px]">
               {galleryLoading ? (
-                <div className="h-96 flex items-center justify-center text-xs text-slate-500">
-                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent mr-2" />
-                  Generating HTML template...
+                <div className="h-96 flex flex-col items-center justify-center text-xs text-slate-500">
+                  <RefreshCw className="h-6 w-6 animate-spin text-indigo-600 mb-2" />
+                  Rendering email template...
+                </div>
+              ) : viewMode === 'code' ? (
+                <div className="w-full bg-slate-900 rounded-xl p-4 text-emerald-400 font-mono text-[11px] overflow-auto max-h-[650px] shadow-md">
+                  <pre className="whitespace-pre-wrap">{galleryHtml}</pre>
                 </div>
               ) : (
-                <iframe
-                  title="Email Template Preview"
-                  srcDoc={galleryHtml}
-                  className="w-full max-w-[620px] h-[700px] rounded-xl border border-slate-200 shadow-md bg-white"
-                />
+                <div
+                  className={`transition-all duration-300 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden ${
+                    viewMode === 'mobile' ? 'w-[375px]' : 'w-full max-w-[620px]'
+                  }`}
+                >
+                  <iframe
+                    title="Live Email Template Preview"
+                    srcDoc={galleryHtml || '<html><body><div style="padding:40px;text-align:center;font-family:sans-serif;color:#64748b;">Loading template preview...</div></body></html>'}
+                    className="w-full h-[650px] border-0"
+                  />
+                </div>
               )}
             </div>
           </div>
@@ -622,10 +713,13 @@ export const EmailMonitoringPage: React.FC = () => {
           TAB 3: DISPATCH TEST CONSOLE
       ═════════════════════════════════════════════════════════ */}
       {activeTab === 'test' && (
-        <div className="max-w-2xl mx-auto rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm space-y-6">
+        <div className="max-w-2xl mx-auto rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-2xs space-y-6">
           <div>
-            <h2 className="text-lg font-black text-slate-900">Dispatch Test Email</h2>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <Send className="h-5 w-5 text-indigo-600" />
+              Dispatch Test Milestone Email
+            </h2>
+            <p className="text-xs text-slate-500 mt-1">
               Send a test delivery milestone notification to any target inbox using live rendered order telemetry.
             </p>
           </div>
@@ -640,8 +734,8 @@ export const EmailMonitoringPage: React.FC = () => {
                 required
                 value={testEmail}
                 onChange={(e) => setTestEmail(e.target.value)}
-                placeholder="e.g. yourname@example.com"
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:bg-white focus:outline-none"
+                placeholder="e.g. anshverma24112005@gmail.com"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs text-slate-900 focus:border-indigo-500 focus:bg-white focus:outline-none"
               />
             </div>
 
@@ -652,11 +746,11 @@ export const EmailMonitoringPage: React.FC = () => {
               <select
                 value={testEventType}
                 onChange={(e) => setTestEventType(e.target.value as EmailEventType)}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:bg-white focus:outline-none font-semibold"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs text-slate-900 focus:border-indigo-500 focus:bg-white focus:outline-none font-bold"
               >
                 {ALL_EVENT_TYPES.map((type) => (
                   <option key={type} value={type}>
-                    {EVENT_TYPE_CONFIG[type]?.icon} {EVENT_TYPE_CONFIG[type]?.label} ({type})
+                    {EVENT_TYPE_CONFIG[type]?.label} ({type})
                   </option>
                 ))}
               </select>
@@ -686,7 +780,7 @@ export const EmailMonitoringPage: React.FC = () => {
               <button
                 type="submit"
                 disabled={testSending}
-                className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-3 text-sm font-bold text-white shadow-sm hover:bg-indigo-700 transition disabled:opacity-50 cursor-pointer"
+                className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-2.5 text-xs font-bold text-white shadow-2xs hover:bg-indigo-500 transition disabled:opacity-50 cursor-pointer"
               >
                 {testSending ? (
                   <>
@@ -709,13 +803,12 @@ export const EmailMonitoringPage: React.FC = () => {
           PREVIEW MODAL (FOR AUDIT LOG ROWS)
       ═════════════════════════════════════════════════════════ */}
       {previewLog && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
-          <div className="w-full max-w-3xl rounded-2xl bg-white shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-scale-in">
-            {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4 bg-slate-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4 animate-in fade-in">
+          <div className="w-full max-w-3xl rounded-2xl bg-white shadow-2xl overflow-hidden flex flex-col max-h-[90vh] border border-slate-200">
+            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4 bg-slate-50/80">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-black text-slate-900">{previewLog.subject}</span>
+                  <span className="text-sm font-bold text-slate-900">{previewLog.subject}</span>
                   <span className="rounded-full bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
                     {previewLog.status}
                   </span>
@@ -732,7 +825,6 @@ export const EmailMonitoringPage: React.FC = () => {
               </button>
             </div>
 
-            {/* Modal Body (Iframe) */}
             <div className="flex-1 p-4 bg-slate-100 overflow-y-auto flex justify-center">
               <iframe
                 title="Rendered Email Log"
@@ -741,10 +833,9 @@ export const EmailMonitoringPage: React.FC = () => {
               />
             </div>
 
-            {/* Modal Footer */}
             <div className="flex items-center justify-between border-t border-slate-200 px-6 py-3 bg-white text-xs">
               <span className="text-slate-500 font-mono text-[11px]">
-                Log ID: {previewLog.id} · Idempotency: {previewLog.idempotencyKey}
+                Log ID: #{previewLog.id} · Idempotency: {previewLog.idempotencyKey}
               </span>
               <div className="flex gap-2">
                 {previewLog.status === 'FAILED' && (

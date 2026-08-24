@@ -139,9 +139,23 @@ public class ZoneServiceImpl implements ZoneService {
 
     @Override
     public RouteType determineRouteType(Zone pickupZone, Zone dropZone) {
-        if (pickupZone.getId().equals(dropZone.getId())) {
+        if (pickupZone == null || dropZone == null) {
             return RouteType.INTRA_ZONE;
         }
+        if (pickupZone.getId() != null && dropZone.getId() != null && pickupZone.getId().equals(dropZone.getId())) {
+            return RouteType.INTRA_ZONE;
+        }
+        if (pickupZone.getCode() != null && dropZone.getCode() != null && pickupZone.getCode().equalsIgnoreCase(dropZone.getCode())) {
+            return RouteType.INTRA_ZONE;
+        }
+
+        String pickupState = pickupZone.getState() != null ? pickupZone.getState().trim().toLowerCase() : "";
+        String dropState = dropZone.getState() != null ? dropZone.getState().trim().toLowerCase() : "";
+
+        if (!pickupState.isEmpty() && !dropState.isEmpty() && !pickupState.equalsIgnoreCase(dropState)) {
+            return RouteType.INTER_STATE;
+        }
+
         return RouteType.INTER_ZONE;
     }
 

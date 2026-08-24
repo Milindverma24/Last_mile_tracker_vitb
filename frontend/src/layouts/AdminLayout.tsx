@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../context/AuthContext';
 import {
   LayoutDashboard,
@@ -19,6 +20,7 @@ import {
   LogOut,
   Menu,
   X,
+  RefreshCw,
 } from 'lucide-react';
 import { NotificationBell } from '../components/common/NotificationBell';
 
@@ -26,23 +28,44 @@ export const AdminLayout: React.FC = () => {
   const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const navigation = [
-    { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
-    { name: 'Orders Dispatch', href: '/admin/orders', icon: Package },
-    { name: 'Email Monitoring', href: '/admin/emails', icon: Mail },
-    { name: 'Reschedule Queue', href: '/admin/reschedules', icon: CalendarClock },
-    { name: 'Fleet / Agents', href: '/admin/agents', icon: Truck },
-    { name: 'Zones & Hubs', href: '/admin/zones', icon: Map },
-    { name: 'Rate Cards', href: '/admin/rate-cards', icon: CreditCard },
-    { name: 'Customers', href: '/admin/customers', icon: Users },
-    { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
-    { name: 'Audit Logs', href: '/admin/audit-logs', icon: ShieldCheck },
-    { name: 'System Health', href: '/admin/system-health', icon: Activity },
-    { name: 'My Profile', href: '/admin/profile', icon: UserIcon },
-    { name: 'Alerts', href: '/admin/notifications', icon: Bell },
-    { name: 'Settings', href: '/admin/settings', icon: Settings },
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await queryClient.invalidateQueries();
+    setTimeout(() => setIsRefreshing(false), 600);
+  };
+
+  const navSections = [
+    {
+      title: 'Operations',
+      items: [
+        { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
+        { name: 'Orders Dispatch', href: '/admin/orders', icon: Package },
+        { name: 'Fleet / Agents', href: '/admin/agents', icon: Truck },
+        { name: 'Customers', href: '/admin/customers', icon: Users },
+      ],
+    },
+    {
+      title: 'Logistics Hub',
+      items: [
+        { name: 'Reschedule Queue', href: '/admin/reschedules', icon: CalendarClock },
+        { name: 'Zones & Hubs', href: '/admin/zones', icon: Map },
+        { name: 'Rate Cards', href: '/admin/rate-cards', icon: CreditCard },
+        { name: 'Email Monitor', href: '/admin/emails', icon: Mail },
+      ],
+    },
+    {
+      title: 'System & Analytics',
+      items: [
+        { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
+        { name: 'Audit Logs', href: '/admin/audit-logs', icon: ShieldCheck },
+        { name: 'System Health', href: '/admin/system-health', icon: Activity },
+        { name: 'Settings', href: '/admin/settings', icon: Settings },
+      ],
+    },
   ];
 
   const handleLogout = () => {
@@ -86,31 +109,35 @@ export const AdminLayout: React.FC = () => {
         </div>
 
         {/* Navigation List */}
-        <div className="flex-1 overflow-y-auto px-3 py-4">
-          <p className="px-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">
-            Operations & Control
-          </p>
-          <nav className="mt-2 space-y-1">
-            {navigation.map((item) => {
-              const Icon = item.icon;
-              const isActive = location.pathname === item.href || (item.href !== '/admin/dashboard' && location.pathname.startsWith(item.href));
-              return (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  onClick={() => setSidebarOpen(false)}
-                  className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
-                    isActive
-                      ? 'bg-indigo-50 font-semibold text-indigo-700 shadow-sm'
-                      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                  }`}
-                >
-                  <Icon className={`h-4 w-4 ${isActive ? 'text-indigo-600' : 'text-slate-400'}`} />
-                  {item.name}
-                </Link>
-              );
-            })}
-          </nav>
+        <div className="flex-1 overflow-y-auto px-3 py-3 space-y-4">
+          {navSections.map((section) => (
+            <div key={section.title}>
+              <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                {section.title}
+              </p>
+              <nav className="mt-1 space-y-0.5">
+                {section.items.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = location.pathname === item.href || (item.href !== '/admin/dashboard' && location.pathname.startsWith(item.href));
+                  return (
+                    <Link
+                      key={item.name}
+                      to={item.href}
+                      onClick={() => setSidebarOpen(false)}
+                      className={`flex items-center gap-2.5 rounded-lg px-3 py-1.5 text-xs font-medium transition ${
+                        isActive
+                          ? 'bg-indigo-50 font-bold text-indigo-700 shadow-2xs'
+                          : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                      }`}
+                    >
+                      <Icon className={`h-4 w-4 ${isActive ? 'text-indigo-600' : 'text-slate-400'}`} />
+                      {item.name}
+                    </Link>
+                  );
+                })}
+              </nav>
+            </div>
+          ))}
         </div>
 
         {/* User Card & Logout */}
@@ -155,7 +182,18 @@ export const AdminLayout: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            {/* Navbar Refresh Button */}
+            <button
+              type="button"
+              onClick={handleRefresh}
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-indigo-600 hover:border-slate-300 transition shadow-2xs cursor-pointer shrink-0"
+              title="Refresh live data"
+              aria-label="Refresh"
+            >
+              <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin text-indigo-600' : ''}`} />
+            </button>
+
             <NotificationBell />
           </div>
         </header>

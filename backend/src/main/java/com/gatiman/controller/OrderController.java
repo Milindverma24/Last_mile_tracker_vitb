@@ -75,7 +75,7 @@ public class OrderController {
         }
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id:[0-9]+}")
     @Operation(summary = "Retrieve complete order details by ID")
     public ResponseEntity<ApiResponse<OrderResponse>> getOrderById(
             @PathVariable Long id,

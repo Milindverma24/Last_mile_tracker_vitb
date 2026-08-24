@@ -8,8 +8,11 @@ import com.gatiman.dto.agent.AssignmentResponse;
 import com.gatiman.dto.common.ApiResponse;
 import com.gatiman.dto.order.RescheduleResponse;
 import com.gatiman.dto.order.RescheduleReviewRequest;
+import com.gatiman.entity.Customer;
 import com.gatiman.entity.User;
-import com.gatiman.repository.UserRepository;
+import com.gatiman.enums.Role;
+import com.gatiman.repository.CustomerRepository;
+import com.gatiman.repository.*;
 import com.gatiman.service.AgentAssignmentService;
 import com.gatiman.service.AnalyticsService;
 import com.gatiman.service.AuditService;
@@ -25,6 +28,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,6 +46,70 @@ public class AdminController {
     private final AuditService auditService;
     private final SystemHealthService systemHealthService;
     private final UserRepository userRepository;
+    private final CustomerRepository customerRepository;
+    private final OrderRepository orderRepository;
+    private final TrackingEventRepository trackingEventRepository;
+    private final DeliveryAttemptRepository deliveryAttemptRepository;
+    private final OrderAssignmentRepository orderAssignmentRepository;
+    private final RescheduleRequestRepository rescheduleRequestRepository;
+    private final EmailLogRepository emailLogRepository;
+    private final NotificationRepository notificationRepository;
+    private final DeliveryAgentRepository deliveryAgentRepository;
+
+    @GetMapping("/customers")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "List all registered retail and enterprise customer accounts")
+    public ResponseEntity<ApiResponse<List<CustomerAccountDto>>> getAllCustomers() {
+        List<User> customerUsers = userRepository.findByRole(Role.CUSTOMER);
+        List<CustomerAccountDto> dtos = customerUsers.stream().map(u -> {
+            Customer cust = customerRepository.findByUserId(u.getId()).orElse(null);
+            long orderCount = cust != null ? orderRepository.countByCustomerId(cust.getId()) : 0L;
+            String type = cust != null && cust.getCustomerType() != null ? cust.getCustomerType().name() : "B2C";
+            String zone = (u.getCity() != null && !u.getCity().isBlank()) 
+                    ? u.getCity() + (u.getPinCode() != null ? " (" + u.getPinCode() + ")" : "")
+                    : "National Express Zone";
+
+            return CustomerAccountDto.builder()
+                    .id(cust != null ? cust.getId() : u.getId())
+                    .userId(u.getId())
+                    .name(u.getFullName() != null && !u.getFullName().isBlank() ? u.getFullName() : "Customer " + u.getId())
+                    .email(u.getEmail())
+                    .phone(u.getPhoneNumber() != null && !u.getPhoneNumber().isBlank() ? u.getPhoneNumber() : "—")
+                    .type(type)
+                    .companyName(cust != null ? cust.getCompanyName() : null)
+                    .gstNumber(cust != null ? cust.getGstNumber() : null)
+                    .address(u.getAddress())
+                    .city(u.getCity())
+                    .state(u.getState())
+                    .pinCode(u.getPinCode())
+                    .zone(zone)
+                    .totalBookings(orderCount)
+                    .createdAt(u.getCreatedAt())
+                    .build();
+        }).toList();
+
+        return ResponseEntity.ok(ApiResponse.ok("Customer accounts retrieved", dtos));
+    }
+
+    @lombok.Data
+    @lombok.Builder
+    public static class CustomerAccountDto {
+        private Long id;
+        private Long userId;
+        private String name;
+        private String email;
+        private String phone;
+        private String type;
+        private String companyName;
+        private String gstNumber;
+        private String address;
+        private String city;
+        private String state;
+        private String pinCode;
+        private String zone;
+        private long totalBookings;
+        private java.time.Instant createdAt;
+    }
 
     @GetMapping("/dashboard")
     @PreAuthorize("hasRole('ADMIN')")
@@ -163,5 +231,46 @@ public class AdminController {
     public ResponseEntity<ApiResponse<SystemHealthDto>> getSystemHealth() {
         SystemHealthDto health = systemHealthService.getSystemHealth();
         return ResponseEntity.ok(ApiResponse.ok("System health metrics retrieved", health));
+    }
+
+    @PostMapping("/system/reset-data")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
+    @Operation(summary = "Reset database transactional data for fresh testing")
+    public ResponseEntity<ApiResponse<String>> resetTransactionalData() {
+        rescheduleRequestRepository.deleteAll();
+        deliveryAttemptRepository.deleteAll();
+        orderAssignmentRepository.deleteAll();
+        trackingEventRepository.deleteAll();
+        notificationRepository.deleteAll();
+        emailLogRepository.deleteAll();
+        orderRepository.deleteAll();
+
+        // Reset all agents to available and 0 active workload
+        deliveryAgentRepository.findAll().forEach(agent -> {
+            agent.setCurrentActiveOrders(0);
+            agent.setMaxActiveOrders(25);
+            agent.setIsAvailable(true);
+            agent.setStatus("ACTIVE");
+            deliveryAgentRepository.save(agent);
+        });
+
+        // Clean up temporary load test customer accounts (preserve core system profiles)
+        List<User> users = userRepository.findAll();
+        for (User u : users) {
+            String email = u.getEmail().toLowerCase();
+            boolean isCore = email.equals("admin@gatiman.com") ||
+                             email.equals("customer@gatiman.com") ||
+                             email.equals("agent@gatiman.com") ||
+                             email.equals("agent.car@gatiman.com") ||
+                             email.equals("agent.tempo@gatiman.com") ||
+                             email.equals("anshverma24112005@gmail.com");
+            if (!isCore) {
+                customerRepository.findByUserId(u.getId()).ifPresent(customerRepository::delete);
+                userRepository.delete(u);
+            }
+        }
+
+        return ResponseEntity.ok(ApiResponse.ok("Storage cleared and transactional state reset successfully. Fleet ready for auto-dispatch."));
     }
 }

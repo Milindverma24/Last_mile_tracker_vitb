@@ -1,0 +1,16 @@
+{
+  "name": "GATIMAN Last-Mile Delivery",
+  "short_name": "GATIMAN",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4f46e5",
+  "description": "High-Speed Last-Mile Delivery Tracker & Logistics Platform",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}

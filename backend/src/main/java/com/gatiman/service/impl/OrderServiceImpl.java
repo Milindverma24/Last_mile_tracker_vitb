@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -37,23 +38,31 @@ public class OrderServiceImpl implements OrderService {
     private final PricingService pricingService;
     private final OrderStatusTransitionService statusTransitionService;
     private final AgentAssignmentService agentAssignmentService;
+    private final OrderAssignmentRepository orderAssignmentRepository;
+    private final DeliveryAttemptRepository deliveryAttemptRepository;
 
     @Override
     @Transactional
     public OrderResponse createOrder(CreateOrderRequest request, User currentUser) {
         log.info("Processing authoritative order creation for user: {}", currentUser.getEmail());
 
-        // 1. Resolve or Create Customer Profile
-        Customer customer = customerRepository.findByUserId(currentUser.getId())
-                .orElseGet(() -> {
-                    log.info("Provisioning customer profile for user: {}", currentUser.getEmail());
-                    return customerRepository.save(Customer.builder()
-                            .user(currentUser)
-                            .customerType(request.getCustomerType() != null ? request.getCustomerType() : CustomerType.B2C)
-                            .defaultPickupAddress(request.getPickupAddress())
-                            .defaultPickupPincode(request.getPickupPincode())
-                            .build());
-                });
+        // 1. Resolve or Create Customer Profile (Support Admin creating on behalf of customer)
+        Customer customer;
+        if (currentUser.getRole() == Role.ADMIN && request.getCustomerId() != null) {
+            customer = customerRepository.findById(request.getCustomerId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Customer not found with ID: " + request.getCustomerId()));
+        } else {
+            customer = customerRepository.findByUserId(currentUser.getId())
+                    .orElseGet(() -> {
+                        log.info("Provisioning customer profile for user: {}", currentUser.getEmail());
+                        return customerRepository.save(Customer.builder()
+                                .user(currentUser)
+                                .customerType(request.getCustomerType() != null ? request.getCustomerType() : CustomerType.B2C)
+                                .defaultPickupAddress(request.getPickupAddress())
+                                .defaultPickupPincode(request.getPickupPincode())
+                                .build());
+                    });
+        }
 
         // 2. Authoritative Price Calculation
         ChargeCalculationRequest calcReq = ChargeCalculationRequest.builder()
@@ -118,7 +127,7 @@ public class OrderServiceImpl implements OrderService {
                 .updatedAt(Instant.now())
                 .build();
 
-        // 6. Attach Package Specifications
+        // 6. Attach Package Specifications (use mutable ArrayList for JPA cascade)
         OrderPackage pkg = OrderPackage.builder()
                 .order(order)
                 .packageDescription(request.getPackageDescription() != null ? request.getPackageDescription() : "Standard Parcel")
@@ -127,22 +136,87 @@ public class OrderServiceImpl implements OrderService {
                 .heightCm(request.getHeightCm())
                 .declaredValue(request.getDeclaredValue() != null ? request.getDeclaredValue() : BigDecimal.ZERO)
                 .build();
-        order.setPackages(List.of(pkg));
+        order.setPackages(new ArrayList<>(List.of(pkg)));
+
+        // 7. Autonomous Dispatch: Pre-Evaluate Driver Pairing
+        DeliveryAgent selectedAgent = null;
+        try {
+            selectedAgent = agentAssignmentService.selectNearestEligibleAgent(order);
+        } catch (Exception e) {
+            log.info("Driver pairing lookup note for order {}: {}", trackingNumber, e.getMessage());
+        }
+
+        if (selectedAgent != null) {
+            order.setAssignedAgent(selectedAgent);
+            order.setStatus(OrderStatus.ASSIGNED);
+            deliveryAgentRepository.incrementActiveOrders(selectedAgent.getId());
+        }
 
         Order savedOrder = orderRepository.save(order);
 
-        // 7. Append Initial Immutable Tracking Event
-        trackingService.recordEvent(
-                savedOrder,
-                null,
-                OrderStatus.CREATED,
-                currentUser,
-                currentUser.getFirstName() + " " + currentUser.getLastName(),
-                currentUser.getRole().name(),
-                "Order created and registered with GATIMAN network",
-                null,
-                null
-        );
+        if (selectedAgent != null) {
+            // Save assignment record
+            OrderAssignment assignment = OrderAssignment.builder()
+                    .order(savedOrder)
+                    .agent(selectedAgent)
+                    .assignmentType("AUTO")
+                    .assignedAt(Instant.now())
+                    .status("ASSIGNED")
+                    .build();
+            orderAssignmentRepository.save(assignment);
+
+            // Save attempt record
+            DeliveryAttempt attempt = DeliveryAttempt.builder()
+                    .order(savedOrder)
+                    .agent(selectedAgent)
+                    .attemptNumber(1)
+                    .status("ASSIGNED")
+                    .scheduledDate(savedOrder.getScheduledDeliveryDate())
+                    .startedAt(Instant.now())
+                    .build();
+            deliveryAttemptRepository.save(attempt);
+
+            // Append Initial Created & Assigned Tracking Events
+            trackingService.recordEvent(
+                    savedOrder,
+                    null,
+                    OrderStatus.CREATED,
+                    currentUser,
+                    currentUser.getFirstName() + " " + currentUser.getLastName(),
+                    currentUser.getRole().name(),
+                    "Order created and registered with GATIMAN network",
+                    null,
+                    null
+            );
+
+            trackingService.recordEvent(
+                    savedOrder,
+                    OrderStatus.CREATED,
+                    OrderStatus.ASSIGNED,
+                    null,
+                    "GATIMAN Dispatch Engine",
+                    "SYSTEM",
+                    "Order automatically dispatched to driver partner " + selectedAgent.getName() + " (" + selectedAgent.getVehicleType().name() + ")",
+                    null,
+                    null
+            );
+
+            notificationService.notifyAgentAssigned(savedOrder, selectedAgent);
+            log.info("Order {} successfully auto-dispatched to driver {}", savedOrder.getTrackingNumber(), selectedAgent.getName());
+        } else {
+            // Append Initial Immutable Tracking Event
+            trackingService.recordEvent(
+                    savedOrder,
+                    null,
+                    OrderStatus.CREATED,
+                    currentUser,
+                    currentUser.getFirstName() + " " + currentUser.getLastName(),
+                    currentUser.getRole().name(),
+                    "Order created and registered with GATIMAN network",
+                    null,
+                    null
+            );
+        }
 
         // 8. Dispatch In-App Notification
         notificationService.createNotification(
@@ -243,9 +317,8 @@ public class OrderServiceImpl implements OrderService {
         // Manage agent active load when transitioning to terminal states
         if (nextStatus == OrderStatus.DELIVERED || nextStatus == OrderStatus.FAILED || nextStatus == OrderStatus.CANCELLED) {
             DeliveryAgent agent = order.getAssignedAgent();
-            if (agent != null && agent.getCurrentActiveOrders() != null && agent.getCurrentActiveOrders() > 0) {
-                agent.setCurrentActiveOrders(agent.getCurrentActiveOrders() - 1);
-                deliveryAgentRepository.save(agent);
+            if (agent != null) {
+                deliveryAgentRepository.decrementActiveOrders(agent.getId());
             }
         }
 

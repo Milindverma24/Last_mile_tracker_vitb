@@ -11,10 +11,19 @@ export const AdminZonesPage: React.FC = () => {
   const [newZoneCode, setNewZoneCode] = useState('');
   const [newZoneName, setNewZoneName] = useState('');
   const [newZoneCity, setNewZoneCity] = useState('');
+  const [newZoneState, setNewZoneState] = useState('');
+  const [selectedStateFilter, setSelectedStateFilter] = useState('ALL');
 
   const [selectedZoneForArea, setSelectedZoneForArea] = useState<Zone | null>(null);
   const [newAreaName, setNewAreaName] = useState('');
   const [newAreaPincode, setNewAreaPincode] = useState('');
+
+  const uniqueStates = Array.from(new Set(zones.map((z) => z.state).filter(Boolean)));
+
+  const filteredZones = zones.filter((z) => {
+    if (selectedStateFilter === 'ALL') return true;
+    return z.state === selectedStateFilter;
+  });
 
   const handleCreateZone = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,10 +32,13 @@ export const AdminZonesPage: React.FC = () => {
       code: newZoneCode.trim().toUpperCase(),
       name: newZoneName.trim(),
       city: newZoneCity.trim() || 'New Delhi',
-    });
+      state: newZoneState.trim() || 'Delhi',
+    } as any);
     setIsAddZoneOpen(false);
     setNewZoneCode('');
     setNewZoneName('');
+    setNewZoneCity('');
+    setNewZoneState('');
   };
 
   const handleAddArea = async (e: React.FormEvent) => {
@@ -53,33 +65,58 @@ export const AdminZonesPage: React.FC = () => {
             Logistics Zones & PIN Coverage
           </h1>
           <p className="text-sm text-slate-500">
-            Define regional logistics clusters and map geographic PIN code serviceability
+            Define Intra-City, Inter-City, and Inter-State regional logistics clusters and map geographic PIN serviceability
           </p>
         </div>
         <button
           onClick={() => setIsAddZoneOpen(true)}
-          className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-xs font-bold text-white shadow hover:bg-indigo-500"
+          className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-indigo-500 transition cursor-pointer"
         >
           <PlusCircle className="h-4 w-4" /> Create New Zone
         </button>
       </div>
 
+      {/* State Filter Bar */}
+      <div className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-3.5 shadow-xs">
+        <div className="flex items-center gap-2">
+          <Map className="h-4 w-4 text-slate-400" />
+          <span className="text-xs font-bold text-slate-700">Filter by State / Region:</span>
+        </div>
+        <select
+          value={selectedStateFilter}
+          onChange={(e) => setSelectedStateFilter(e.target.value)}
+          className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700 focus:border-indigo-600 focus:outline-none"
+        >
+          <option value="ALL">All States (Cross Boundary)</option>
+          {uniqueStates.map((st) => (
+            <option key={st} value={st}>
+              {st}
+            </option>
+          ))}
+        </select>
+      </div>
+
       {/* Zone Cards Grid */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        {zones.map((zone) => (
+        {filteredZones.map((zone) => (
           <div
             key={zone.id}
             className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4"
           >
             <div className="flex items-start justify-between border-b border-slate-100 pb-3">
               <div>
-                <span className="font-mono text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">
-                  {zone.code}
-                </span>
-                <h3 className="text-base font-bold text-slate-900 mt-1">{zone.name}</h3>
-                <p className="text-xs text-slate-400">{zone.city || 'National Capital Region'}, {zone.state || 'India'}</p>
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-xs font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 px-2 py-0.5 rounded">
+                    {zone.code}
+                  </span>
+                  <span className="rounded bg-slate-100 border border-slate-200 px-2 py-0.5 text-[11px] font-semibold text-slate-700">
+                    {zone.state || 'Delhi NCR'}
+                  </span>
+                </div>
+                <h3 className="text-base font-bold text-slate-900 mt-1.5">{zone.name}</h3>
+                <p className="text-xs text-slate-500">{zone.city || 'NCR'}, {zone.state || 'India'}</p>
               </div>
-              <span className="rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 text-xs font-bold">
+              <span className="rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 text-xs font-bold">
                 Active Hub
               </span>
             </div>
@@ -92,7 +129,7 @@ export const AdminZonesPage: React.FC = () => {
                 </span>
                 <button
                   onClick={() => setSelectedZoneForArea(zone)}
-                  className="text-xs font-bold text-indigo-600 hover:text-indigo-500"
+                  className="text-xs font-bold text-indigo-600 hover:text-indigo-500 cursor-pointer"
                 >
                   + Add PIN Code
                 </button>
@@ -151,15 +188,29 @@ export const AdminZonesPage: React.FC = () => {
                   required
                 />
               </div>
-              <div>
-                <label className="block text-xs font-bold uppercase text-slate-700">City / State</label>
-                <input
-                  type="text"
-                  value={newZoneCity}
-                  onChange={(e) => setNewZoneCity(e.target.value)}
-                  placeholder="e.g. New Delhi"
-                  className="mt-1 w-full rounded-lg border border-slate-300 p-2 text-sm focus:border-indigo-600 focus:outline-none"
-                />
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold uppercase text-slate-700">City</label>
+                  <input
+                    type="text"
+                    value={newZoneCity}
+                    onChange={(e) => setNewZoneCity(e.target.value)}
+                    placeholder="e.g. Gurugram"
+                    className="mt-1 w-full rounded-lg border border-slate-300 p-2 text-sm focus:border-indigo-600 focus:outline-none"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold uppercase text-slate-700">State</label>
+                  <input
+                    type="text"
+                    value={newZoneState}
+                    onChange={(e) => setNewZoneState(e.target.value)}
+                    placeholder="e.g. Haryana"
+                    className="mt-1 w-full rounded-lg border border-slate-300 p-2 text-sm focus:border-indigo-600 focus:outline-none"
+                    required
+                  />
+                </div>
               </div>
               <div className="flex justify-end gap-2 pt-2">
                 <button

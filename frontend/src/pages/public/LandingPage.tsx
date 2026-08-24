@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { orderApi } from '../../api/orderApi';
 import { trackingApi, LiveTrackingData } from '../../api/trackingApi';
 import { Order } from '../../types';
-import { LiveDeliveryMap } from '../../components/tracking/LiveDeliveryMap';
 import { DeliveryVideoPlayer } from '../../components/common/DeliveryVideoPlayer';
 import {
   Truck, Search, ArrowRight, Shield, Clock, MapPin, Navigation,
@@ -359,9 +358,38 @@ export const LandingPage: React.FC = () => {
                       </span>
                     </div>
 
-                    {/* Live Map Preview */}
-                    <div className="rounded-xl overflow-hidden border border-slate-700 shadow-lg">
-                      <LiveDeliveryMap trackingData={previewLiveTracking} className="h-[260px]" />
+                    {/* Live Transit Route Visualizer (Map Removed) */}
+                    <div className="rounded-xl overflow-hidden border border-slate-800 bg-slate-950/80 p-5 shadow-lg">
+                      <div className="flex items-center justify-between text-xs text-slate-400 mb-3">
+                        <span className="font-bold uppercase tracking-wider text-indigo-400">Live Route Dispatch</span>
+                        <span className="text-emerald-400 font-semibold flex items-center gap-1.5">
+                          <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
+                          Driver En-Route ({(previewLiveTracking as any)?.speedKmph || 34} km/h)
+                        </span>
+                      </div>
+                      <div className="relative flex items-center justify-between py-2">
+                        <div className="absolute left-6 right-6 top-1/2 -translate-y-1/2 h-1 bg-slate-800 rounded-full">
+                          <div className="h-full bg-gradient-to-r from-indigo-500 to-emerald-400 rounded-full w-2/3 animate-pulse" />
+                        </div>
+                        <div className="relative z-10 flex flex-col items-center gap-1">
+                          <div className="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs font-bold shadow-md shadow-indigo-500/30">
+                            <Package className="h-4 w-4" />
+                          </div>
+                          <span className="text-[11px] font-semibold text-slate-300">Origin Hub</span>
+                        </div>
+                        <div className="relative z-10 flex flex-col items-center gap-1">
+                          <div className="h-9 w-9 rounded-full bg-emerald-500 flex items-center justify-center text-white text-xs font-bold shadow-md shadow-emerald-500/30 animate-bounce">
+                            <Truck className="h-4 w-4" />
+                          </div>
+                          <span className="text-[11px] font-bold text-emerald-400">Driver Courier</span>
+                        </div>
+                        <div className="relative z-10 flex flex-col items-center gap-1">
+                          <div className="h-8 w-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 text-xs font-bold">
+                            <MapPin className="h-4 w-4" />
+                          </div>
+                          <span className="text-[11px] font-semibold text-slate-400">Destination</span>
+                        </div>
+                      </div>
                     </div>
 
                     {/* Dynamic Telemetry Metrics Strip */}

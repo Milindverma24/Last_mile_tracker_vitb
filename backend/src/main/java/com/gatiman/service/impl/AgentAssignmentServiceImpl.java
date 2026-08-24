@@ -51,8 +51,22 @@ public class AgentAssignmentServiceImpl implements AgentAssignmentService {
 
         DeliveryAgent selectedAgent = selectNearestEligibleAgent(order);
         if (selectedAgent == null) {
-            log.warn("No eligible delivery agent available for Order {}", order.getTrackingNumber());
-            throw new BusinessRuleException("NO_AVAILABLE_AGENT: No delivery agent is currently available. The order has been created and is awaiting assignment.");
+            double actualWeight = order.getActualWeightKg() != null ? order.getActualWeightKg().doubleValue() : 0.0;
+            double volumetricWeight = order.getVolumetricWeightKg() != null ? order.getVolumetricWeightKg().doubleValue() : 0.0;
+            double weight = Math.max(actualWeight, volumetricWeight);
+            double maxDim = 0.0;
+            if (order.getPackages() != null) {
+                for (OrderPackage pkg : order.getPackages()) {
+                    if (pkg.getLengthCm() != null) maxDim = Math.max(maxDim, pkg.getLengthCm().doubleValue());
+                    if (pkg.getBreadthCm() != null) maxDim = Math.max(maxDim, pkg.getBreadthCm().doubleValue());
+                    if (pkg.getHeightCm() != null) maxDim = Math.max(maxDim, pkg.getHeightCm().doubleValue());
+                }
+            }
+            com.gatiman.enums.VehicleType requiredType = com.gatiman.enums.VehicleType.getRequiredVehicleType(weight, maxDim);
+
+            log.warn("No eligible delivery agent available with capacity {} for Order {}", requiredType, order.getTrackingNumber());
+            throw new BusinessRuleException(String.format("NO_AVAILABLE_AGENT: No active delivery driver with suitable vehicle capacity (%s for %.1f kg) is currently available.",
+                    requiredType.getDisplayName(), weight));
         }
 
         return executeAssignment(order, selectedAgent, "AUTO", null, "System Auto-Dispatch Engine (Proximity & Workload Balanced)");
@@ -75,6 +89,14 @@ public class AgentAssignmentServiceImpl implements AgentAssignmentService {
                 .orElseThrow(() -> new ResourceNotFoundException("AGENT_NOT_FOUND: Delivery agent not found with ID " + agentId));
 
         eligibilityService.validateAgentEligibility(agent);
+
+        if (!eligibilityService.isAgentEligibleForOrder(agent, order)) {
+            double actualWeight = order.getActualWeightKg() != null ? order.getActualWeightKg().doubleValue() : 0.0;
+            double volumetricWeight = order.getVolumetricWeightKg() != null ? order.getVolumetricWeightKg().doubleValue() : 0.0;
+            double weight = Math.max(actualWeight, volumetricWeight);
+            throw new BusinessRuleException(String.format("INSUFFICIENT_VEHICLE_CAPACITY: Driver %s has a %s (max %.1f kg), which cannot carry this %.1f kg package. Please choose a suitable vehicle.",
+                    agent.getName(), agent.getVehicleType().getDisplayName(), agent.getVehicleType().getMaxWeightKg(), weight));
+        }
 
         String actorName = assignedBy != null ? assignedBy.getFirstName() + " " + assignedBy.getLastName() : "Operations Admin";
         return executeAssignment(order, agent, "MANUAL", assignedBy, "Manual dispatch by " + actorName);

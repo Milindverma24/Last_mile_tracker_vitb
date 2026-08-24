@@ -1,16 +1,26 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../context/AuthContext';
 import {
-  LayoutDashboard, PackagePlus, Package, CalendarClock, User, LogOut, Menu, X, Truck,
+  LayoutDashboard, PackagePlus, Package, CalendarClock, User, LogOut, Menu, X, Truck, RefreshCw,
 } from 'lucide-react';
 import { NotificationBell } from '../components/common/NotificationBell';
+import { CompleteProfileModal } from '../components/profile/CompleteProfileModal';
 
 export const CustomerLayout: React.FC = () => {
   const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await queryClient.invalidateQueries();
+    setTimeout(() => setIsRefreshing(false), 600);
+  };
 
   const navigation = [
     { name: 'Dashboard', href: '/customer/dashboard', icon: LayoutDashboard },
@@ -74,14 +84,17 @@ export const CustomerLayout: React.FC = () => {
           </div>
 
           {/* Right actions */}
-          <div className="flex items-center gap-3">
-            <Link
-              to="/customer/orders/create"
-              className="hidden sm:inline-flex items-center gap-1.5 whitespace-nowrap rounded-xl bg-indigo-600 px-3.5 py-1.5 text-xs font-bold text-white shadow-sm hover:bg-indigo-700 transition shrink-0"
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            {/* Navbar Refresh Button */}
+            <button
+              type="button"
+              onClick={handleRefresh}
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-indigo-600 hover:border-slate-300 transition shadow-2xs cursor-pointer shrink-0"
+              title="Refresh page data"
+              aria-label="Refresh"
             >
-              <PackagePlus className="h-4 w-4" />
-              <span>New Order</span>
-            </Link>
+              <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin text-indigo-600' : ''}`} />
+            </button>
 
             <NotificationBell />
 
@@ -188,6 +201,9 @@ export const CustomerLayout: React.FC = () => {
           })}
         </div>
       </div>
+
+      {/* Profile Completion Onboarding Modal */}
+      <CompleteProfileModal />
     </div>
   );
 };
