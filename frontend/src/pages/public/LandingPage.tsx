@@ -46,12 +46,12 @@ export const LandingPage: React.FC = () => {
           isLive: true,
           deliveryPartner: order.assignedAgentName
             ? {
-                id: order.assignedAgentId || 3,
-                name: order.assignedAgentName,
-                phoneNumber: '+91 98999 11223',
-                vehicleType: 'EV_SCOOTER',
-                vehicleNumber: 'DL-03-EV-9821',
-              }
+              id: order.assignedAgentId || 3,
+              name: order.assignedAgentName,
+              phoneNumber: '+91 98999 11223',
+              vehicleType: 'EV_SCOOTER',
+              vehicleNumber: 'DL-03-EV-9821',
+            }
             : undefined,
           currentLocation: { latitude: 28.512, longitude: 77.145 },
           heading: 220,
@@ -88,7 +88,7 @@ export const LandingPage: React.FC = () => {
     } catch (err: any) {
       setSearchError(
         err.response?.data?.message ||
-          `No active shipment found with tracking ID "${cleanId}". Please check the number and try again.`
+        `No active shipment found with tracking ID "${cleanId}". Please check the number and try again.`
       );
     } finally {
       setIsSearching(false);
