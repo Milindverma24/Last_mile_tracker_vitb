@@ -32,7 +32,12 @@ export const useLiveTracking = (orderId?: number | string) => {
   useEffect(() => {
     if (!numericId) return;
 
-    const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:8088/ws';
+    const rawWs = import.meta.env.VITE_WS_URL || 'ws://localhost:8088/ws';
+    const wsUrl = rawWs.startsWith('http://')
+      ? rawWs.replace('http://', 'ws://').replace(/\/$/, '') + (rawWs.includes('/ws') ? '' : '/ws')
+      : rawWs.startsWith('https://')
+      ? rawWs.replace('https://', 'wss://').replace(/\/$/, '') + (rawWs.includes('/ws') ? '' : '/ws')
+      : rawWs;
 
     let client: Client | null = null;
     try {
