@@ -40,6 +40,9 @@ public class AdminEmailController {
     private final EmailTemplateService emailTemplateService;
     private final OrderRepository orderRepository;
 
+    @org.springframework.beans.factory.annotation.Value("${app.email.base-url:${app.base-url:${APP_BASE_URL:https://frontend-ten-lyart-76.vercel.app}}}")
+    private String baseUrl;
+
     @GetMapping
     @Operation(summary = "Get paginated email logs with filtering and search")
     public ResponseEntity<ApiResponse<Page<EmailLog>>> getEmailLogs(
@@ -99,7 +102,14 @@ public class AdminEmailController {
         return ResponseEntity.ok(ApiResponse.ok(stats));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/diagnostic")
+    @Operation(summary = "Run non-destructive SMTP connectivity, DNS, and TLS network diagnostics")
+    public ResponseEntity<ApiResponse<com.gatiman.dto.email.SmtpDiagnosticResponse>> runSmtpDiagnostic() {
+        com.gatiman.dto.email.SmtpDiagnosticResponse diagnostic = emailService.runSmtpDiagnostic();
+        return ResponseEntity.ok(ApiResponse.ok("SMTP network diagnostic completed", diagnostic));
+    }
+
+    @GetMapping("/{id:[0-9]+}")
     @Operation(summary = "Get specific email log record by ID")
     public ResponseEntity<ApiResponse<EmailLog>> getEmailLogById(@PathVariable Long id) {
         EmailLog emailLog = emailLogRepository.findById(id)
@@ -107,7 +117,7 @@ public class AdminEmailController {
         return ResponseEntity.ok(ApiResponse.ok(emailLog));
     }
 
-    @PostMapping("/{id}/retry")
+    @PostMapping("/{id:[0-9]+}/retry")
     @Operation(summary = "Retry dispatching a failed email")
     public ResponseEntity<ApiResponse<EmailLog>> retryEmail(@PathVariable Long id) {
         EmailLog retried = emailService.retryEmail(id);
@@ -137,15 +147,21 @@ public class AdminEmailController {
         } catch (Exception ignored) {
         }
 
-        String html = emailTemplateService.buildHtmlEmail(
-                eventType,
-                order,
-                recipientName,
-                2.4,
-                12,
-                null,
-                "http://localhost:5173"
-        );
+        String html;
+        String resolvedBaseUrl = (baseUrl != null && !baseUrl.isBlank()) ? baseUrl : "https://frontend-ten-lyart-76.vercel.app";
+        if (eventType == EmailEventType.WELCOME) {
+            html = emailTemplateService.buildWelcomeEmailHtml(recipientName, "customer@example.com", resolvedBaseUrl);
+        } else {
+            html = emailTemplateService.buildHtmlEmail(
+                    eventType,
+                    order,
+                    recipientName,
+                    2.4,
+                    12,
+                    null,
+                    resolvedBaseUrl
+            );
+        }
 
         return ResponseEntity.ok(ApiResponse.ok(html));
     }

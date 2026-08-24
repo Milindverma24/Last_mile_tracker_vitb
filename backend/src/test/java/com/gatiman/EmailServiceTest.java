@@ -139,4 +139,27 @@ class EmailServiceTest {
         assertEquals(1, retried.getRetryCount());
         assertEquals(EmailStatus.SENT, retried.getStatus());
     }
+
+    @Test
+    @DisplayName("Successfully dispatches welcome email for newly onboarded user")
+    void testSendWelcomeEmail() {
+        when(emailLogRepository.existsByIdempotencyKeyAndStatusIn(eq("WELCOME_customer@gatiman.local"), anyList())).thenReturn(false);
+        when(emailLogRepository.save(any(EmailLog.class))).thenAnswer(i -> {
+            EmailLog log = i.getArgument(0);
+            if (log.getId() == null) log.setId(2L);
+            return log;
+        });
+        when(templateService.buildWelcomeEmailHtml(anyString(), anyString(), anyString())).thenReturn("<html>Welcome</html>");
+
+        emailService.sendWelcomeEmail(customerUser);
+
+        ArgumentCaptor<EmailLog> captor = ArgumentCaptor.forClass(EmailLog.class);
+        verify(emailLogRepository, atLeastOnce()).save(captor.capture());
+
+        EmailLog saved = captor.getValue();
+        assertEquals("customer@gatiman.local", saved.getRecipientEmail());
+        assertEquals(EmailEventType.WELCOME, saved.getEventType());
+        assertEquals(EmailStatus.SENT, saved.getStatus());
+        assertTrue(saved.getSubject().contains("Welcome to GATIMAN Delivery Network"));
+    }
 }

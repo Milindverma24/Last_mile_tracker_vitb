@@ -44,7 +44,11 @@ public interface EmailService {
 
     void sendRescheduledEmail(Order order, String requestedDate, String slot);
 
+    void sendWelcomeEmail(com.gatiman.entity.User user);
+
     EmailLog retryEmail(Long emailLogId);
 
     void sendTestEmail(String toEmail, EmailEventType eventType, Long orderId);
+
+    com.gatiman.dto.email.SmtpDiagnosticResponse runSmtpDiagnostic();
 }

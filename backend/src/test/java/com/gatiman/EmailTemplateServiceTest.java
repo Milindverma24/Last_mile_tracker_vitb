@@ -70,7 +70,11 @@ class EmailTemplateServiceTest {
         for (EmailEventType type : EmailEventType.values()) {
             String subject = templateService.generateEmailSubject(type, sampleOrder);
             assertNotNull(subject);
-            assertTrue(subject.contains("GTM-20260822-875171"));
+            if (type != EmailEventType.WELCOME) {
+                assertTrue(subject.contains("GTM-20260822-875171"));
+            } else {
+                assertTrue(subject.contains("Welcome to GATIMAN"));
+            }
         }
     }
 

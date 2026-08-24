@@ -15,7 +15,8 @@ public enum EmailEventType {
     DELIVERY_DELAYED("Delivery Delayed"),
     DELIVERY_FAILED("Delivery Attempt Failed"),
     RESCHEDULE_APPROVED("Delivery Rescheduled"),
-    RESCHEDULE_REJECTED("Reschedule Request Rejected");
+    RESCHEDULE_REJECTED("Reschedule Request Rejected"),
+    WELCOME("Welcome to GATIMAN Delivery Network");
 
     private final String displayName;
 

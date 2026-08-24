@@ -44,19 +44,18 @@ public class MailConfig {
         props.put("mail.smtp.writetimeout", "10000");
 
         if (port == 465) {
-            // Port 465 SMTPS (SSL) configuration — Recommended for Cloud Platforms (Render, AWS, Railway)
+            // Port 465 SMTPS (Implicit SSL) configuration for Jakarta / Angus Mail
             props.put("mail.smtp.ssl.enable", "true");
+            props.put("mail.smtp.ssl.protocols", "TLSv1.2 TLSv1.3");
             props.put("mail.smtp.ssl.trust", "*");
-            props.put("mail.smtp.socketFactory.port", "465");
-            props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-            props.put("mail.smtp.socketFactory.fallback", "false");
-            log.info("Configured JavaMailSender with SSL (Port 465) for host: {}", host);
+            log.info("JavaMailSender initialized with SMTPS/SSL (Port 465) for host: {}", host);
         } else {
             // Port 587 STARTTLS configuration
             props.put("mail.smtp.starttls.enable", "true");
-            props.put("mail.smtp.starttls.required", "false");
+            props.put("mail.smtp.starttls.required", "true");
+            props.put("mail.smtp.ssl.protocols", "TLSv1.2 TLSv1.3");
             props.put("mail.smtp.ssl.trust", "*");
-            log.info("Configured JavaMailSender with STARTTLS (Port {}) for host: {}", port, host);
+            log.info("JavaMailSender initialized with STARTTLS (Port {}) for host: {}", port, host);
         }
 
         return mailSender;

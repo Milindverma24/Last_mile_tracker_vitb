@@ -47,7 +47,7 @@ public class EmailServiceImpl implements EmailService {
     @Value("${app.email.from-name:GATIMAN Logistics}")
     private String fromName;
 
-    @Value("${app.base-url:http://localhost:5173}")
+    @Value("${app.email.base-url:${app.base-url:${APP_BASE_URL:https://frontend-ten-lyart-76.vercel.app}}}")
     private String baseUrl;
 
     @Value("${app.email.delay-cooldown-minutes:30}")
@@ -147,12 +147,24 @@ public class EmailServiceImpl implements EmailService {
         dispatchMimeMessage(emailLog);
     }
 
+    @Value("${spring.mail.host:smtp.gmail.com}")
+    private String smtpHost;
+
+    @Value("${spring.mail.port:465}")
+    private int smtpPort;
+
+    @Value("${spring.mail.username:}")
+    private String smtpUsername;
+
+    @Value("${spring.mail.password:}")
+    private String smtpPassword;
+
     private void dispatchMimeMessage(EmailLog emailLog) {
         try {
             boolean isTestRecipient = emailLog.getRecipientEmail() != null &&
                     (emailLog.getRecipientEmail().endsWith(".test") || emailLog.getRecipientEmail().endsWith("@example.com") || emailLog.getRecipientEmail().startsWith("loadtest_"));
 
-            if (mailSender != null && !isTestRecipient) {
+            if (mailSender != null && !isTestRecipient && smtpUsername != null && !smtpUsername.isBlank() && smtpPassword != null && !smtpPassword.isBlank()) {
                 MimeMessage mimeMessage = mailSender.createMimeMessage();
                 MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 
@@ -176,12 +188,144 @@ public class EmailServiceImpl implements EmailService {
                         emailLog.getEventType(), emailLog.getRecipientEmail(), emailLog.getSubject(), emailLog.getTrackingNumber());
             }
         } catch (Exception e) {
-            log.error("Failed to dispatch email for log ID {}: {}", emailLog.getId(), e.getMessage(), e);
+            String classifiedReason = classifySmtpFailure(e, emailLog.getRecipientEmail());
+            log.error("Failed to dispatch email for log ID {} to <{}>: {}", emailLog.getId(), emailLog.getRecipientEmail(), classifiedReason);
             emailLog.setStatus(EmailStatus.FAILED);
-            emailLog.setFailureReason(e.getMessage());
+            emailLog.setFailureReason(classifiedReason);
         } finally {
             emailLogRepository.save(emailLog);
         }
+    }
+
+    private String classifySmtpFailure(Exception e, String recipientEmail) {
+        String msg = e.getMessage() != null ? e.getMessage() : "";
+        Throwable cause = e.getCause();
+        while (cause != null) {
+            msg += " -> " + cause.getClass().getSimpleName() + ": " + cause.getMessage();
+            cause = cause.getCause();
+        }
+
+        String host = smtpHost != null ? smtpHost : "smtp.gmail.com";
+        int port = smtpPort > 0 ? smtpPort : 465;
+
+        if (msg.contains("MailConnectException") || msg.contains("SocketTimeoutException") || msg.contains("ConnectException") || msg.contains("timeout") || msg.contains("Couldn't connect")) {
+            return String.format("SMTP_CONNECTION_TIMEOUT: Cannot establish TCP socket connection to %s:%d. Outbound SMTP ports may be blocked/restricted by cloud hosting egress firewalls (e.g. Render/AWS). Recommendation: Ensure outbound port %d is allowed, or use an HTTPS email API (e.g. Resend / Brevo API). Details: %s", host, port, port, e.getMessage());
+        } else if (msg.contains("AuthenticationFailedException") || msg.contains("535") || msg.contains("BadCredentials") || msg.contains("Username and Password not accepted")) {
+            return String.format("SMTP_AUTH_FAILED: Gmail SMTP authentication failed for user %s. Ensure 2-Step Verification is active and a 16-character Google App Password (not standard account password) is configured.", maskEmail(smtpUsername));
+        } else if (msg.contains("SendFailedException") || msg.contains("InvalidAddressesException") || msg.contains("550")) {
+            return String.format("SMTP_RECIPIENT_REJECTED: Mail server rejected delivery to recipient <%s>. Details: %s", recipientEmail, e.getMessage());
+        }
+
+        return "SMTP_DISPATCH_FAILED: " + (e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
+    }
+
+    private String maskEmail(String email) {
+        if (email == null || email.isBlank()) return "NOT_SET";
+        int at = email.indexOf('@');
+        if (at <= 1) return "***" + email.substring(Math.max(0, at));
+        return email.charAt(0) + "***" + email.charAt(at - 1) + email.substring(at);
+    }
+
+    @Override
+    public com.gatiman.dto.email.SmtpDiagnosticResponse runSmtpDiagnostic() {
+        String host = smtpHost != null && !smtpHost.isBlank() ? smtpHost.trim() : "smtp.gmail.com";
+        int port = smtpPort > 0 ? smtpPort : 465;
+        String protocol = (port == 465) ? "SMTPS (SSL)" : "SMTP (STARTTLS)";
+
+        boolean dnsResolved = false;
+        String resolvedIp = null;
+        boolean tcpConnected = false;
+        long tcpLatencyMs = -1;
+        boolean tlsSslHandshakeSuccess = false;
+        String cipherSuite = null;
+        boolean authSuccess = false;
+        String statusMessage;
+        String recommendation;
+
+        // 1. DNS Resolution
+        try {
+            java.net.InetAddress inetAddress = java.net.InetAddress.getByName(host);
+            resolvedIp = inetAddress.getHostAddress();
+            dnsResolved = true;
+        } catch (Exception e) {
+            resolvedIp = "DNS_ERROR: " + e.getMessage();
+        }
+
+        // 2. TCP Socket & TLS/SSL Handshake Test
+        if (dnsResolved) {
+            long t0 = System.currentTimeMillis();
+            if (port == 465) {
+                try (javax.net.ssl.SSLSocket sslSocket = (javax.net.ssl.SSLSocket) javax.net.ssl.SSLSocketFactory.getDefault().createSocket()) {
+                    sslSocket.connect(new java.net.InetSocketAddress(host, port), 5000);
+                    tcpLatencyMs = System.currentTimeMillis() - t0;
+                    tcpConnected = true;
+                    sslSocket.startHandshake();
+                    tlsSslHandshakeSuccess = true;
+                    cipherSuite = sslSocket.getSession().getCipherSuite() + " (" + sslSocket.getSession().getProtocol() + ")";
+                } catch (Exception e) {
+                    tcpLatencyMs = System.currentTimeMillis() - t0;
+                    statusMessage = "TCP/SSL connect error: " + e.getMessage();
+                }
+            } else {
+                try (java.net.Socket socket = new java.net.Socket()) {
+                    socket.connect(new java.net.InetSocketAddress(host, port), 5000);
+                    tcpLatencyMs = System.currentTimeMillis() - t0;
+                    tcpConnected = true;
+                    tlsSslHandshakeSuccess = true;
+                    cipherSuite = "TCP Plain (STARTTLS eligible on port " + port + ")";
+                } catch (Exception e) {
+                    tcpLatencyMs = System.currentTimeMillis() - t0;
+                    statusMessage = "TCP connect error: " + e.getMessage();
+                }
+            }
+        }
+
+        // 3. Credential configuration check
+        boolean hasUser = smtpUsername != null && !smtpUsername.isBlank();
+        boolean hasPass = smtpPassword != null && !smtpPassword.isBlank();
+        authSuccess = hasUser && hasPass && tcpConnected;
+
+        if (tcpConnected && tlsSslHandshakeSuccess && hasUser && hasPass) {
+            statusMessage = "SMTP host reachable, SSL/TLS handshake passed, and credentials configured.";
+            recommendation = "SMTP pipeline is healthy and ready for live email dispatch.";
+        } else if (!tcpConnected) {
+            statusMessage = String.format("Could not establish TCP connection to %s:%d (timeout 5s).", host, port);
+            recommendation = "Outbound TCP SMTP connections on port " + port + " appear blocked by the runtime or cloud network egress firewall (common on free/standard Render, AWS, and DigitalOcean instances). Use an HTTPS email service (e.g. Resend REST API) or allow outbound port " + port + ".";
+        } else if (!hasUser || !hasPass) {
+            statusMessage = "TCP connected to " + host + ":" + port + ", but EMAIL_USERNAME or EMAIL_PASSWORD environment variable is missing.";
+            recommendation = "Configure EMAIL_USERNAME and EMAIL_PASSWORD (16-character Google App Password) in your environment variables.";
+        } else {
+            statusMessage = "SMTP connectivity partially verified.";
+            recommendation = "Verify SMTP encryption settings match selected port (" + port + ").";
+        }
+
+        java.util.Map<String, Object> envFlags = new java.util.HashMap<>();
+        envFlags.put("EMAIL_ENABLED", emailEnabled);
+        envFlags.put("EMAIL_HOST_PRESENT", smtpHost != null && !smtpHost.isBlank());
+        envFlags.put("EMAIL_PORT_PRESENT", smtpPort > 0);
+        envFlags.put("EMAIL_USERNAME_PRESENT", hasUser);
+        envFlags.put("EMAIL_PASSWORD_PRESENT", hasPass);
+        envFlags.put("FROM_EMAIL", fromEmail);
+
+        return com.gatiman.dto.email.SmtpDiagnosticResponse.builder()
+                .overallHealthy(tcpConnected && tlsSslHandshakeSuccess && hasUser && hasPass)
+                .host(host)
+                .port(port)
+                .protocol(protocol)
+                .dnsResolved(dnsResolved)
+                .resolvedIp(resolvedIp)
+                .tcpConnected(tcpConnected)
+                .tcpLatencyMs(tcpLatencyMs)
+                .tlsSslHandshakeSuccess(tlsSslHandshakeSuccess)
+                .cipherSuite(cipherSuite)
+                .authSuccess(authSuccess)
+                .maskedUsername(maskEmail(smtpUsername))
+                .passwordConfigured(hasPass)
+                .statusMessage(statusMessage)
+                .recommendation(recommendation)
+                .timestamp(Instant.now())
+                .environmentFlags(envFlags)
+                .build();
     }
 
     @Override
@@ -366,6 +510,49 @@ public class EmailServiceImpl implements EmailService {
         String name = getCustomerName(order);
         String msg = String.format("Your delivery has been rescheduled for %s (%s).", requestedDate, slot != null ? slot : "Standard Slot");
         sendEmail(EmailEventType.RESCHEDULE_APPROVED, order, email, name, null, null, msg, null);
+    }
+
+    @Override
+    @Async
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void sendWelcomeEmail(User user) {
+        if (user == null || user.getEmail() == null || user.getEmail().isBlank()) {
+            return;
+        }
+
+        if (!emailEnabled) {
+            log.info("[EMAIL DISABLED] Skipping welcome email for user: {}", user.getEmail());
+            return;
+        }
+
+        String recipientEmail = user.getEmail().trim();
+        String recipientName = user.getFullName() != null && !user.getFullName().isBlank()
+                ? user.getFullName()
+                : (user.getFirstName() != null ? user.getFirstName() : "Valued Member");
+        String subject = "Welcome to GATIMAN Delivery Network, " + (user.getFirstName() != null ? user.getFirstName() : "there") + "! 🚀";
+        String htmlContent = emailTemplateService.buildWelcomeEmailHtml(recipientName, recipientEmail, baseUrl);
+        String idempotencyKey = "WELCOME_" + recipientEmail.toLowerCase();
+
+        if (emailLogRepository.existsByIdempotencyKeyAndStatusIn(idempotencyKey, List.of(EmailStatus.SENT, EmailStatus.PENDING))) {
+            log.info("Welcome email for user {} already sent or pending. Skipping duplicate.", recipientEmail);
+            return;
+        }
+
+        EmailLog emailLog = EmailLog.builder()
+                .trackingNumber("USER-" + (user.getId() != null ? user.getId() : "NEW"))
+                .customerId(null)
+                .recipientEmail(recipientEmail)
+                .recipientName(recipientName)
+                .eventType(EmailEventType.WELCOME)
+                .subject(subject)
+                .htmlContent(htmlContent)
+                .status(EmailStatus.PENDING)
+                .retryCount(0)
+                .idempotencyKey(idempotencyKey)
+                .build();
+
+        emailLog = emailLogRepository.save(emailLog);
+        dispatchMimeMessage(emailLog);
     }
 
     private String getCustomerEmail(Order order) {

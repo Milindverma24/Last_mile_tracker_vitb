@@ -42,6 +42,7 @@ public class AuthServiceImpl implements AuthService {
     private final DeliveryAgentRepository deliveryAgentRepository;
     private final ZoneRepository zoneRepository;
     private final PasswordEncoder passwordEncoder;
+    private final com.gatiman.service.EmailService emailService;
 
     @Override
     public AuthResponse login(LoginRequest request) {
@@ -107,6 +108,13 @@ public class AuthServiceImpl implements AuthService {
                     .status("ACTIVE")
                     .build();
             deliveryAgentRepository.save(agent);
+        }
+
+        // Dispatch Welcome Email asynchronously for newly registered user
+        try {
+            emailService.sendWelcomeEmail(savedUser);
+        } catch (Exception e) {
+            log.warn("Could not dispatch welcome email for {}: {}", savedUser.getEmail(), e.getMessage());
         }
 
         Authentication authentication = authenticationManager.authenticate(
@@ -212,6 +220,14 @@ public class AuthServiceImpl implements AuthService {
                             .defaultPickupPincode(request.getPinCode() != null ? request.getPinCode() : "")
                             .build();
                     customerRepository.save(customer);
+
+                    // Dispatch Welcome Email asynchronously for first-time Google sign-in
+                    try {
+                        emailService.sendWelcomeEmail(saved);
+                    } catch (Exception e) {
+                        log.warn("Could not dispatch welcome email for Google user {}: {}", saved.getEmail(), e.getMessage());
+                    }
+
                     return saved;
                 });
 

@@ -40,6 +40,7 @@ public class EmailTemplateService {
             case DELIVERY_FAILED -> "Delivery Attempt Notice for Order #" + trackingNum;
             case RESCHEDULE_APPROVED -> "Delivery Rescheduled for Order #" + trackingNum;
             case RESCHEDULE_REJECTED -> "Reschedule Request Notice for Order #" + trackingNum;
+            case WELCOME -> "Welcome to GATIMAN Delivery Network 🚀";
         };
     }
 
@@ -278,6 +279,7 @@ public class EmailTemplateService {
             case DELIVERY_FAILED -> "⚠️";
             case RESCHEDULE_APPROVED -> "📅";
             case RESCHEDULE_REJECTED -> "⚠️";
+            case WELCOME -> "🚀";
         };
     }
 
@@ -297,6 +299,7 @@ public class EmailTemplateService {
             case DELIVERY_FAILED -> "Delivery Attempt Unsuccessful";
             case RESCHEDULE_APPROVED -> "Delivery Reschedule Approved";
             case RESCHEDULE_REJECTED -> "Reschedule Request Update";
+            case WELCOME -> "Welcome to GATIMAN Delivery Network 🎉";
         };
     }
 
@@ -320,6 +323,7 @@ public class EmailTemplateService {
             case DELIVERY_FAILED -> "Hello " + customerName + ", our driver partner was unable to complete the delivery handover. Please use the tracking link to reschedule your delivery slot.";
             case RESCHEDULE_APPROVED -> "Hello " + customerName + ", your requested reschedule delivery window has been approved and assigned for dispatch.";
             case RESCHEDULE_REJECTED -> "Hello " + customerName + ", your reschedule request could not be approved for the requested slot. Please check the tracking link for details.";
+            case WELCOME -> "Hello " + customerName + ", welcome to GATIMAN! Your account has been successfully verified. You now have access to instant rate previews, real-time live radar tracking, and secure OTP-verified delivery.";
         };
     }
 
@@ -339,17 +343,185 @@ public class EmailTemplateService {
             case DELIVERY_FAILED -> "ATTEMPT FAILED";
             case RESCHEDULE_APPROVED -> "RESCHEDULED";
             case RESCHEDULE_REJECTED -> "REJECTED";
+            case WELCOME -> "ACTIVE";
         };
     }
 
     private String getStatusBadgeColor(EmailEventType eventType) {
         return switch (eventType) {
-            case DELIVERED, ORDER_CONFIRMED -> SUCCESS_COLOR;
+            case DELIVERED, ORDER_CONFIRMED, WELCOME -> SUCCESS_COLOR;
             case ON_THE_WAY, OUT_FOR_DELIVERY, NEAR_DESTINATION -> BRAND_PRIMARY;
             case DELIVERY_DELAYED, AGENT_ASSIGNED, PICKED_UP, ORDER_PREPARING, ORDER_READY -> WARNING_COLOR;
             case DELIVERY_FAILED, DELIVERY_CANCELLED, RESCHEDULE_REJECTED -> DANGER_COLOR;
             default -> "#64748B";
         };
+    }
+
+    public String buildWelcomeEmailHtml(String recipientName, String userEmail, String baseUrl) {
+        String name = recipientName != null && !recipientName.isBlank() ? recipientName : "Valued Member";
+        String dashboardUrl = (baseUrl != null ? baseUrl : "http://localhost:5173") + "/customer/dashboard";
+        String loginUrl = (baseUrl != null ? baseUrl : "http://localhost:5173") + "/login";
+
+        return """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to GATIMAN Delivery Network</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: %s;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      color: %s;
+      -webkit-font-smoothing: antialiased;
+    }
+    table { border-collapse: separate; }
+    a { color: %s; text-decoration: none; }
+    .btn-primary {
+      background-color: %s;
+      color: #ffffff !important;
+      font-weight: 700;
+      text-decoration: none;
+      padding: 14px 32px;
+      border-radius: 12px;
+      display: inline-block;
+      letter-spacing: 0.5px;
+    }
+    @media only screen and (max-width: 600px) {
+      .container { width: 100%% !important; }
+      .mobile-padding { padding: 24px 20px !important; }
+    }
+  </style>
+</head>
+<body style="margin: 0; padding: 0; background-color: %s;">
+  <center style="width: 100%%; background-color: %s; padding: 32px 0;">
+    <table border="0" cellpadding="0" cellspacing="0" width="600" class="container" style="background-color: %s; border-radius: 24px; overflow: hidden; border: 1px solid %s; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: left;">
+      
+      <!-- Brand Header -->
+      <tr>
+        <td class="mobile-padding" style="padding: 32px 36px; background-color: #0F172A; text-align: center;">
+          <table border="0" cellpadding="0" cellspacing="0" width="100%%">
+            <tr>
+              <td align="center">
+                <div style="display: inline-block; padding: 8px 16px; background-color: rgba(79, 70, 229, 0.2); border: 1px solid rgba(99, 102, 241, 0.4); border-radius: 100px;">
+                  <span style="color: #818CF8; font-size: 11px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;">
+                    ⚡ WELCOME TO GATIMAN
+                  </span>
+                </div>
+                <h1 style="color: #FFFFFF; font-size: 26px; font-weight: 800; margin: 16px 0 4px 0; letter-spacing: -0.5px;">
+                  GATIMAN LOGISTICS
+                </h1>
+                <p style="color: #94A3B8; font-size: 13px; margin: 0; font-weight: 500;">
+                  Intelligent Last-Mile Delivery & Live Telemetry
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- Hero Message -->
+      <tr>
+        <td class="mobile-padding" style="padding: 36px 36px 20px 36px; text-align: center;">
+          <div style="font-size: 44px; margin-bottom: 12px;">🚀</div>
+          <h2 style="font-size: 22px; font-weight: 800; color: %s; margin: 0 0 12px 0; letter-spacing: -0.5px;">
+            Welcome aboard, %s!
+          </h2>
+          <p style="font-size: 14px; color: %s; line-height: 1.6; margin: 0 0 24px 0;">
+            Your GATIMAN account is now active and verified for <strong>%s</strong>. You have instant access to automated express dispatch, real-time live radar telemetry, and secure 256-bit OTP package handover across the entire delivery network.
+          </p>
+        </td>
+      </tr>
+
+      <!-- Feature Grid -->
+      <tr>
+        <td class="mobile-padding" style="padding: 0 36px 24px 36px;">
+          <table border="0" cellpadding="0" cellspacing="0" width="100%%" style="border: 1px solid #E2E8F0; border-radius: 16px; background-color: #F8FAFC; padding: 20px;">
+            <tr>
+              <td style="padding-bottom: 16px;">
+                <div style="font-weight: 700; color: #0F172A; font-size: 14px; margin-bottom: 2px;">⚡ Automated Price Preview</div>
+                <div style="font-size: 12px; color: #64748B; line-height: 1.4;">Instant volumetric calculation with deadweight comparison and transparent pricing before booking.</div>
+              </td>
+            </tr>
+            <tr>
+              <td style="border-top: 1px dashed #E2E8F0; padding: 16px 0;">
+                <div style="font-weight: 700; color: #4F46E5; font-size: 14px; margin-bottom: 2px;">📡 Live GPS Radar</div>
+                <div style="font-size: 12px; color: #64748B; line-height: 1.4;">Track your driver partner in sub-second real time on an interactive live map with dynamic ETA.</div>
+              </td>
+            </tr>
+            <tr>
+              <td style="border-top: 1px dashed #E2E8F0; padding-top: 16px;">
+                <div style="font-weight: 700; color: #10B981; font-size: 14px; margin-bottom: 2px;">🔒 256-Bit OTP Delivery Security</div>
+                <div style="font-size: 12px; color: #64748B; line-height: 1.4;">End-to-end verified delivery handovers with cryptographic proof of delivery.</div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- Primary Action CTA Button -->
+      <tr>
+        <td style="padding: 8px 36px 32px 36px; text-align: center;">
+          <a href="%s" target="_blank" class="btn-primary">
+            GO TO MY DASHBOARD &nbsp;➔
+          </a>
+        </td>
+      </tr>
+
+      <!-- Support Strip -->
+      <tr>
+        <td class="mobile-padding" style="padding: 20px 36px; background-color: #F1F5F9; border-top: 1px solid #E2E8F0; border-bottom: 1px solid #E2E8F0;">
+          <table border="0" cellpadding="0" cellspacing="0" width="100%%">
+            <tr>
+              <td style="font-size: 13px; color: #64748B; line-height: 1.5;">
+                <strong style="color: #0F172A;">Have questions or need enterprise bulk dispatch?</strong><br>
+                Our 24/7 support and dispatch operations team is here to assist at <a href="mailto:support@gatiman.in" style="color: #4F46E5; font-weight: 600;">support@gatiman.in</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- Footer -->
+      <tr>
+        <td class="mobile-padding" style="padding: 28px 36px; text-align: center; background-color: #0F172A; color: #94A3B8; font-size: 12px; line-height: 1.7;">
+          <div style="font-weight: 700; color: #FFFFFF; font-size: 14px; margin-bottom: 6px;">GATIMAN Delivery Network</div>
+          <div style="color: #64748B; margin-bottom: 12px;">Delhi NCR Live Dispatch · Gurugram · Noida · Faridabad</div>
+          <div style="border-top: 1px solid #1E293B; padding-top: 12px;">
+            <a href="%s" style="color: #94A3B8; text-decoration: underline; margin: 0 8px;">Customer Portal</a> •
+            <a href="mailto:support@gatiman.in" style="color: #94A3B8; text-decoration: underline; margin: 0 8px;">Contact Support</a>
+          </div>
+          <div style="margin-top: 12px; color: #475569; font-size: 11px;">
+            © 2026 GATIMAN Logistics Inc. All rights reserved.<br>
+            This email was sent to %s as a welcome notification upon account registration.
+          </div>
+        </td>
+      </tr>
+
+    </table>
+  </center>
+</body>
+</html>
+""".formatted(
+                BG_COLOR,
+                TEXT_PRIMARY,
+                BRAND_PRIMARY,
+                BRAND_PRIMARY,
+                BG_COLOR,
+                BG_COLOR,
+                CARD_BG,
+                BORDER_COLOR,
+                TEXT_PRIMARY,
+                name,
+                TEXT_SECONDARY,
+                userEmail != null ? userEmail : "your account",
+                dashboardUrl,
+                loginUrl,
+                userEmail != null ? userEmail : "your email"
+        );
     }
 
     private String buildOrderCardHtml(Order order, String trackingNum, Integer etaMinutes, Double distanceRemaining, String statusText, String statusColor) {

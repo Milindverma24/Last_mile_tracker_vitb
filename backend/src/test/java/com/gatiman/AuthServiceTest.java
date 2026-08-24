@@ -53,6 +53,9 @@ public class AuthServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private com.gatiman.service.EmailService emailService;
+
     @InjectMocks
     private AuthServiceImpl authService;
 
@@ -118,5 +121,33 @@ public class AuthServiceTest {
         assertNotNull(response);
         assertEquals("token.jwt", response.getToken());
         assertEquals("new@gatiman.local", response.getUser().getEmail());
+        verify(emailService, times(1)).sendWelcomeEmail(any(User.class));
+    }
+
+    @Test
+    void testGoogleLoginNewUserTriggersWelcomeEmail() {
+        com.gatiman.dto.auth.GoogleAuthRequest request = com.gatiman.dto.auth.GoogleAuthRequest.builder()
+                .email("googleuser@gatiman.local")
+                .firstName("Google")
+                .lastName("User")
+                .customerType(CustomerType.B2C)
+                .build();
+
+        when(userRepository.findByEmail("googleuser@gatiman.local")).thenReturn(java.util.Optional.empty());
+        when(passwordEncoder.encode(anyString())).thenReturn("random_hash");
+        when(userRepository.save(any(User.class))).thenAnswer(i -> {
+            User u = i.getArgument(0);
+            u.setId(5L);
+            return u;
+        });
+        when(customerRepository.save(any(Customer.class))).thenAnswer(i -> i.getArgument(0));
+        when(tokenProvider.generateTokenForUser(any(User.class))).thenReturn("google.jwt.token");
+
+        AuthResponse response = authService.googleLogin(request);
+
+        assertNotNull(response);
+        assertEquals("google.jwt.token", response.getToken());
+        assertEquals("googleuser@gatiman.local", response.getUser().getEmail());
+        verify(emailService, times(1)).sendWelcomeEmail(any(User.class));
     }
 }
