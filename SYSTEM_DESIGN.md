@@ -1,91 +1,108 @@
-# GATIMAN Last-Mile Logistics — System Design
+# GATIMAN — System Design Write-Up
 
-## 1. Rate Calculation Engine
-GATIMAN utilizes a deterministic, multi-factor pricing engine (`PricingServiceImpl`) to calculate delivery charges dynamically based on physical dimensions, distance, customer classification, and payment mode.
+**Stack**: Spring Boot 3.3.4 · React 18 · PostgreSQL 16 · Razorpay · WebSocket STOMP  
+**Deployment**: Render (API + DB) · Vercel (SPA)
 
-1. **Volumetric vs. Actual Weight**:
-   Industry standard volumetric divisor is applied:
-   $$\text{Volumetric Weight (kg)} = \frac{\text{Length (cm)} \times \text{Breadth (cm)} \times \text{Height (cm)}}{5000}$$
-   The billable weight is established as:
-   $$\text{Billable Weight} = \max(\text{Actual Weight}, \text{Volumetric Weight})$$
-
-2. **Rate Card Evaluation**:
-   Rate rules are resolved hierarchically:
-   $$\text{Base Charge} = \text{Base Price} + (\max(0, \text{Billable Weight} - \text{Base Weight Limit}) \times \text{Per Kg Surcharge})$$
-   - Route classification applies: **Same Zone** (Intra-city), **Adjacent Zone**, or **Inter-City**.
-   - Customer tiers apply: **B2C** (standard rate) vs. **B2B** (contractual volume discount).
-
-3. **Ancillary Fees & Taxes**:
-   - **COD Handling Fee**: Applied if `paymentType == COD` (min flat fee or tiered percentage of order value).
-   - **Emergency/Express Surcharges**: Surge factor calculated on high-density traffic windows.
-   - **Final Total**:
-     $$\text{Total Charge} = \text{Base Charge} + \text{COD Fee} + \text{Fuel Surcharge}$$
+GATIMAN is a last-mile delivery platform for urban corridors. Customers book shipments through a wizard, the system prices them dynamically, assigns a driver, and tracks parcels through a strict state machine until delivery — or through failure recovery.
 
 ---
 
-## 2. Zone Detection Approach
-Geographic routing and dispatch zones are managed through a dual-index spatial model (`ZoneDetectionServiceImpl`):
+## 1. Rate Calculation Engine
 
-1. **Pincode Prefix & Exact Matching**:
-   Each postal code (e.g., `110016` South Delhi, `122002` Gurugram Cyber City, `201301` Noida) is mapped to a specific `Zone` entity containing child `Area` records.
-   - Initial lookup tests exact 6-digit Pincode matching.
-   - Fallback lookup checks 3-digit regional sorting hub prefixes.
+Charges are computed in `PricingServiceImpl` through four cooperating services. Rates come from database-stored `RateCard` and `RateCardRule` records, so pricing is adjustable without redeployment.
 
-2. **Inter-Zone Matrix & Distance Traversal**:
-   When pickup origin $P$ and drop destination $D$ are evaluated:
-   - If $\text{Zone}(P) == \text{Zone}(D) \implies \text{RouteType.SAME\_ZONE}$
-   - If $\text{Zone}(D) \in \text{AdjacentZones}(\text{Zone}(P)) \implies \text{RouteType.ADJACENT\_ZONE}$
-   - Otherwise $\implies \text{RouteType.CROSS\_ZONE}$ (Long-haul express).
+**Step 1 — Volumetric vs. Actual Weight**
 
-3. **Geodesic Distance Approximation**:
-   Haversine formula computes point-to-point latitude/longitude distance:
-   $$d = 2R \arcsin \left( \sqrt{\sin^2\left(\frac{\Delta \phi}{2}\right) + \cos(\phi_1)\cos(\phi_2)\sin^2\left(\frac{\Delta \lambda}{2}\right)} \right)$$
-   Combined with urban road routing multipliers ($\approx 1.25 \times d_{\text{geodesic}}$) for real-time ETA calculation.
+We use the industry-standard volumetric divisor:
+
+```
+Volumetric Weight = (Length × Breadth × Height) / 5000
+Billable Weight   = max(Actual Weight, Volumetric Weight)
+```
+
+This prevents bulky-but-light packages from being undercharged. Invalid dimensions throw a `BusinessRuleException`.
+
+**Step 2 — Route Classification**
+
+Pickup and drop PINs are resolved to zones (see §2). The pair determines route type: `INTRA_ZONE`, `INTER_ZONE`, or `INTER_STATE`. Route type selects which rate card applies.
+
+**Step 3 — Weight Slab Resolution**
+
+Each rate card contains sorted weight slabs with min/max boundaries, a base price, and a per-kg rate. The system finds the matching slab; if weight exceeds the highest defined slab, the top tier applies as a catchall. Excess weight is ceiling-rounded to full kilograms:
+
+```
+Base Charge = Slab Base Price + ⌈Billable Weight − Slab Min⌉ × Per-Kg Rate
+```
+
+**Step 4 — COD Surcharge & Total**
+
+For COD orders, a surcharge (flat fee + configurable percentage of base charge) is added:
+
+```
+Total Charge = Base Charge + COD Surcharge
+```
+
+Rate cards are scoped by `CustomerType` (B2C/B2B) × `RouteType`, forming a configurable pricing matrix.
+
+---
+
+## 2. Zone Detection
+
+Zone detection (`ZoneDetectionServiceImpl`) maps a 6-digit PIN code to a `Zone` entity — the entry point for pricing and assignment.
+
+**Primary lookup**: exact PIN match against the `areas` table. Each area belongs to one zone. If found and active, returned with confidence 1.0.
+
+**Fallback**: if no exact match exists but an area name is provided, a substring search across zone names catches unmapped localities. Confidence drops to 0.85.
+
+**Route type determination** compares the pickup zone and drop zone:
+- Same zone ID → `INTRA_ZONE`
+- Different zones, different state fields → `INTER_STATE`  
+- Otherwise → `INTER_ZONE`
+
+If either PIN can't be resolved, the system throws `ZONE_NOT_FOUND` with a clear message. We chose a database-driven approach over geocoding APIs to avoid per-request latency and external dependency costs — a practical trade-off for a defined service area like Delhi NCR.
 
 ---
 
 ## 3. Auto-Assignment Logic
-The dispatch engine (`AgentAssignmentServiceImpl`) optimizes delivery driver pairing using a deterministic scoring algorithm:
 
-1. **Eligibility Filter**:
-   Driver agents must satisfy hard constraints:
-   - `isActive == true` AND `isAvailable == true`
-   - $\text{CurrentActiveOrders} < \text{MaxActiveOrders}$ (default concurrency limit = 5)
-   - Vehicle payload capability matches order weight (e.g., Bike for $<15\text{kg}$, EV Scooter for standard parcels, Van for bulk freight $>35\text{kg}$).
+When an order is created (or rescheduled), `AgentAssignmentServiceImpl.autoAssign()` selects a driver through a two-phase process.
 
-2. **Multi-Criteria Scoring Formula**:
-   $$\text{Score}(A) = w_1 \cdot \text{Proximity}(A, \text{Origin}) + w_2 \cdot \text{WorkloadCapacity}(A) + w_3 \cdot \text{ZoneAffinity}(A)$$
-   - **Proximity**: Inverted Haversine distance from driver's last reported GPS coordinate to pickup origin.
-   - **Workload Balancing**: Lower active order counts receive higher priority to prevent driver burnout.
-   - **Zone Affinity**: Bonus weight given if driver is currently inside the origin pickup zone.
+**Phase 1 — Eligibility Filter** (`AgentEligibilityServiceImpl`)
 
-3. **Atomic Lock & State Transition**:
-   Selected agent is assigned atomically within a `@Transactional` block. The agent's `currentActiveOrders` is incremented, and order status transitions from `CREATED` $\to$ `ASSIGNED`.
+All agents are loaded and filtered by hard constraints:
+- `active = true` AND `isAvailable = true`
+- `currentActiveOrders < maxActiveOrders` (default cap: 5)
+- Vehicle can carry the package: weight ≤ vehicle max weight AND max dimension ≤ vehicle max dimension. Six vehicle tiers exist — Bike (5 kg), EV Scooter (5 kg), Car (25 kg), Van (25 kg), Tempo (150 kg), Truck (500 kg).
+
+**Phase 2 — Proximity Scoring**
+
+Eligible agents are ranked by a composite score (lower is better):
+
+```
+Score = Haversine Distance (km) + (Active Orders × 2.0) − Zone Bonus
+```
+
+- **Distance**: Haversine great-circle distance from the agent's last GPS coordinates to the pickup centroid.
+- **Workload penalty**: `currentActiveOrders × 2.0` — spreads load across the fleet.
+- **Zone bonus**: −10 points if the agent is already assigned to the pickup zone.
+- **Tie-breaker**: `(agentId % 10) × 0.01` for deterministic ordering.
+
+The top-scoring agent is assigned atomically within a `@Transactional` block: their workload counter increments, the order transitions to `ASSIGNED`, a `DeliveryAttempt` record is created, and a tracking event is appended. If no eligible agent exists, the API returns a clear error with the required vehicle type.
+
+Admin can also manually assign or reassign agents, bypassing auto-dispatch.
 
 ---
 
-## 4. Failed Delivery Handling & Rescheduling
-Unsuccessful delivery attempts are governed by an automated recovery protocol (`RescheduleServiceImpl`):
+## 4. Failed Delivery Handling
 
-```mermaid
-stateDiagram-v2
-    OUT_FOR_DELIVERY --> FAILED: Delivery Attempt Fails (Reason Logged)
-    FAILED --> RESCHEDULE_REQUESTED: Customer Submits New Date/Slot
-    RESCHEDULE_REQUESTED --> APPROVED: Admin Approves Slot
-    RESCHEDULE_REQUESTED --> REJECTED: Slot Overbooked
-    APPROVED --> ASSIGNED: Order Re-queued for Auto-Dispatch
-    FAILED --> RETURN_TO_ORIGIN: Max Attempts Exceeded (3/3)
-```
+Order status follows a strict finite state machine enforced by `OrderStatusTransitionServiceImpl`. Only `OUT_FOR_DELIVERY → FAILED` is a valid failure transition.
 
-1. **Failure Capture**:
-   When a driver partner records an unsuccessful attempt, they must submit a standardized failure code (`CUSTOMER_UNAVAILABLE`, `INCORRECT_ADDRESS`, `CUSTOMER_REJECTED`, `PREMISES_CLOSED`).
-   - Order transitions from `OUT_FOR_DELIVERY` $\to$ `FAILED`.
-   - `attemptCount` increments. An automated transactional email notification is triggered.
+**Failure capture**: The driver records a failure with a structured `FailureReason` (`CUSTOMER_UNAVAILABLE`, `INCORRECT_ADDRESS`, `CUSTOMER_REJECTED`, `PREMISES_CLOSED`). The system decrements the agent's workload, persists the status change, and logs an immutable tracking event with GPS coordinates.
 
-2. **Self-Service Customer Rescheduling**:
-   Customers can access the tracking portal to request a new delivery date and time window (e.g. `10:00 AM - 01:00 PM` or `02:00 PM - 06:00 PM`).
-   - Creates a pending `RescheduleRequest` record.
+**Customer notification**: An in-app notification is pushed immediately, prompting the customer to reschedule.
 
-3. **Re-Dispatch / Return to Origin (RTO)**:
-   - If approved by operations admin, status transitions to `RESCHEDULE_APPROVED` $\to$ `ASSIGNED`, re-entering the auto-assignment queue.
-   - If `attemptCount >= 3` without resolution, the order is marked `RETURN_TO_ORIGIN` (RTO) for reverse logistics to the sender.
+**Rescheduling**: The customer selects a new delivery date and time slot via the tracking portal. This creates a `RescheduleRequest` in `PENDING` state. An operations admin reviews and approves (or rejects). On approval, the order transitions `FAILED → RESCHEDULED → ASSIGNED`, re-entering auto-assignment. A new `DeliveryAttempt` record tracks the retry independently.
+
+**Safeguards**: Duplicate pending reschedule requests are blocked. Past dates are rejected. Only the order owner (or admin) can request rescheduling. Each reschedule increments a counter on the order for operational visibility.
+
+The system does not currently enforce a maximum attempt limit automatically — that policy is left to operations. This is a deliberate scope decision; automated RTO (Return to Origin) after N failures is a planned future enhancement.
